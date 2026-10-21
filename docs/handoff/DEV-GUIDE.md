@@ -84,6 +84,12 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - **Mac app logs:** MacDroidCore's logs go to the unified log under subsystem `dev.macdroid.mac` (`OSLogHandler`). Watch them with `log stream --predicate 'subsystem == "dev.macdroid.mac"' --style compact`.
 - **Security-scoped bookmarks and signing:** bookmarks are tied to the app's signature too. They broke across ad-hoc rebuilds ("The original file is no longer available"); with the stable self-signed identity they should survive rebuilds.
 
+## Website (`website/`, Plan 12)
+- Node 24 + npm. `cd website && npm ci` once.
+- `npm run dev`: local server with live reload at `http://localhost:5173/macdorid/` (the site always lives under the base path from `site.config.js`).
+- `npm test`: Vitest unit tests (`test/`). `npm run build`: static site into `website/dist`. `npm run check`: post-build assertions on `dist` (no "MacDroid", links under the base path, SEO files present). `npm run preview`: serve `dist` at `http://localhost:4173/macdorid/`.
+- Site identity and every URL (site, repo, DMG, Play) live only in `website/site.config.js`.
+
 ## Conventions
 - Swift Testing (`@Test`, `#expect`) on the Mac and JUnit4 on Android; TDD for logic.
 - Pure presentation and state logic lives in testable types; views stay thin.

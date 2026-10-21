@@ -4,6 +4,9 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Plan 12: website (feat/website)
+- **Task 1 (scaffold, config, SEO module):** `website/` Vite package (vite 8.3.5, vitest 5.0.5, three 0.160.0, all exact). `site.config.js` is the single source of the site's name, URLs, developer and Play status. `src/seo.js` generates head tags, JSON-LD (`operatingSystem` "macOS" while Play is null), sitemap, robots, `llms.txt` and the web manifest. Verified: `npm test` 6/6 (RED first: module missing).
+
 ## 2026-10-21 — Plan 12: website plan written (feat/website)
 - **What:** implementation plan `docs/superpowers/plans/2026-10-21-unison-website-12.md` (10 tasks: scaffold + SEO module, pages + dist check, icons + preview image, capability tiers + shared 3D, the three scenes, release script for `Unison.dmg`, Pages workflow, final gates and go-live on the owner's word). The approved mockup is now in the repo as `website/reference/mockup-v7.html` (it was gitignored scratch).
 - **Verified:** docs only.
