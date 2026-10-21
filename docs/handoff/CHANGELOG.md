@@ -6,7 +6,7 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
 
 ## 2026-10-21 — Visible play button on the demo video (fix/video-play-button)
 - **What:** the browser's own play button is light grey and disappeared on the light poster (owner). The player now shows a 92 px black play button of our own; pressing it turns on the native controls and plays; it comes back when the video ends. The decorative spinning glow is hidden once a real video is there.
-- **Verified:** `npm test` 20/20, build (no warnings), check ok.
+- **Verified:** `npm test` 20/20, build (no warnings), check ok. Merged to `main` as `7521d53` and pushed at the owner's request; the deploy passed and the live script contains the new button.
 
 ## 2026-10-21 — Demo video on the website (feat/demo-video)
 - **What:** the owner's 22-second demo (`brag-output/brag.mp4`, 1080p H.264, 2.8 MB) is now `website/public/demo.mp4`, re-muxed losslessly with `+faststart` so it starts before it has fully downloaded; `brag.jpg` is its poster (`demo-poster.jpg`). The player placeholder's `data-video-src`/`data-video-poster` point at them, so `main.js` swaps in a `<video controls preload="none">`. The section label is "A quick tour". `npm run check` now fails if a set demo video or poster isn't in `dist` (shown failing with `demo.mp4` removed).
