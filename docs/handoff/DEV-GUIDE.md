@@ -57,7 +57,9 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - **WS client SNI:** Swift `WebSocketClient` needs a hostname (`localhost`), not an IP literal.
 - **Window not opened automatically:** in an `LSUIElement` app a SwiftUI `Window` scene is not opened at launch. `MenuBarLabel` (always alive) opens it via `WindowRequest`. `SceneBuilder` rejects `if #available`.
 - **Hidden menu-bar icon:** on a MacBook with a notch it can be hidden. Launching the app again opens the window (`applicationShouldHandleReopen`).
-- **Keychain prompt:** ad-hoc signed dev builds change signature on each rebuild, so macOS asks to allow keychain access. Click "Always Allow".
+- **Signing identity (once per Mac):** run `scripts/make-signing-cert.sh` before the first Mac build. It puts the self-signed "MacDroid Self-Signed" code-signing identity in the login keychain, and `project.yml` signs every build with it (Manual style). Without it the build fails with a missing-identity error. `security find-identity -p codesigning` shows it as `CSSMERR_TP_NOT_TRUSTED`; that's expected, and codesign still uses it. Back it up (Keychain Access → My Certificates → Export .p12) and ship every release with the same one.
+- **Keychain prompt:** macOS knows the app by `identifier "dev.macdroid.mac" and certificate leaf = H"…"` (check with `codesign -dr - MacDroid.app`), so after one "Always Allow" (two prompts: key and certificate items) rebuilds and updates don't ask again. Ad-hoc builds were known by their cdhash, which changes every build, so they asked every time (fixed 2026-10-21). A new certificate means one more round of prompts.
+- **Running the Release build:** `xcodebuild -project MacDroid.xcodeproj -scheme MacDroid -configuration Release -derivedDataPath build build`, then `ditto build/Build/Products/Release/MacDroid.app /Applications/MacDroid.app` and `open /Applications/MacDroid.app`. Quit any Debug copy first, so two copies don't fight over the server port.
 - **Android 17 local network:** apps targeting API 37 need runtime `ACCESS_LOCAL_NETWORK` before LAN sockets or NSD. Setup requests it first, and the service and boot receiver refuse to run without it.
 - **NSD addresses:** `getHost()` on API 34+ is `hostAddresses[0]`. The locator scans every address for IPv4. `stopServiceResolution` exists only on 34+.
 - **Gradle wrapper:** `gradle-wrapper.properties` has `validateDistributionUrl=false` (environment workaround). Restore validation and add `distributionSha256Sum` before publishing.
@@ -80,7 +82,7 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
   ```
 
 - **Mac app logs:** MacDroidCore's logs go to the unified log under subsystem `dev.macdroid.mac` (`OSLogHandler`). Watch them with `log stream --predicate 'subsystem == "dev.macdroid.mac"' --style compact`.
-- **Security-scoped bookmarks and ad-hoc builds:** like the keychain, bookmarks made by one ad-hoc-signed build may not resolve in the next build. During development, a Retry of a file queued before a rebuild can fail with "The original file is no longer available".
+- **Security-scoped bookmarks and signing:** bookmarks are tied to the app's signature too. They broke across ad-hoc rebuilds ("The original file is no longer available"); with the stable self-signed identity they should survive rebuilds.
 
 ## Conventions
 - Swift Testing (`@Test`, `#expect`) on the Mac and JUnit4 on Android; TDD for logic.

@@ -29,8 +29,9 @@ public enum KeychainError: Error, Equatable {
     case unexpectedStatus(OSStatus)
 }
 
-/// Stores the identity as two generic-password items. Uses the file-based login keychain so an
-/// ad-hoc signed development build works; after a rebuild macOS may ask once to allow access.
+/// Stores the identity as two generic-password items in the file-based login keychain. Access is granted by code
+/// signature: builds are signed with one stable self-signed certificate (`scripts/make-signing-cert.sh`), so
+/// "Always Allow" survives rebuilds and updates. An ad-hoc build would be asked again after every rebuild.
 public final class KeychainIdentityStore: IdentityStore {
     private static let keyAccount = "private-key"
     private static let certificateAccount = "certificate"
