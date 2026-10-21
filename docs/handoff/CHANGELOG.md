@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Merged the memory pass to main
+- **What:** `perf/image-decoding` merged into `main` locally as `bf9adf8` (`--no-ff`) at the owner's request. Not pushed.
+- **Verified on `main`:** `swift test` 370; Mac app build, no code warnings. Android is unchanged since its gates passed on the branch.
+
 ## 2026-10-21 — Memory pass on the Mac app (perf/image-decoding)
 - **What:** the owner asked for the Mac app to stay light, so the Mac code was read for memory and CPU hotspots. Rewriting in Go or Rust was ruled out (see DECISIONS.md). Transfers (chunked, progress throttled to 4 Hz), mirroring (hardware decode, drop to key frame), the notification list (50) and clipboard history (capped) were already fine. Two real problems were fixed:
   1. **Icons, Now Playing art and clipboard images** were drawn with `NSImage(contentsOf:)` in `body`. That re-read the file on every redraw, on the main thread, and decoded it at full size (a 5K screenshot is about 60 MB for a 28 pt square). The new `DownscaledImages` (MacDroidCore) decodes with ImageIO at the drawn pixel size into a bounded `NSCache` (300 images, 32 MB). The new `DownscaledImageView` (app, `Views/Shared`) loads it off the main thread; `AppIconView`, `NowPlayingCard` and `ClipboardView` use it.
