@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — README: drop the "Formerly MacDroid" line (docs/readme-tagline)
+- **What:** removed the sub-heading "Formerly MacDroid. Code and internal ids still use that name." from the top of `README.md` at the owner's request. The naming note for contributors stays in `CLAUDE.md` and `docs/handoff/README.md`.
+- **Verified:** docs only; the footer change before it is live (merge `fe551bf`, deploy passed).
+
 ## 2026-10-22 — Footer credit links to the developer's GitHub (feat/footer-github)
 - **What:** "made by Venusai" in the home and privacy footers is a link to https://github.com/Venu005 (`rel="author"`), underlined on hover and focus. The URL lives in `site.config.js` `developer.url` (pages use `%DEV_URL%`) and is also the JSON-LD author/publisher `url`. Owner's request.
 - **Verified:** `seo.test.js` author assertion RED→GREEN, `npm test` 21/21, build (no warnings), check ok; live after deploy.

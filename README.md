@@ -4,8 +4,6 @@
 
 <h1 align="center">Unison</h1>
 
-<p align="center"><sub>Formerly MacDroid. Code and internal ids still use that name.</sub></p>
-
 <p align="center">
   Your Android phone and your Mac, working together over your own Wi-Fi.<br>
   No account, no cloud — the two devices talk directly, end-to-end encrypted.
