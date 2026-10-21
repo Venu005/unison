@@ -13,7 +13,7 @@
     <nav class="top" aria-label="Main">
       <b>Unison</b>
       <a class="opt" href="#video">Demo</a><a href="#features">Features</a><a href="#install">Install</a>
-      <a class="dl" href="#install">Download</a>
+      <a class="dl" href="%DMG_URL%" data-download>Download</a>
     </nav>
 
     <main>
@@ -25,7 +25,7 @@
           <h1 id="hero-title">Your phone<br>lives here<br>now.</h1>
           <p>Files, notifications, clipboard, calls and your phone's screen, straight over your own Wi-Fi. Nothing goes through a cloud.</p>
           <div class="ctas">
-            <a class="btn p" href="#install">Download for Mac</a>
+            <a class="btn p" href="%DMG_URL%" data-download>Download for Mac</a>
             <span class="btn s" data-play>Coming soon to Google Play</span>
           </div>
         </div>
@@ -49,21 +49,23 @@
           <h2 class="big" id="features-title">Phone. Mac.<br>One link.</h2>
           <p>Encrypted end to end and paired by QR code. Your stuff goes straight across your Wi-Fi and never touches a server.</p>
         </div>
-        <div class="stage"><canvas aria-hidden="true"></canvas><div class="hint mono" aria-hidden="true">drag to spin it round · the phone flips to show its light</div></div>
-        <ul class="feature-grid">
-          <li class="feature" data-f="files" style="--c:#4CB873"><i aria-hidden="true">⬆</i><div><b>Send files both ways</b><span>Drop on the menu bar or share from Android. Resumes if Wi-Fi drops.</span></div></li>
-          <li class="feature" data-f="notifs" style="--c:#6fb6ff"><i aria-hidden="true">✉</i><div><b>Notifications + replies</b><span>See and answer your phone's notifications on your Mac.</span></div></li>
-          <li class="feature" data-f="clip" style="--c:#F9C9A6"><i aria-hidden="true">⎘</i><div><b>Shared clipboard</b><span>Copy on one, paste on the other. Text, links and images.</span></div></li>
-          <li class="feature" data-f="calls" style="--c:#ff7b7b"><i aria-hidden="true">☏</i><div><b>Calls on your Mac</b><span>Answer, decline and dial from your Mac.</span></div></li>
-          <li class="feature" data-f="photos" style="--c:#ffd36b"><i aria-hidden="true">▦</i><div><b>Browse your photos</b><span>Your phone's library, with previews and drag-out to Finder.</span></div></li>
-          <li class="feature" data-f="mirror" style="--c:#c7a6ff"><i aria-hidden="true">▣</i><div><b>Mirror + control</b><span>Your phone's screen in a window, with mouse and keyboard. Plus ring my phone and media controls.</span></div></li>
-        </ul>
+        <div class="stage"><canvas aria-hidden="true"></canvas></div>
+        <p class="hint mono" aria-hidden="true">drag to spin it round · the phone flips to show its light</p>
+        <ol class="feature-list">
+          <li class="feature" data-f="files" style="--c:#4CB873"><span class="idx mono">01</span><h3>Send files <em>both ways.</em></h3><p>Drop files on the menu bar or share from any Android app. Transfers resume if Wi-Fi drops.</p><span class="live mono" aria-hidden="true">Mac → phone · Report.pdf</span></li>
+          <li class="feature" data-f="notifs" style="--c:#6fb6ff"><span class="idx mono">02</span><h3>Answer notifications <em>from your Mac.</em></h3><p>Your phone's notifications show up on your Mac. Reply, dismiss or tap an action.</p><span class="live mono" aria-hidden="true">phone → Mac · WhatsApp</span></li>
+          <li class="feature" data-f="clip" style="--c:#F9C9A6"><span class="idx mono">03</span><h3>One clipboard, <em>two devices.</em></h3><p>Copy on one, paste on the other: text, links and images.</p><span class="live mono" aria-hidden="true">Mac → phone · Copied link</span></li>
+          <li class="feature" data-f="calls" style="--c:#ff7b7b"><span class="idx mono">04</span><h3>Take calls <em>at your desk.</em></h3><p>See who's calling, then answer, decline or dial from your Mac.</p><span class="live mono" aria-hidden="true">phone → Mac · Mum is calling</span></li>
+          <li class="feature" data-f="photos" style="--c:#ffd36b"><span class="idx mono">05</span><h3>Your photos, <em>on the big screen.</em></h3><p>Browse your phone's library, preview with Quick Look, drag into Finder.</p><span class="live mono" aria-hidden="true">phone → Mac · IMG_2041.heic</span></li>
+          <li class="feature" data-f="mirror" style="--c:#c7a6ff"><span class="idx mono">06</span><h3>Mirror your phone <em>and drive it.</em></h3><p>Your phone's screen in a window, with your mouse and keyboard.</p><span class="live mono" aria-hidden="true">phone → Mac · 60 fps</span></li>
+        </ol>
+        <p class="also mono">Also: ring my phone · media controls · open links on the other device</p>
       </section>
 
       <section id="install" aria-labelledby="install-title">
         <div class="head">
           <div><span class="eyebrow">Install on your Mac</span><h2 class="big" id="install-title">One minute,<br>once.</h2></div>
-          <p>Unison is free and not registered with Apple, so macOS asks you to confirm it the first time. After that it opens like any other app, and updates do too.</p>
+          <p>Unison is free and not registered with Apple, so macOS asks you to confirm it the first time. After that it opens like any other app.</p>
         </div>
         <ol class="steps">
           <li class="step"><div class="shot mono">SCREENSHOT</div><span class="n mono">01</span><h3>Download</h3><p><a href="%DMG_URL%">Download <b>Unison.dmg</b></a>, open it and drag Unison into <b>Applications</b>.</p></li>
@@ -85,8 +87,8 @@
         <div class="copy">
           <span class="eyebrow">Go on, try it</span>
           <h2 id="game-title">Throw something at it.</h2>
-          <p><span class="mouse">Grab anything and fling it at the robot. It sends it to your phone, just like the real thing.</span><span class="touch">Open this page on a computer to throw things at the robot.</span></p>
-          <div class="ctas"><a class="btn p" href="#install">Download for Mac</a><span class="btn s" data-play>Coming soon to Google Play</span></div>
+          <p><span class="mouse">Grab anything and fling it at the robot. It sends it to your phone, just like the real thing.</span><span class="touch">Open this page on a computer to throw things at the robot.</span><span class="paused">Motion is turned off, so the robot is taking a rest.</span></p>
+          <div class="ctas"><a class="btn p" href="%DMG_URL%" data-download>Download for Mac</a><span class="btn s" data-play>Coming soon to Google Play</span></div>
         </div>
         <div class="word" aria-hidden="true">Uni<span id="seat">s</span>on</div>
         <div class="score mono" aria-hidden="true">sent to phone · <b id="sent">0</b></div>

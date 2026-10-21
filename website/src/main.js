@@ -32,6 +32,12 @@ const quality = chooseQuality({
   cores: navigator.hardwareConcurrency || 4,
 });
 document.documentElement.dataset.quality = quality;
+document.documentElement.dataset.pointer = matchMedia('(pointer: coarse)').matches ? 'coarse' : 'fine';
+
+// "Download" starts the DMG download and brings up the install steps, which the visitor needs next.
+for (const a of document.querySelectorAll('a[data-download]')) {
+  a.addEventListener('click', () => setTimeout(() => document.getElementById('install')?.scrollIntoView({ behavior: 'smooth' }), 150));
+}
 
 /** Mounts a scene module when `section` is within a viewport of the screen; `static` only shows the still picture. */
 export function mountWhenNear(section, loader, q) {

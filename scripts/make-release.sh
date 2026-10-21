@@ -24,14 +24,17 @@ VERSION="$(sed -n 's/.*CFBundleShortVersionString: "\(.*\)".*/\1/p' "$ROOT/mac/p
 OUT="$ROOT/mac/build/release"
 DMG="$OUT/Unison.dmg"
 
+mkdir -p "$OUT"
 echo "Building Unison ${VERSION}…"
 cd "$ROOT/mac"
 xcodegen generate >/dev/null
 xcodebuild -project MacDroid.xcodeproj -scheme MacDroid -configuration Release -derivedDataPath build build >"$ROOT/mac/build/release-build.log" 2>&1 \
   || { echo "Release build failed; see mac/build/release-build.log" >&2; exit 1; }
 
-STAGE="$(mktemp -d)/Unison"
-mkdir -p "$STAGE" "$OUT"
+WORK="$(mktemp -d)"
+trap 'rm -rf "$WORK"' EXIT
+STAGE="$WORK/Unison"
+mkdir -p "$STAGE"
 ditto "$ROOT/mac/build/Build/Products/Release/Unison.app" "$STAGE/Unison.app"
 ln -s /Applications "$STAGE/Applications"
 rm -f "$DMG"

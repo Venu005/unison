@@ -13,8 +13,8 @@ for (const f of ['index.html', 'privacy/index.html', '404.html', 'sitemap.xml', 
 }
 
 const files = walk(dist);
-for (const f of files.filter(f => /\.(html|txt|xml|json|webmanifest|js|css)$/.test(f))) {
-  if (readFileSync(f, 'utf8').includes('MacDroid')) fail(`${relative(dist, f)} still says "MacDroid"`);
+for (const f of files.filter(f => /\.(html|txt|xml|json|webmanifest|js|css|svg)$/.test(f))) {
+  if (/macdroid/i.test(readFileSync(f, 'utf8'))) fail(`${relative(dist, f)} still mentions the old name (macdroid)`);
 }
 
 const read = f => readFileSync(join(dist, f), 'utf8');
@@ -39,5 +39,10 @@ const os = SITE.playUrl ? 'macOS, Android' : 'macOS';
 if (data.operatingSystem !== os) fail(`index.html: JSON-LD operatingSystem is "${data.operatingSystem}", expected "${os}"`);
 const h1 = index.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 if (h1 !== SITE.tagline) fail(`index.html: <h1> is "${h1}", expected "${SITE.tagline}"`);
+
+// Every "Download for Mac" button downloads the DMG.
+for (const [, cls, href] of index.matchAll(/<a class="([^"]*\b(?:dl|p)\b[^"]*)" href="([^"]*)"/g)) {
+  if (href !== SITE.dmgUrl) fail(`index.html: download button (.${cls}) goes to "${href}", not the DMG`);
+}
 
 console.log(`check-dist: ok (${files.length} files)`);

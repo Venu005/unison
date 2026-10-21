@@ -1,12 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <!-- MacDroid app icon (macOS). Apple icon grid: 824x824 rounded square centred on a 1024 canvas. -->
   <defs>
     <clipPath id="tile"><rect x="100" y="100" width="824" height="824" rx="185"/></clipPath>
   </defs>
   <rect x="100" y="100" width="824" height="824" rx="185" fill="#F9C9A6"/>
   <g clip-path="url(#tile)">
     <g transform="translate(100 100) scale(8.24)">
-      <!-- artwork in a 100x100 frame -->
       <path d="M50,27 V20" stroke="#4CB873" stroke-width="2.6" stroke-linecap="round" fill="none"/>
       <circle cx="50" cy="18" r="3" fill="#4CB873"/>
       <path d="M26,55 A24,24 0 0,1 74,55 Z" fill="#4CB873"/>

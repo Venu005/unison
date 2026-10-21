@@ -9,3 +9,26 @@ export function catchDecision({ held, thrownFrames, distance, reach, aboveBody }
   if (distance >= reach || !aboveBody) return 'none';
   return held || thrownFrames > 0 ? 'eat' : 'bounce';
 }
+
+/** What the pointer is holding: one object or none. */
+export function grabState() { return { held: null }; }
+
+/** The robot ate `body`: if it was the held object, the hand is now empty, and nothing about it counts as thrown. */
+export function eatBody(state, body) {
+  body.eaten = 1; body.held = false; body.thrown = 0;
+  if (state.held === body) state.held = null;
+}
+
+/** The pointer let go: whatever it still held becomes a throw. Returns that object, or null. */
+export function releaseHeld(state) {
+  const body = state.held;
+  if (!body) return null;
+  body.held = false; body.thrown = THROW_FRAMES; state.held = null;
+  return body;
+}
+
+/** An object dropping back in starts fresh: never held, never thrown. */
+export function respawnBody(body) { body.eaten = 0; body.held = false; body.thrown = 0; }
+
+/** Grabbing needs a mouse or trackpad and a live scene; touch screens keep scrolling the page. */
+export function canGrab({ quality, coarsePointer }) { return quality !== 'static' && !coarsePointer; }

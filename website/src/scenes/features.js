@@ -73,7 +73,7 @@ export function mount(section, quality) {
     { lane: 0, f: 'photos', color: '#ffd36b', icon: '▦', title: 'IMG_2041.heic', sub: '4.2 MB · from Photos' },
     { lane: 1, f: 'files', color: '#4CB873', icon: '⬆', title: 'Report.pdf', sub: '12 MB · to Downloads' },
     { lane: 0, f: 'notifs', color: '#6fb6ff', icon: '✉', title: 'WhatsApp', sub: 'on my way 🚲' },
-    { lane: 1, f: 'clip', color: '#F9C9A6', icon: '⎘', title: 'Copied link', sub: 'github.com/macdroid' },
+    { lane: 1, f: 'clip', color: '#F9C9A6', icon: '⎘', title: 'Copied link', sub: 'github.com/Venu005/unison' },
     { lane: 0, f: 'calls', color: '#ff7b7b', icon: '☏', title: 'Mum is calling', sub: 'Answer on your Mac' },
     { lane: 0, f: 'mirror', color: '#c7a6ff', icon: '▣', title: 'Screen mirroring', sub: '60 fps · 38 ms' },
   ];
@@ -106,7 +106,15 @@ export function mount(section, quality) {
     arrivals[to] = { ...it, t };
     if (to === 'mac') { recent.unshift(it); recent.length = Math.min(recent.length, 4); }
     else { backGlow = 1; backColor = it.color; }
-    chips.forEach(ch => ch.classList.toggle('on', ch.dataset.f === it.f));
+    chips.forEach(ch => {
+      const on = ch.dataset.f === it.f;
+      // Restart the sweep under the row: drop the class, force a reflow, add it again.
+      ch.classList.remove('on');
+      if (!on) return;
+      void ch.offsetWidth; ch.classList.add('on');
+      const live = ch.querySelector('.live');
+      if (live) live.textContent = `${it.lane === 0 ? 'phone → Mac' : 'Mac → phone'} · ${it.title}`;
+    });
     lanes[it.lane].mat.uniforms.uBoost.value = 2.5;
   }
 

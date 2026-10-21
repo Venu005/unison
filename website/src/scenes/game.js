@@ -1,10 +1,10 @@
 // The game, "Throw something at it." (Plan 12): the full robot sits on a letter of the wordmark and catches
 // the things Unison moves around. Only throws count (src/game/rules.js).
 import { THREE, RoundedBoxGeometry, setup, run, progress, clay, screenTexture, roundRect, makeRobot, GREEN } from '../three/shared.js';
-import { catchDecision, THROW_FRAMES } from '../game/rules.js';
+import { catchDecision, grabState, eatBody, releaseHeld, respawnBody, canGrab } from '../game/rules.js';
 
 export function mount(section, quality) {
-  const el = section, interactive = quality === 'full';
+  const el = section, interactive = canGrab({ quality, coarsePointer: matchMedia('(pointer: coarse)').matches });
   const s = setup(el, { exposure: 1.1, quality });
   s.camera.position.set(0, 0, 16);
   s.scene.add(new THREE.HemisphereLight(0xffffff, 0xb9b2a8, 1.1));
@@ -38,7 +38,7 @@ export function mount(section, quality) {
   const board = faced(new RoundedBoxGeometry(1.8, 2.3, 0.14, 6, 0.1), 0xd9a066, 1.5, 1.85, (c, w, h) => {
     c.fillStyle = '#fffdf6'; c.fillRect(0, 0, w, h);
     c.fillStyle = '#1f2933'; c.font = '700 40px -apple-system, sans-serif'; c.fillText('Copied', 36, 90);
-    c.fillStyle = '#2f6fdb'; c.font = '600 34px ui-monospace, Menlo, monospace'; c.fillText('https://', 36, 160); c.fillText('github.com/', 36, 205); c.fillText('macdroid', 36, 250);
+    c.fillStyle = '#2f6fdb'; c.font = '600 34px ui-monospace, Menlo, monospace'; c.fillText('https://', 36, 160); c.fillText('github.com/', 36, 205); c.fillText('Venu005/unison', 36, 250);
     c.fillStyle = '#ddd'; for (let i = 0; i < 3; i++) { roundRect(c, 36, 310 + i * 50, w - 120, 18, 9); c.fill(); }
   }, 0.075); board.children[1].position.y = -0.12;
   const clipTop = new THREE.Mesh(new RoundedBoxGeometry(0.8, 0.3, 0.24, 4, 0.08), new THREE.MeshPhysicalMaterial({ color: 0xc0c4ca, metalness: 0.9, roughness: 0.25 }));
@@ -112,44 +112,46 @@ export function mount(section, quality) {
   const toast = el.querySelector('#toast'), count = el.querySelector('#sent');
   let sent = 0, gulp = 0, happy = 0;
   function eat(b) {
-    b.eaten = 1; b.held = false; sent++; count.textContent = sent;
+    eatBody(grab, b);
+    if (!grab.held) el.classList.remove('grabbing');
+    sent++; count.textContent = sent;
     toast.textContent = '✓ ' + b.msg; toast.classList.remove('show'); void toast.offsetWidth; toast.classList.add('show');
     gulp = 1; happy = 1;
   }
   function respawn(b) {
-    b.eaten = 0; b.obj.scale.setScalar(1);
+    respawnBody(b); b.obj.scale.setScalar(1);
     b.obj.position.set((Math.random() - 0.5) * halfW * 1.4, halfH + 2, 0); b.v.set((Math.random() - 0.5) * 0.06, 0, 0);
   }
   let dropped = false;
   const drop = () => { if (dropped) return; dropped = true;
-    bodies.forEach((b, i) => { b.obj.position.set(-halfW + 1.5 + i * (halfW * 2 - 3) / (bodies.length - 1), halfH + 2 + i * 1.3, 0); b.v.set((Math.random() - .5) * .05, 0, 0);
+    bodies.forEach((b, i) => { respawnBody(b); b.obj.position.set(-halfW + 1.5 + i * (halfW * 2 - 3) / (bodies.length - 1), halfH + 2 + i * 1.3, 0); b.v.set((Math.random() - .5) * .05, 0, 0);
       b.spin.set(Math.random() * .02, Math.random() * .02, Math.random() * .02); }); };
   bodies.forEach(b => b.obj.position.set(0, 40, 0));
 
   // Grab and throw.
   const ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hit = new THREE.Vector3(), prevHit = new THREE.Vector3();
-  let held = null; const grabOffset = new THREE.Vector3();
+  const grab = grabState(), grabOffset = new THREE.Vector3();
   const pointerWorld = () => { ray.setFromCamera(s.pointer, s.camera); ray.ray.intersectPlane(plane, hit); return hit; };
   el.addEventListener('pointerdown', e => {
-    // Touch screens get the lite scene: things still fall and the robot still moves, but nothing is grabbed,
-    // so a swipe always scrolls the page. On a computer, only a press that lands on an object starts a grab.
+    // On touch screens nothing is grabbed, so a swipe always scrolls the page. With a mouse or trackpad,
+    // only a press that lands on an object starts a grab.
     if (!interactive || e.target.closest('a')) return;
     ray.setFromCamera(s.pointer, s.camera);
     const meshes = []; bodies.forEach(b => !b.eaten && b.obj.traverse(o => o.isMesh && meshes.push(o)));
     const first = ray.intersectObjects(meshes, false)[0];
     if (!first) return;
-    held = first.object.userData.owner; held.held = true;
-    grabOffset.copy(held.obj.position).sub(pointerWorld()); grabOffset.z = 0;
+    grab.held = first.object.userData.owner; grab.held.held = true;
+    grabOffset.copy(grab.held.obj.position).sub(pointerWorld()); grabOffset.z = 0;
     el.setPointerCapture(e.pointerId); el.classList.add('grabbing');
   });
-  const letGo = () => { if (held) { held.held = false; held.thrown = THROW_FRAMES; held = null; } el.classList.remove('grabbing'); };
+  const letGo = () => { releaseHeld(grab); el.classList.remove('grabbing'); };
   el.addEventListener('pointerup', letGo); el.addEventListener('pointercancel', letGo);
 
   const stop = run(s, t => {
     if (progress(el) > 0.25) drop();
     pointerWorld(); const push = hit.clone().sub(prevHit); prevHit.copy(hit);
     // Robot: eyes on the cursor (or on what you're holding), a gulp when it eats, happy squint after.
-    const look = held ? held.obj.position : hit, hp = headPos();
+    const look = grab.held ? grab.held.obj.position : hit, hp = headPos();
     const lx = THREE.MathUtils.clamp((look.x - hp.x) / 8, -1, 1), ly = THREE.MathUtils.clamp((look.y - hp.y) / 6, -1, 1);
     eyes.forEach((e, i) => { e.position.x = (i ? 0.34 : -0.34) + lx * 0.09; e.position.y = 0.42 + ly * 0.07;
       const blink = (t % 3.7) < 0.12 ? 0.15 : 1; e.scale.y = THREE.MathUtils.lerp(e.scale.y, happy > 0.35 ? 0.4 : blink, 0.35); });
@@ -160,7 +162,7 @@ export function mount(section, quality) {
     body.scale.set(1 + gulp * 0.05, 1 - gulp * 0.06 + Math.sin(t * 2) * 0.01, 1);
     // Legs kick over the edge; arms reach up for what you're holding, wave now and then, cheer when it eats.
     // Idle: legs crossed, left over right, the top foot bobbing. Holding something or a catch: uncross and kick.
-    excite = THREE.MathUtils.lerp(excite, held || happy > 0.2 ? 1 : 0, 0.08);
+    excite = THREE.MathUtils.lerp(excite, grab.held || happy > 0.2 ? 1 : 0, 0.08);
     const bob = Math.sin(t * 2.2) * 0.14;
     const crossed = [{ x: -1.05 + bob, z: 0.62, py: 0.32, pz: 0.75 }, { x: -0.3, z: -0.12, py: 0.12, pz: 0.45 }];
     legs.forEach((l, i) => {
@@ -173,7 +175,7 @@ export function mount(section, quality) {
     const wave = Math.max(0, Math.sin(t * 0.6)) ** 12;
     arms.forEach(a => { const side = a.userData.side;
       let target = side * 0.12;                                       // resting
-      if (held) target = side * (2.4 + Math.sin(t * 8) * 0.1);          // reach up
+      if (grab.held) target = side * (2.4 + Math.sin(t * 8) * 0.1);          // reach up
       else if (happy > 0.3) target = side * (2.7 + Math.sin(t * 14) * 0.25); // cheer
       else if (side > 0 && wave > 0.05) target = 2.5 + Math.sin(t * 12) * 0.35 * wave; // wave
       a.rotation.z = THREE.MathUtils.lerp(a.rotation.z, target, 0.15); });
@@ -192,7 +194,7 @@ export function mount(section, quality) {
         b.spin.z = -b.v.x * 0.05;
       } else {
         const d = b.obj.position.clone().sub(hit); d.z = 0;
-        if (!held && d.length() < b.r + 1) { b.v.add(d.normalize().multiplyScalar(0.012)).add(push.clone().multiplyScalar(0.05)); }
+        if (!grab.held && d.length() < b.r + 1) { b.v.add(d.normalize().multiplyScalar(0.012)).add(push.clone().multiplyScalar(0.05)); }
         b.v.y -= 0.006; b.v.multiplyScalar(0.99); b.obj.position.add(b.v);
       }
       // Caught: touching the robot's head.

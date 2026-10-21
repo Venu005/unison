@@ -11,5 +11,5 @@ mkdir -p "$OUT"
 "$BIN" "$ICON" "$OUT/icon-192.png" 192
 "$BIN" "$ICON" "$OUT/icon-512.png" 512
 "$BIN" "$ICON" "$OUT/apple-touch-icon.png" 180
-cp "$ICON" "$OUT/favicon.svg"
+sed '/<!--/d' "$ICON" > "$OUT/favicon.svg"
 echo "Rendered $(ls "$OUT" | wc -l | tr -d ' ') files into $OUT"
