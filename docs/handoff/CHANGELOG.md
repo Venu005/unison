@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Website live, first Mac release
+- **What (owner's go-ahead):** `feat/website` merged into `main` as `d232e89` (`--no-ff`) and pushed. GitHub Pages turned on with source "GitHub Actions" (needed the repo owner's admin token: `venusai-glitch` is a push-only collaborator). The `Website` workflow built, tested, checked and deployed: https://venu005.github.io/unison/. `scripts/make-release.sh` published `v0.4.0` with `Unison.dmg` (SHA-256 `3070f73dca698eb1e99e6155aa0e2ec9820ee69564059ca8bb1003159087d9b1`).
+- **Verified live:** `/unison/`, `/unison/privacy/`, `/unison/llms.txt`, `/unison/sitemap.xml`, `/unison/og-image.png` return 200; a missing deep URL returns the custom 404 page; `releases/latest/download/Unison.dmg` returns 200 (11,958,965 bytes). Deferred minors from the final review: per-frame Vector3 allocations in the game, the hero repainting its screen every frame, `/unison/robots.txt` ignored by crawlers until there's a domain (submit the sitemap in Search Console), the 404's canonical pointing home, listeners outliving `stop()`, the grab raycast using the last pointer move, and reduced motion showing the icon instead of a still frame.
+
 ## 2026-10-21 — Plan 12: website (feat/website)
 - **Repo renamed** by the owner to `Venu005/unison`: site URL is now `https://venu005.github.io/unison/` (base `/unison/`), `origin` points at the new repo, plan and spec updated.
 - **Owner feedback (blurry, jagged 3D):** the quality check no longer uses `navigator.hardwareConcurrency`. Brave randomises it, which put a fast Mac on `lite`. `lite` is now only narrow (< 900 px) or touch screens, and it keeps antialiasing at up to 1.5× pixel ratio (`full`: 2×). The hero's laptop and robot are bigger on wide screens (camera 8.4 instead of 9.8). Test `the reported core count is ignored` RED→GREEN; suite 20/20.
