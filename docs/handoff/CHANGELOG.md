@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Plan 12: website plan written (feat/website)
+- **What:** implementation plan `docs/superpowers/plans/2026-10-21-unison-website-12.md` (10 tasks: scaffold + SEO module, pages + dist check, icons + preview image, capability tiers + shared 3D, the three scenes, release script for `Unison.dmg`, Pages workflow, final gates and go-live on the owner's word). The approved mockup is now in the repo as `website/reference/mockup-v7.html` (it was gitignored scratch).
+- **Verified:** docs only.
+
 ## 2026-10-21 — Rename merged to main; website design approved
 - **What:** `chore/rename-unison` merged into `main` locally as `b67246c` (`--no-ff`) at the owner's request; not pushed. New builds installed on both devices (Mac: `/Applications/Unison.app`, old `MacDroid.app` removed, Dock tile repointed; phone: `:app:installDebug` over wireless debugging). Website design written, reviewed by a fresh builder check and approved by the owner: `docs/superpowers/specs/2026-10-21-unison-website-design.md` (one landing page with three 3D scenes, install steps, privacy page, SEO + `llms.txt`, GitHub Pages; this work also ships the first `Unison.dmg` release; Android shown as "coming soon").
 - **Verified on `main`:** `swift test` 370 (tree identical to the branch, where all gates and the cross-platform test passed).
