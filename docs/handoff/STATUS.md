@@ -12,6 +12,7 @@
 - `main` also has the memory pass (images decoded at drawn size, photo thumbnails capped), merged 2026-10-21 as `bf9adf8`; `swift test` 370.
 - `main` also has photos (Plan 6: browse the phone's photos and videos, Quick Look, Save to Mac, drag out), merged 2026-10-14 as `37b425c`; its 9 follow-up minors merged as `2807ce9`; `swift test` 274.
 ## In flight
+- **Rename to Unison (`chore/rename-unison`, 2026-10-21):** user-visible name is Unison on both apps; internal ids unchanged; MIT licence added. All gates pass. Not merged; needs both apps reinstalled (the Mac app is now `/Applications/Unison.app`).
 - **Stable signing (`fix/stable-signing`, 2026-10-21):** builds are signed with the self-signed "MacDroid Self-Signed" identity, so keychain "Always Allow" should survive rebuilds and updates. Merged to `main` on 2026-10-21 as `7afb438`. Release build installed in /Applications and running. Pending: the owner's check that a rebuild no longer prompts.
 - **Memory pass (`perf/image-decoding`, 2026-10-21):** rows and cards decode images at the drawn size off the main thread (`DownscaledImages`); photo thumbnails in memory capped at 600. Merged to `main` on 2026-10-21 as `bf9adf8`. All gates pass (`swift test` 370, Mac app build, Android gates). Not yet measured on the running app.
 - **Backlog clean-up (Plan 11):** merged to `main` on 2026-10-16 as `d11b73f`; new builds installed on both devices. All gates pass (`swift test` 366, Mac app build, Android gates, cross-platform). Still open: the owner's 7-step check (plan Task 13) and 8 deferred minors from the final review: Return right after a dead key loses the newline; the 4,096 text cap can split a flag/ZWJ emoji; every NSD sighting resets backoff (and discovery runs while connected); NsdMacLocator relies on NsdManager's found-once behaviour; BonjourAdvertiser.deinit deallocates off its queue; mirror shrink-to-screen can overshoot by the bar height; the "moved or deleted" alert may open behind other apps; typed pairing codes drop 0/1/8/9. Every owner checklist has passed (2026-10-16), including the 2 GB+ file both ways.
@@ -40,8 +41,8 @@
   - Cross-platform file transfer both ways (24 MiB each), with resume after a dropped connection.
 
 ## Pending or unverified
-- **Login-item launch.** With a phone paired, MacDroid should start quietly with no window. Not verified. If macOS restores the window at login, disable window restoration.
-- Real login items need a properly signed build. Dev builds are ad-hoc signed (expect a keychain prompt after each rebuild).
+- **Login-item launch.** With a phone paired, Unison should start quietly with no window. Not verified. If macOS restores the window at login, disable window restoration.
+- Real login items need a properly signed build. Builds are self-signed ("MacDroid Self-Signed"), so keychain access survives rebuilds.
 
 ## Known limitations (by design for now)
 - One paired phone per Mac.

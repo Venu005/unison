@@ -13,7 +13,7 @@ object OpenOnMacDecision {
         val link = LinkExtractor.firstLink(text) ?: return Decision(null, "No link to open")
         return when {
             state !is ConnectionState.Connected -> Decision(null, "Not connected to your Mac")
-            !state.macSupports(Features.LINKS) -> Decision(null, "Update MacDroid on your Mac to use this")
+            !state.macSupports(Features.LINKS) -> Decision(null, "Update Unison on your Mac to use this")
             else -> Decision(link, "Opening on your Mac")
         }
     }

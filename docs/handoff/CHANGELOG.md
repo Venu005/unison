@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Renamed to Unison, MIT licence (chore/rename-unison)
+- **What:** the product is now **Unison** everywhere a user sees it. "MacDroid" clashed with an existing commercial Android–Mac app (and "Droid"/"Mac" are trademarks). Changed: every user-facing string on both apps (and the tests that check them); the Mac app is built as `Unison.app` (`PRODUCT_NAME`, `CFBundleDisplayName`, local-network usage text, Services port `NSPortName`); Android app, notification-listener and accessibility labels ("Unison control"); the consent matcher now looks for "… with Unison?"; default received-files folders are `~/Downloads/Unison` and `Download/Unison` (files already in the old `MacDroid` folders stay there); README, CLAUDE.md and the handoff docs. Kept on purpose: bundle id `dev.macdroid.mac`, Android package `dev.macdroid.*`, keychain items, Bonjour `_macdroid._tcp`, `X-MacDroid-Session`, the "MacDroid Self-Signed" certificate, module/target/folder names, window-position keys. Added an MIT `LICENSE` (© 2026 Venu005). Rulings in DECISIONS.md.
+- **Verified:** `swift test` 370; Mac Release build as `Unison.app` (bundle id unchanged), no code warnings; `:core:test :app:testDebugUnitTest :app:assembleDebug` passed; cross-platform test passed. Not yet tried on the devices: the phone needs the new build for "Unison control" auto-Start to match the renamed consent dialog.
+
 ## 2026-10-21 — Merged stable signing to main
 - **What:** `fix/stable-signing` merged into `main` locally as `7afb438` (`--no-ff`) at the owner's request. Not pushed.
 - **Verified on `main`:** `swift test` 370; Mac Debug build succeeded with no code warnings and carries the certificate-based designated requirement. Android unchanged. Still pending: the owner's check that a rebuild no longer prompts.

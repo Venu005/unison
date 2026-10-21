@@ -60,7 +60,7 @@ import Testing
         await h.center.clearNotice()
         #expect(await h.center.state.panel == .none)
         await h.center.handle(.callError(CallError(reason: .noPermission)))
-        #expect(await h.center.state.panel == .notice("Allow MacDroid to make calls on your phone (phone Settings → Calls)"))
+        #expect(await h.center.state.panel == .notice("Allow Unison to make calls on your phone (phone Settings → Calls)"))
     }
 
     // Review Focus #5
@@ -130,7 +130,7 @@ import Testing
         #expect(CallPresentation.errorNotice(.callGone, action: nil) == "Couldn't answer — use your phone")
         #expect(CallPresentation.confirmTitle(number: "+15551234567") == "Call +15551234567 on your phone?")
         #expect(CallPresentation.dialProblem(.notConnected) == "Your phone isn't connected")
-        #expect(CallPresentation.dialProblem(.unsupported) == "Update MacDroid on your phone to use calls")
+        #expect(CallPresentation.dialProblem(.unsupported) == "Update Unison on your phone to use calls")
         #expect(CallPresentation.dialProblem(.invalidNumber) == "That doesn't look like a phone number")
         #expect(CallPresentation.dialProblem(.sent) == nil)
     }
@@ -157,9 +157,9 @@ import Testing
 
     // The sandbox doesn't let MacDroid make itself the tel: handler, so Settings shows who handles phone links instead.
     @Test func phoneLinksLine() {
-        #expect(CallPresentation.phoneLinksLine(handler: "MacDroid") == "Phone links open in MacDroid.")
+        #expect(CallPresentation.phoneLinksLine(handler: "Unison") == "Phone links open in Unison.")
         #expect(CallPresentation.phoneLinksLine(handler: "Phone")
-            == "Phone links open in Phone. macOS doesn't let MacDroid change this itself: choose MacDroid as the default for calls in Phone's settings.")
+            == "Phone links open in Phone. macOS doesn't let Unison change this itself: choose Unison as the default for calls in Phone's settings.")
         #expect(CallPresentation.phoneLinksLine(handler: nil) == "No app opens phone links yet.")
     }
 
@@ -183,7 +183,7 @@ import Testing
         guard case .ringing(let call) = await h.center.state.panel else { Issue.record("ringing call hidden"); return }
         #expect(call.callId == "k2")
         await h.phone("k2", .ended)
-        #expect(await h.center.state.panel == .notice("Allow MacDroid to make calls on your phone (phone Settings → Calls)"))
+        #expect(await h.center.state.panel == .notice("Allow Unison to make calls on your phone (phone Settings → Calls)"))
     }
 
     // Minor 3: a phone link that launched MacDroid waits briefly for the phone to connect.

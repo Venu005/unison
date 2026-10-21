@@ -55,7 +55,7 @@ class UninterruptibleTarget(private val folder: File) : SaveTarget {
 
 class TransferEngineDecisionTest {
     private val dir: File = Files.createTempDirectory("decide").toFile()
-    private val gate = GateTarget(File(dir, "Download/MacDroid"))
+    private val gate = GateTarget(File(dir, "Download/Unison"))
     private val h = EngineHarness(dir = dir, target = gate)
 
     @After fun tearDown() = h.close()

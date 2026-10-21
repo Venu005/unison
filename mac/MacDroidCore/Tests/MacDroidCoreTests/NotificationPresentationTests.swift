@@ -20,13 +20,13 @@ import Testing
 
     @Test func pageNotices() {
         var state = PhoneNotificationsState(connected: true, phoneSupportsNotifications: false)
-        #expect(NotificationPresentation.pageNotice(state) == "Update MacDroid on your phone to use this.")
+        #expect(NotificationPresentation.pageNotice(state) == "Update Unison on your phone to use this.")
         state.phoneSupportsNotifications = true
         state.phoneAccess = false
-        #expect(NotificationPresentation.pageNotice(state) == "Notification access is off on your phone. Open MacDroid on your phone to turn it on.")
+        #expect(NotificationPresentation.pageNotice(state) == "Notification access is off on your phone. Open Unison on your phone to turn it on.")
         state.phoneAccess = true
         state.phoneForwarding = false
-        #expect(NotificationPresentation.pageNotice(state) == "“Show on your Mac” is off in MacDroid on your phone.")
+        #expect(NotificationPresentation.pageNotice(state) == "“Show on your Mac” is off in Unison on your phone.")
         state.phoneForwarding = true
         #expect(NotificationPresentation.pageNotice(state) == nil)
         #expect(NotificationPresentation.pageNotice(PhoneNotificationsState(connected: false)) == nil)

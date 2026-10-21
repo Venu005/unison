@@ -76,13 +76,13 @@ The owner's planned features, with status:
 - Use the phone as a webcam (Wi-Fi + USB): **parked 2026-10-15** (owner), before a spec. What was found:
   - A system-wide camera on macOS 26 needs a CoreMediaIO camera extension. Installing one requires the app signed with a paid Apple Developer Team ID (the Mac app is ad-hoc signed today; the owner plans to enrol later). Legacy DAL plug-ins no longer load.
   - The owner's Nothing Phone (3) has no built-in USB "Webcam" mode.
-  - Route without the membership: Phase 1 = phone camera → a MacDroid Camera window on the Mac, bridged into calls by OBS Virtual Camera. Phase 2 (after enrolling) = a built-in "MacDroid Camera" extension.
+  - Route without the membership: Phase 1 = phone camera → a Unison Camera window on the Mac, bridged into calls by OBS Virtual Camera. Phase 2 (after enrolling) = a built-in "Unison Camera" extension.
 - Mic support (Wi-Fi + USB): not specced. Needs a macOS audio driver/extension; USB means adb.
 
 Also noted earlier: SMS (personal build only, Play-restricted), USB transport via `adb reverse`, Wi-Fi Direct, and the parked Finder Share extension.
 
 ## Before publishing
-- **Stance (2026-10-16):** free and unsigned for now; no Apple Developer account. If it is ever sold: Android free, a one-time Pro unlock on the Mac only, offline signed license keys (see DECISIONS.md). Check the "MacDroid" name for trademark clashes first.
+- **Stance (2026-10-16):** free and unsigned for now; no Apple Developer account. If it is ever sold: Android free, a one-time Pro unlock on the Mac only, offline signed license keys (see DECISIONS.md). Renamed from MacDroid to Unison on 2026-10-21 (name clash); still worth a formal trademark search before selling.
 - Play declaration for photo/video access (`READ_MEDIA_IMAGES`/`READ_MEDIA_VIDEO`) as core functionality (Plan 6).
 - **Signing:** proper signing with a Team ID, and the data-protection keychain.
 - **Android hardening:** Gradle wrapper checksum; backup exclusions for pairing prefs; restart on `MY_PACKAGE_REPLACED`.

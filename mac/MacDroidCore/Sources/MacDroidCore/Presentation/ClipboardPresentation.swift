@@ -21,7 +21,7 @@ public enum ClipboardPresentation {
     }
 
     public static func pageNotice(_ state: ClipboardState) -> String? {
-        state.connected && !state.phoneSupportsClipboard ? "Update MacDroid on your phone to use this." : nil
+        state.connected && !state.phoneSupportsClipboard ? "Update Unison on your phone to use this." : nil
     }
 
     static func oneLine(_ text: String, limit: Int) -> String {

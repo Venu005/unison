@@ -29,7 +29,7 @@ struct MacDroidApp: App {
         }
         .menuBarExtraStyle(.window)
 
-        Window("MacDroid", id: MainWindow.id) {
+        Window("Unison", id: MainWindow.id) {
             MainWindow(model: model)
         }
         .defaultSize(width: 720, height: 480)

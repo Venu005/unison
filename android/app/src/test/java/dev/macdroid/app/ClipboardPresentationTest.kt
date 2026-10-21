@@ -12,7 +12,7 @@ class ClipboardPresentationTest {
         assertEquals("Not connected to your Mac", ClipboardPresentation.toast(SendResult.NotConnected))
         assertEquals("Clipboard is empty", ClipboardPresentation.toast(SendResult.Empty))
         assertEquals("Too large to send", ClipboardPresentation.toast(SendResult.TooLarge))
-        assertEquals("Update MacDroid on your Mac to use this", ClipboardPresentation.toast(SendResult.MacTooOld))
+        assertEquals("Update Unison on your Mac to use this", ClipboardPresentation.toast(SendResult.MacTooOld))
     }
 
     @Test fun previewsAndSubtitles() {

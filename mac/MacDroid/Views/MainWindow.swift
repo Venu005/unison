@@ -10,7 +10,7 @@ struct MainWindow: View {
                 Section {
                     ForEach(SidebarSection.features) { row($0) }
                 }
-                Section("MacDroid") {
+                Section("Unison") {
                     ForEach(SidebarSection.settings) { row($0) }
                 }
             }

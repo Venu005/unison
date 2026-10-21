@@ -12,7 +12,7 @@ struct PhotosView: View {
             if !state.connected && state.items.isEmpty {
                 ContentUnavailableView("Phone not connected", systemImage: "iphone.slash", description: Text("Your phone's photos appear here when it connects."))
             } else if state.connected && !state.supported {
-                ContentUnavailableView("Photos", systemImage: "photo.on.rectangle", description: Text("Update MacDroid on your phone to use this."))
+                ContentUnavailableView("Photos", systemImage: "photo.on.rectangle", description: Text("Update Unison on your phone to use this."))
             } else if state.access == PhotoAccess.none {
                 ContentUnavailableView("Photos are off", systemImage: "photo", description: Text(PhotosPresentation.banner(access: PhotoAccess.none, visibleCount: 0) ?? ""))
             } else {

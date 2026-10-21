@@ -20,9 +20,9 @@ public enum NotificationPresentation {
     /// The banner at the top of the Notifications page, if the phone can't send notifications right now.
     public static func pageNotice(_ state: PhoneNotificationsState) -> String? {
         guard state.connected else { return nil }
-        if !state.phoneSupportsNotifications { return "Update MacDroid on your phone to use this." }
-        if state.phoneAccess == false { return "Notification access is off on your phone. Open MacDroid on your phone to turn it on." }
-        if state.phoneForwarding == false { return "“Show on your Mac” is off in MacDroid on your phone." }
+        if !state.phoneSupportsNotifications { return "Update Unison on your phone to use this." }
+        if state.phoneAccess == false { return "Notification access is off on your phone. Open Unison on your phone to turn it on." }
+        if state.phoneForwarding == false { return "“Show on your Mac” is off in Unison on your phone." }
         return nil
     }
 

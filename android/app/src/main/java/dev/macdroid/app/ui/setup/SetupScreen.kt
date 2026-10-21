@@ -82,7 +82,7 @@ fun SetupScreen(viewModel: SetupViewModel, pairingViewModel: PairingViewModel = 
 private fun WelcomeStep(onContinue: () -> Unit) {
     StepLayout(
         icon = Icons.Rounded.Laptop,
-        title = "Welcome to MacDroid",
+        title = "Welcome to Unison",
         body = "Your phone and your Mac, working together — right over your Wi-Fi. No account, and nothing leaves your network.",
         primaryLabel = "Get started",
         onPrimary = onContinue,
@@ -96,7 +96,7 @@ private fun LocalNetworkStep(onResult: () -> Unit) {
     StepLayout(
         icon = Icons.Rounded.Wifi,
         title = "Find your Mac on Wi-Fi",
-        body = "MacDroid talks to your Mac directly over your local network. Android asks your permission for apps to reach devices on your network.",
+        body = "Unison talks to your Mac directly over your local network. Android asks your permission for apps to reach devices on your network.",
         primaryLabel = "Allow",
         onPrimary = { launcher.launch(Permissions.ACCESS_LOCAL_NETWORK) },
         secondaryLabel = "Open settings",
@@ -115,7 +115,7 @@ private fun NotificationsStep(needsPermission: Boolean, onResult: () -> Unit, on
     StepLayout(
         icon = Icons.Rounded.NotificationsActive,
         title = "See phone notifications on your Mac",
-        body = "Reply to messages and clear notifications from your Mac. MacDroid only sends them to your paired Mac — never to the internet.",
+        body = "Reply to messages and clear notifications from your Mac. Unison only sends them to your paired Mac — never to the internet.",
         primaryLabel = "Allow notification access",
         onPrimary = {
             when {
@@ -136,7 +136,7 @@ private fun FilesStep(onDone: (Uri?) -> Unit) {
         icon = Icons.Rounded.Folder,
         title = "Where should files from your Mac go?",
         body = "Files you send from your Mac are saved automatically. You can change this later in Settings.",
-        primaryLabel = "Use Download/MacDroid",
+        primaryLabel = "Use Download/Unison",
         onPrimary = { onDone(null) },
         secondaryLabel = "Choose a folder",
         onSecondary = { launcher.launch(null) },
@@ -162,8 +162,8 @@ private fun BatteryStep(onDone: () -> Unit) {
     val context = LocalContext.current
     StepLayout(
         icon = Icons.Rounded.BatteryChargingFull,
-        title = "Keep MacDroid running",
-        body = "Android may pause apps in the background. Set MacDroid to “Unrestricted” so it stays connected to your Mac.\n\nOn Nothing phones: App info → Battery → Unrestricted.",
+        title = "Keep Unison running",
+        body = "Android may pause apps in the background. Set Unison to “Unrestricted” so it stays connected to your Mac.\n\nOn Nothing phones: App info → Battery → Unrestricted.",
         primaryLabel = "Open battery settings",
         onPrimary = { runCatching { context.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) } },
         secondaryLabel = "Done",

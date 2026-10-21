@@ -17,7 +17,7 @@ public enum CallPresentation {
     }
 
     public static func errorNotice(_ reason: CallErrorReason, action: CallActionKind?) -> String {
-        if reason == .noPermission { return "Allow MacDroid to make calls on your phone (phone Settings → Calls)" }
+        if reason == .noPermission { return "Allow Unison to make calls on your phone (phone Settings → Calls)" }
         switch action {
         case .decline: return "Couldn't decline — use your phone"
         case .hangUp: return "Couldn't hang up — use your phone"
@@ -28,8 +28,8 @@ public enum CallPresentation {
     /// Settings → Calls: which app opens `tel:` links. The sandbox doesn't let MacDroid make itself the handler.
     public static func phoneLinksLine(handler: String?) -> String {
         guard let handler else { return "No app opens phone links yet." }
-        if handler == "MacDroid" { return "Phone links open in MacDroid." }
-        return "Phone links open in \(handler). macOS doesn't let MacDroid change this itself: choose MacDroid as the default for calls in \(handler)'s settings."
+        if handler == "Unison" { return "Phone links open in Unison." }
+        return "Phone links open in \(handler). macOS doesn't let Unison change this itself: choose Unison as the default for calls in \(handler)'s settings."
     }
 
     public static func confirmTitle(number: String) -> String { "Call \(number) on your phone?" }
@@ -38,7 +38,7 @@ public enum CallPresentation {
         switch result {
         case .sent: nil
         case .notConnected: "Your phone isn't connected"
-        case .unsupported: "Update MacDroid on your phone to use calls"
+        case .unsupported: "Update Unison on your phone to use calls"
         case .invalidNumber: "That doesn't look like a phone number"
         }
     }

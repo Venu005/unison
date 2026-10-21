@@ -1,4 +1,6 @@
-# MacDroid
+# Unison
+
+**Naming:** the product is called **Unison** (renamed from MacDroid on 2026-10-21). Code, folders, the Xcode target/scheme, bundle id `dev.macdroid.mac`, Android package `dev.macdroid.*`, the keychain items, the Bonjour type `_macdroid._tcp` and the `X-MacDroid-Session` header keep the old name on purpose: changing them would break existing pairings. Anything a user sees says Unison.
 
 A LinkMyMac-style app pair: a sandboxed **Mac menu-bar app** and an **Android app** that pair by QR code and talk directly over local Wi-Fi. No account, no cloud. Built first for personal use (Nothing Phone (3), Android 17), designed to be publishable later (Mac App Store, Google Play).
 

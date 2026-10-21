@@ -31,7 +31,7 @@ struct PairedDeviceView: View {
                     LabeledContent("Notifications", value: line)
                 }
                 if model.mirror.connected && !model.mirror.supported {
-                    LabeledContent("Mirroring", value: "Update MacDroid on your phone to use this.")
+                    LabeledContent("Mirroring", value: "Update Unison on your phone to use this.")
                 }
                 if model.photos.supported, let line = PhotosPresentation.phoneLine(model.photos.access) {
                     LabeledContent("Photos", value: line)

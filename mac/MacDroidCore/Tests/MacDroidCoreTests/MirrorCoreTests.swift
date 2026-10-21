@@ -168,7 +168,7 @@ extension Data {
 
     @Test func audioNoticeOnlyWhenAskedForButMissing() {
         let streaming = MirrorPhase.streaming(width: 1, height: 1, rotation: 0)
-        #expect(MirrorPresentation.audioNotice(state(streaming, audio: false), requested: true) == "Phone audio is off: allow the microphone permission for MacDroid on your phone")
+        #expect(MirrorPresentation.audioNotice(state(streaming, audio: false), requested: true) == "Phone audio is off: allow the microphone permission for Unison on your phone")
         #expect(MirrorPresentation.audioNotice(state(streaming, audio: true), requested: true) == nil)
         #expect(MirrorPresentation.audioNotice(state(streaming, audio: false), requested: false) == nil)
     }

@@ -92,7 +92,7 @@ struct MenuBarPopover: View {
         HStack(spacing: 8) {
             PopoverTile(symbol: "arrow.up.doc", title: "Send Files", hint: model.canSendFiles ? "or drop here" : "Phone not connected",
                         enabled: model.canSendFiles) { model.pickFilesToSend() }
-            PopoverTile(symbol: "macwindow", title: "Open MacDroid", hint: "⌘O") { model.showWindow(.phone) }
+            PopoverTile(symbol: "macwindow", title: "Open Unison", hint: "⌘O") { model.showWindow(.phone) }
                 .keyboardShortcut("o")
         }
     }
@@ -130,7 +130,7 @@ struct MenuBarPopover: View {
                 .keyboardShortcut(",")
             Spacer()
             Button { NSApp.terminate(nil) } label: { Image(systemName: "power") }
-                .help("Quit MacDroid")
+                .help("Quit Unison")
                 .keyboardShortcut("q")
         }
         .buttonStyle(.borderless)

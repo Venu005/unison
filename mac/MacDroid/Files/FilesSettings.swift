@@ -27,7 +27,7 @@ final class FilesSettings {
     @ObservationIgnored private var openPanels: [String: NSSavePanel] = [:]
 
     static var defaultFolder: URL {
-        URL.downloadsDirectory.resolvingSymlinksInPath().appending(path: "MacDroid", directoryHint: .isDirectory)
+        URL.downloadsDirectory.resolvingSymlinksInPath().appending(path: "Unison", directoryHint: .isDirectory)
     }
 
     init() {

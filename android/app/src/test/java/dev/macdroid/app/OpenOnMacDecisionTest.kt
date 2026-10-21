@@ -17,7 +17,7 @@ class OpenOnMacDecisionTest {
     @Test fun explainsWhyNot() {
         assertEquals(OpenOnMacDecision.Decision(null, "No link to open"), OpenOnMacDecision.decide("just words", connected))
         assertEquals(OpenOnMacDecision.Decision(null, "Not connected to your Mac"), OpenOnMacDecision.decide("https://x.com", ConnectionState.Connecting))
-        assertEquals(OpenOnMacDecision.Decision(null, "Update MacDroid on your Mac to use this"),
+        assertEquals(OpenOnMacDecision.Decision(null, "Update Unison on your Mac to use this"),
             OpenOnMacDecision.decide("https://x.com", ConnectionState.Connected("Mac", setOf("files"))))
     }
 }

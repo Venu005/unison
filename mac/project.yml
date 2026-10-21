@@ -16,11 +16,11 @@ targets:
     info:
       path: MacDroid/Info.plist
       properties:
-        CFBundleDisplayName: MacDroid
+        CFBundleDisplayName: Unison
         CFBundleShortVersionString: "0.4.0"
         CFBundleVersion: "4"
         LSUIElement: true
-        NSLocalNetworkUsageDescription: MacDroid connects to your Android phone over your local network.
+        NSLocalNetworkUsageDescription: Unison connects to your Android phone over your local network.
         NSBonjourServices: [_macdroid._tcp]
         CFBundleURLTypes:
           - CFBundleURLName: dev.macdroid.mac.tel
@@ -29,7 +29,7 @@ targets:
           - NSMenuItem:
               default: Open on Phone
             NSMessage: openOnPhone
-            NSPortName: MacDroid
+            NSPortName: Unison
             NSSendTypes:
               - public.utf8-plain-text
               - public.url
@@ -46,6 +46,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.macdroid.mac
+        # The product is called Unison (renamed 2026-10-21); the bundle id, target and folders keep the old name.
+        PRODUCT_NAME: Unison
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SWIFT_VERSION: "6.0"
         # A stable self-signed identity (scripts/make-signing-cert.sh), not ad-hoc: keychain access survives rebuilds and updates.

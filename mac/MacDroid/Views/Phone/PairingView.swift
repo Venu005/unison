@@ -11,7 +11,7 @@ struct PairingView: View {
             Spacer(minLength: 0)
             Text(model.isRepairing ? "Pair a different phone" : "Pair your Android phone")
                 .font(.title2.weight(.semibold))
-            Text("Open MacDroid on your phone and scan this code")
+            Text("Open Unison on your phone and scan this code")
                 .foregroundStyle(.secondary)
             codeArea
             if model.isRepairing {
@@ -104,7 +104,7 @@ struct PairingView: View {
         VStack(spacing: 10) {
             Image(systemName: "lock.trianglebadge.exclamationmark").font(.system(size: 44)).foregroundStyle(.secondary)
             Text("Pairing unavailable").font(.headline)
-            Text("MacDroid couldn't open its keychain, so a pairing wouldn't survive a restart. Quit and reopen MacDroid to try again.")
+            Text("Unison couldn't open its keychain, so a pairing wouldn't survive a restart. Quit and reopen Unison to try again.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: 360)

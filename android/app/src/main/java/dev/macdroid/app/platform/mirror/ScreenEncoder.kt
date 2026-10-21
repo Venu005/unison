@@ -29,7 +29,7 @@ class ScreenEncoder(
 
     fun start(width: Int, height: Int) {
         val (codec, surface) = newCodec(width, height)
-        display = projection.createVirtualDisplay("MacDroid mirror", width, height, dpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface, null, null)
+        display = projection.createVirtualDisplay("Unison mirror", width, height, dpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface, null, null)
         begin(codec)
     }
 
