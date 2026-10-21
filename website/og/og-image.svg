@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <!-- Link-preview image (Plan 12). Rendered to public/og-image.png by scripts/render-assets.sh. Artwork from design/icon. -->
+  <defs>
+    <radialGradient id="bg" cx="0.72" cy="0.42" r="0.9">
+      <stop offset="0" stop-color="#f6c29d"/>
+      <stop offset="0.45" stop-color="#e9a77c"/>
+      <stop offset="1" stop-color="#b8714a"/>
+    </radialGradient>
+    <clipPath id="tile"><rect x="0" y="0" width="100" height="100" rx="22.5"/></clipPath>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="80" y="150" font-family="HelveticaNeue-Bold" font-size="30" font-weight="700" letter-spacing="4" fill="#3b2a1f" stroke="#3b2a1f" stroke-width="1">UNISON</text>
+  <text x="74" y="270" font-family="HelveticaNeue-Bold" font-size="104" font-weight="800" letter-spacing="-2" fill="#1d130d" stroke="#1d130d" stroke-width="4" stroke-linejoin="round">Your phone</text>
+  <text x="74" y="368" font-family="HelveticaNeue-Bold" font-size="104" font-weight="800" letter-spacing="-2" fill="#1d130d" stroke="#1d130d" stroke-width="4" stroke-linejoin="round">lives here</text>
+  <text x="74" y="466" font-family="HelveticaNeue-Bold" font-size="104" font-weight="800" letter-spacing="-2" fill="#1d130d" stroke="#1d130d" stroke-width="4" stroke-linejoin="round">now.</text>
+  <text x="80" y="540" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="28" font-weight="500" fill="#3b2a1f">Free for Mac · Android coming soon · No account, no cloud</text>
+  <g transform="translate(770 135) scale(3.6)">
+    <g clip-path="url(#tile)">
+      <rect width="100" height="100" fill="#F9C9A6"/>
+      <path d="M50,27 V20" stroke="#4CB873" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <circle cx="50" cy="18" r="3" fill="#4CB873"/>
+      <path d="M26,55 A24,24 0 0,1 74,55 Z" fill="#4CB873"/>
+      <circle cx="42" cy="45" r="3.4" fill="#1F2933"/>
+      <circle cx="58" cy="45" r="3.4" fill="#1F2933"/>
+      <path d="M16,60 A5,5 0 0,1 21,55 H79 A5,5 0 0,1 84,60 V100 H16 Z" fill="#E7E9EC"/>
+      <path d="M32.5,52 H34.5 A3.5,3.5 0 0,1 34.5,59 H32.5 A3.5,3.5 0 0,1 32.5,52 Z" fill="#4CB873"/>
+      <path d="M65.5,52 H67.5 A3.5,3.5 0 0,1 67.5,59 H65.5 A3.5,3.5 0 0,1 65.5,52 Z" fill="#4CB873"/>
+    </g>
+  </g>
+</svg>
