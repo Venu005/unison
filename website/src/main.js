@@ -17,9 +17,16 @@ for (const player of document.querySelectorAll('.player[data-video-src]')) {
   const src = player.dataset.videoSrc;
   if (!src) continue;
   const video = document.createElement('video');
-  Object.assign(video, { src, controls: true, preload: 'none', playsInline: true });
+  Object.assign(video, { src, preload: 'none', playsInline: true });
   if (player.dataset.videoPoster) video.poster = player.dataset.videoPoster;
-  player.replaceChildren(video);
+  // Our own play button: the browser's is light grey and disappears on the light poster.
+  const play = document.createElement('button');
+  play.className = 'play-btn'; play.type = 'button'; play.setAttribute('aria-label', 'Play the demo video');
+  play.addEventListener('click', () => { video.controls = true; video.play(); });
+  video.addEventListener('play', () => { play.hidden = true; });
+  video.addEventListener('ended', () => { play.hidden = false; video.controls = false; });
+  player.classList.add('has-video');
+  player.replaceChildren(video, play);
 }
 
 // 3D scenes: chosen once per visit, each loaded only when its section comes near the screen.

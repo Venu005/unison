@@ -21,7 +21,13 @@
 .player::after { content: ""; position: absolute; inset: 1px; border-radius: 23px; background: linear-gradient(135deg, #15181b, #0c0e10); }
 .player .play { position: relative; z-index: 1; width: 86px; height: 86px; border-radius: 50%; background: #fff; color: #111; display: grid; place-items: center; font-size: 28px; box-shadow: 0 0 0 12px rgba(255,255,255,.08); }
 .player .note { position: absolute; z-index: 1; bottom: 18px; left: 22px; font-size: 12px; color: #8b939b; }
-.player video { position: relative; z-index: 1; width: 100%; height: 100%; border-radius: 23px; }
+.player video { position: relative; z-index: 1; width: 100%; height: 100%; border-radius: 23px; object-fit: cover; }
+.player .play-btn { position: absolute; z-index: 2; left: 50%; top: 50%; width: 92px; height: 92px; margin: -46px 0 0 -46px; border: 0; border-radius: 50%;
+  background: #111; cursor: pointer; box-shadow: 0 0 0 10px rgba(17,17,17,.12), 0 14px 40px rgba(0,0,0,.35); transition: transform .2s, background .2s; }
+.player .play-btn::before { content: ""; position: absolute; left: 36px; top: 28px; border-style: solid; border-width: 18px 0 18px 28px; border-color: transparent transparent transparent #fff; }
+.player .play-btn:hover { transform: scale(1.06); background: #000; }
+.player .play-btn[hidden] { display: none; }
+.player.has-video::before, .player.has-video::after { display: none; }
 @keyframes spin { to { transform: rotate(1turn); } }
 
 /* 3 · features ("Phone. Mac. One link.") */
