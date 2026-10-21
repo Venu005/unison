@@ -8,7 +8,7 @@ const fail = msg => { console.error(`check-dist: ${msg}`); process.exit(1); };
 const walk = dir => readdirSync(dir).flatMap(f => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : [p]; });
 
 if (!existsSync(dist)) fail('no dist folder: run `npm run build` first');
-for (const f of ['index.html', 'privacy/index.html', '404.html', 'sitemap.xml', 'robots.txt', 'llms.txt', 'site.webmanifest', 'og-image.png', 'favicon.svg']) {
+for (const f of ['google5e78a886f56186ac.html', 'index.html', 'privacy/index.html', '404.html', 'sitemap.xml', 'robots.txt', 'llms.txt', 'site.webmanifest', 'og-image.png', 'favicon.svg']) {
   if (!existsSync(join(dist, f))) fail(`missing ${f}`);
 }
 
@@ -18,7 +18,9 @@ for (const f of files.filter(f => /\.(html|txt|xml|json|webmanifest|js|css|svg)$
 }
 
 const read = f => readFileSync(join(dist, f), 'utf8');
-for (const f of files.filter(f => f.endsWith('.html')).map(f => relative(dist, f))) {
+// Search-engine verification files (e.g. Google's google<token>.html) are plain text, not pages.
+const isVerification = f => /^google[0-9a-f]+\.html$/.test(f);
+for (const f of files.filter(f => f.endsWith('.html')).map(f => relative(dist, f)).filter(f => !isVerification(f))) {
   const html = read(f);
   for (const [, url] of html.matchAll(/\s(?:href|src)="([^"]*)"/g)) {
     if (/^(https?:|mailto:|#|data:)/.test(url)) continue;
