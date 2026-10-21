@@ -96,7 +96,7 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - Action versions are pinned to major tags (checkout v7, setup-node v7, upload-pages-artifact v5, deploy-pages v5).
 
 ## Search engines (Plan 12)
-- Google Search Console property: URL prefix `https://venu005.github.io/unison/`, verified by `website/public/google5e78a886f56186ac.html` (keep that file; deleting it unverifies the site). Submit `sitemap.xml` there by hand: `/unison/robots.txt` isn't read by crawlers, because robots.txt only counts at the host root. Bing Webmaster Tools can import the property from Search Console.
+- Google Search Console property: URL prefix `https://venu005.github.io/unison/`, verified by `website/public/google5e78a886f56186ac.html` (keep that file; deleting it unverifies the site). Submit `sitemap.xml` there by hand: `/unison/robots.txt` isn't read by crawlers, because robots.txt only counts at the host root. Bing Webmaster Tools: property `https://venu005.github.io/unison/`, verified by `website/public/BingSiteAuth.xml` and the `msvalidate.01` meta tag (`verification.bing` in `site.config.js`); submit the full sitemap URL there.
 
 ## Releasing the Mac app (Plan 12)
 - Prerequisites: the "MacDroid Self-Signed" identity in the login keychain (`scripts/make-signing-cert.sh`, or import the backed-up .p12), a clean git tree, and `gh` logged in with push rights to `Venu005/unison` (`venusai-glitch` is a collaborator).

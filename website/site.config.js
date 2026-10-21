@@ -17,6 +17,9 @@ export default {
   version: '0.4.0',
   developer: { name: 'Venusai', email: 'venusaiyalamanchili@gmail.com' },
   license: 'MIT',
+  // Search-engine ownership proofs. Google's is the file public/google<token>.html; Bing reads public/BingSiteAuth.xml
+  // or this code as a meta tag on the home page.
+  verification: { bing: 'CD613607B586A3B1587004B1A995141B' },
   themeColor: '#F9C9A6',
   pages: [
     {

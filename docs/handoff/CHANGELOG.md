@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Bing Webmaster Tools verification (chore/bing-webmaster)
+- **What:** Bing's GSC import found no sites (the Google property was minutes old), so the site was added to Bing by hand. Its proof is served both ways: `website/public/BingSiteAuth.xml` at `/unison/BingSiteAuth.xml`, and `<meta name="msvalidate.01">` on the home page from `site.config.js` `verification.bing`. `npm run check` requires the XML file. Test `the home page carries the Bing verification tag; other pages do not` (RED→GREEN).
+- **Verified:** `npm test` 21/21, build (no warnings), check ok (28 files); after deploy both proofs are live.
+
 ## 2026-10-21 — Google Search Console verification (chore/search-console)
 - **What:** the owner's Search Console verification file is served at `/unison/google5e78a886f56186ac.html` (`website/public/`, copied verbatim). `npm run check` requires it and skips `google<token>.html` files in its per-page rules (they're plain text, not pages). Next for the owner: verify the URL-prefix property, then submit `sitemap.xml`, since crawlers won't find `/unison/robots.txt`.
 - **Verified:** build (no warnings), check ok (27 files); after deploy the live URL returns the exact text.

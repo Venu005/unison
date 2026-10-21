@@ -47,3 +47,10 @@ test('webManifest uses the base path for start_url and icons', () => {
   expect(m.start_url).toBe('/unison/');
   expect(m.icons.map(i => i.src)).toEqual(['/unison/icon-192.png', '/unison/icon-512.png']);
 });
+
+test('the home page carries the Bing verification tag; other pages do not', () => {
+  const tag = `<meta name="msvalidate.01" content="${SITE.verification.bing}">`;
+  expect(SITE.verification.bing).toBe('CD613607B586A3B1587004B1A995141B');
+  expect(headTags(SITE, SITE.pages[0])).toContain(tag);
+  expect(headTags(SITE, privacy)).not.toContain('msvalidate.01');
+});

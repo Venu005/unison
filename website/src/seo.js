@@ -29,6 +29,7 @@ export function headTags(site, page) {
     `<link rel="icon" href="${site.base}favicon.svg" type="image/svg+xml">`,
     `<link rel="apple-touch-icon" href="${site.base}apple-touch-icon.png">`,
     `<link rel="manifest" href="${site.base}site.webmanifest">`,
+    ...(page.path === '' && site.verification?.bing ? [`<meta name="msvalidate.01" content="${esc(site.verification.bing)}">`] : []),
   ].join('\n    ');
 }
 

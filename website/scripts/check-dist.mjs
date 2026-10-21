@@ -8,7 +8,7 @@ const fail = msg => { console.error(`check-dist: ${msg}`); process.exit(1); };
 const walk = dir => readdirSync(dir).flatMap(f => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : [p]; });
 
 if (!existsSync(dist)) fail('no dist folder: run `npm run build` first');
-for (const f of ['google5e78a886f56186ac.html', 'index.html', 'privacy/index.html', '404.html', 'sitemap.xml', 'robots.txt', 'llms.txt', 'site.webmanifest', 'og-image.png', 'favicon.svg']) {
+for (const f of ['google5e78a886f56186ac.html', 'BingSiteAuth.xml', 'index.html', 'privacy/index.html', '404.html', 'sitemap.xml', 'robots.txt', 'llms.txt', 'site.webmanifest', 'og-image.png', 'favicon.svg']) {
   if (!existsSync(join(dist, f))) fail(`missing ${f}`);
 }
 
