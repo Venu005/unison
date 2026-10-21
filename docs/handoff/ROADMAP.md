@@ -81,6 +81,9 @@ The owner's planned features, with status:
 
 Also noted earlier: SMS (personal build only, Play-restricted), USB transport via `adb reverse`, Wi-Fi Direct, and the parked Finder Share extension.
 
+## Website (in progress, 2026-10-21)
+- Landing page, install steps, privacy page and the first `Unison.dmg` release on GitHub Pages / GitHub Releases. Design: `docs/superpowers/specs/2026-10-21-unison-website-design.md`.
+
 ## Before publishing
 - **Stance (2026-10-16):** free and unsigned for now; no Apple Developer account. If it is ever sold: Android free, a one-time Pro unlock on the Mac only, offline signed license keys (see DECISIONS.md). Renamed from MacDroid to Unison on 2026-10-21 (name clash); still worth a formal trademark search before selling.
 - Play declaration for photo/video access (`READ_MEDIA_IMAGES`/`READ_MEDIA_VIDEO`) as core functionality (Plan 6).
