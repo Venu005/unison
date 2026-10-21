@@ -86,8 +86,8 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 
 ## Website (`website/`, Plan 12)
 - Node 24 + npm. `cd website && npm ci` once.
-- `npm run dev`: local server with live reload at `http://localhost:5173/macdorid/` (the site always lives under the base path from `site.config.js`).
-- `npm test`: Vitest unit tests (`test/`). `npm run build`: static site into `website/dist`. `npm run check`: post-build assertions on `dist` (no "MacDroid", links under the base path, SEO files present). `npm run preview`: serve `dist` at `http://localhost:4173/macdorid/`.
+- `npm run dev`: local server with live reload at `http://localhost:5173/unison/` (the site always lives under the base path from `site.config.js`).
+- `npm test`: Vitest unit tests (`test/`). `npm run build`: static site into `website/dist`. `npm run check`: post-build assertions on `dist` (no "MacDroid", links under the base path, SEO files present). `npm run preview`: serve `dist` at `http://localhost:4173/unison/`.
 - Site identity and every URL (site, repo, DMG, Play) live only in `website/site.config.js`.
 
 ## Conventions

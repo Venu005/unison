@@ -14,9 +14,9 @@
 
 ## Global Constraints
 
-- Product name on every visible surface: **Unison**. The string `MacDroid` must not appear in any built file under `website/dist/` (repo URL `macdorid` is fine; it's a different spelling).
-- Site URL: `https://venu005.github.io/macdorid/`; Vite `base`: `/macdorid/`. Both come only from `website/site.config.js`.
-- Repo: `https://github.com/Venu005/macdorid`. DMG: `https://github.com/Venu005/macdorid/releases/latest/download/Unison.dmg`. Latest release page: `https://github.com/Venu005/macdorid/releases/latest`.
+- Product name on every visible surface: **Unison**. The string `MacDroid` must not appear in any built file under `website/dist/`.
+- Site URL: `https://venu005.github.io/unison/`; Vite `base`: `/unison/`. Both come only from `website/site.config.js`.
+- Repo: `https://github.com/Venu005/unison`. DMG: `https://github.com/Venu005/unison/releases/latest/download/Unison.dmg`. Latest release page: `https://github.com/Venu005/unison/releases/latest`.
 - Developer: **Venusai**, contact **venusaiyalamanchili@gmail.com**. Licence: MIT.
 - Android: "Coming soon to Google Play"; `playUrl: null` in config means a non-link badge. JSON-LD `operatingSystem` is `"macOS"` only while `playUrl` is null.
 - Brand facts (verbatim from the spec): free; no account; no cloud (direct over local Wi-Fi); paired by QR code; "encrypted end to end"; Mac app is sandboxed; features: send files both ways (resumable), notifications with replies, shared clipboard (text, links, images), calls on the Mac (answer/decline/dial), browse phone photos (preview, save, drag out), screen mirroring with remote control, ring my phone, media controls.
@@ -27,7 +27,7 @@
 
 ## Review Focus
 
-1. **The site lives under `/macdorid/`, not `/`.** Every `href`/`src` in built HTML must work under that path, including on the 404 page, which GitHub Pages serves for any missing URL at any depth. → `npm run check` asserts every local URL in `dist/**/*.html` starts with `/macdorid/` or `#` (Task 2).
+1. **The site lives under `/unison/`, not `/`.** Every `href`/`src` in built HTML must work under that path, including on the 404 page, which GitHub Pages serves for any missing URL at any depth. → `npm run check` asserts every local URL in `dist/**/*.html` starts with `/unison/` or `#` (Task 2).
 2. **No WebGL, reduced motion, a phone, a touch screen.** The page must still show all text and buttons, scroll normally, and never trap a swipe. → `chooseQuality` tests (Task 4) and the game's `touch-action: pan-y` + static mode on coarse pointers (Task 7).
 3. **The Download button before or after a release.** The asset must be named exactly `Unison.dmg`, contain `Unison.app` plus an `Applications` link, and be signed with "MacDroid Self-Signed". → `make-release.sh --dry-run` verification (Task 8).
 4. **Old brand or false claims leaking through.** Copying from the mockup can carry "MacDroid", an Android download link, or "macOS + Android" in JSON-LD. → `npm run check` asserts no `MacDroid` in `dist`, no Play link while `playUrl` is null, and `operatingSystem === "macOS"` (Task 2).
@@ -70,7 +70,7 @@ scripts/render-icon.swift        gains an optional height argument
 
 **Interfaces:**
 - Produces: `SITE` (default export of `site.config.js`):
-  `{ name: 'Unison', tagline: 'Your phone lives here now.', description: string (≤ 160 chars, mentions Android, Mac, files, notifications, clipboard, no account, no cloud), url: 'https://venu005.github.io/macdorid/', base: '/macdorid/', repo, dmgUrl, releasesUrl, playUrl: null, version: '0.4.0', developer: { name: 'Venusai', email: 'venusaiyalamanchili@gmail.com' }, license: 'MIT', pages: [{ path: '', title, description }, { path: 'privacy/', title, description }] }`
+  `{ name: 'Unison', tagline: 'Your phone lives here now.', description: string (≤ 160 chars, mentions Android, Mac, files, notifications, clipboard, no account, no cloud), url: 'https://venu005.github.io/unison/', base: '/unison/', repo, dmgUrl, releasesUrl, playUrl: null, version: '0.4.0', developer: { name: 'Venusai', email: 'venusaiyalamanchili@gmail.com' }, license: 'MIT', pages: [{ path: '', title, description }, { path: 'privacy/', title, description }] }`
 - Produces (`src/seo.js`, all pure, take `site` as first arg):
   `absoluteUrl(site, path = '') -> string`; `headTags(site, page) -> string` (title, description, canonical, OG, Twitter, theme-color, icons, manifest link); `jsonLd(site) -> object`; `sitemapXml(site) -> string`; `robotsTxt(site) -> string`; `llmsTxt(site) -> string`; `webManifest(site) -> object`.
 
@@ -84,14 +84,14 @@ import { absoluteUrl, headTags, jsonLd, sitemapXml, robotsTxt, llmsTxt, webManif
 const home = SITE.pages[0], privacy = SITE.pages[1];
 
 test('absoluteUrl joins under the site url', () => {
-  expect(absoluteUrl(SITE)).toBe('https://venu005.github.io/macdorid/');
-  expect(absoluteUrl(SITE, 'privacy/')).toBe('https://venu005.github.io/macdorid/privacy/');
-  expect(absoluteUrl(SITE, '/og-image.png')).toBe('https://venu005.github.io/macdorid/og-image.png');
+  expect(absoluteUrl(SITE)).toBe('https://venu005.github.io/unison/');
+  expect(absoluteUrl(SITE, 'privacy/')).toBe('https://venu005.github.io/unison/privacy/');
+  expect(absoluteUrl(SITE, '/og-image.png')).toBe('https://venu005.github.io/unison/og-image.png');
 });
 test('headTags carries canonical, og and twitter for the page', () => {
   const h = headTags(SITE, privacy);
-  expect(h).toContain('<link rel="canonical" href="https://venu005.github.io/macdorid/privacy/">');
-  expect(h).toContain('property="og:image" content="https://venu005.github.io/macdorid/og-image.png"');
+  expect(h).toContain('<link rel="canonical" href="https://venu005.github.io/unison/privacy/">');
+  expect(h).toContain('property="og:image" content="https://venu005.github.io/unison/og-image.png"');
   expect(h).toContain('name="twitter:card" content="summary_large_image"');
   expect(h).toContain(`<title>${privacy.title}</title>`);
 });
@@ -105,21 +105,21 @@ test('jsonLd is a free macOS app by Venusai while Play is not live', () => {
   expect(jsonLd({ ...SITE, playUrl: 'https://play.google.com/x' }).operatingSystem).toBe('macOS, Android');
 });
 test('sitemap lists both pages, robots points at it', () => {
-  expect(sitemapXml(SITE)).toContain('<loc>https://venu005.github.io/macdorid/privacy/</loc>');
-  expect(robotsTxt(SITE)).toContain('Sitemap: https://venu005.github.io/macdorid/sitemap.xml');
+  expect(sitemapXml(SITE)).toContain('<loc>https://venu005.github.io/unison/privacy/</loc>');
+  expect(robotsTxt(SITE)).toContain('Sitemap: https://venu005.github.io/unison/sitemap.xml');
 });
 test('llms.txt follows llmstxt.org and says Android is coming soon', () => {
   const t = llmsTxt(SITE);
   expect(t.startsWith('# Unison\n\n> ')).toBe(true);
   expect(t).toMatch(/coming soon/i);
-  expect(t).toContain('https://venu005.github.io/macdorid/privacy/');
-  expect(t).toContain('https://github.com/Venu005/macdorid');
+  expect(t).toContain('https://venu005.github.io/unison/privacy/');
+  expect(t).toContain('https://github.com/Venu005/unison');
   expect(t).not.toContain('MacDroid');
 });
 test('webManifest uses the base path for start_url and icons', () => {
   const m = webManifest(SITE);
-  expect(m.start_url).toBe('/macdorid/');
-  expect(m.icons.map(i => i.src)).toEqual(['/macdorid/icon-192.png', '/macdorid/icon-512.png']);
+  expect(m.start_url).toBe('/unison/');
+  expect(m.icons.map(i => i.src)).toEqual(['/unison/icon-192.png', '/unison/icon-512.png']);
 });
 ```
 
@@ -142,7 +142,7 @@ test('webManifest uses the base path for start_url and icons', () => {
 - Produces: `npm run check`, which later tasks rely on.
 
 - [ ] **Step 1:** Port every section's HTML and CSS from `reference/mockup-v7.html` (order and copy per spec "The page, top to bottom"), renaming to Unison, the features section id to `features`, the toy section to `game`; drop the `.review` note. The video placeholder is one element, `<div class="player" data-video-src="" data-video-poster="">`: `main.js` swaps it for a `<video controls preload="none">` when `data-video-src` is set, so adding the demo later is a one-line edit. Install steps exactly as the spec's step 5 list, including the two command cards and "Why the warning?" (open source, MIT). "Check your download" links to `SITE.releasesUrl`. Head of each page contains `%SEO_HEAD%`; `index.html` also `%JSON_LD%`. `privacy/index.html`: the policy from the spec's Privacy bullet, with every permission in `android/app/src/main/AndroidManifest.xml` grouped in plain words (network, camera for QR, notifications access, photos/videos, calls, microphone for mirroring audio, accessibility for remote control, foreground service + wake lock to stay connected, start at boot), the Mac's entitlements (network server/client, user-selected files, Downloads), GitHub Pages logs with a link to GitHub's privacy statement, developer and contact. `404.html`: robot illustration (the icon SVG inline), "This page wandered off.", link to `SITE.base`.
-- [ ] **Step 2: Write `scripts/check-dist.mjs`** (fails with a message and exit 1 on the first broken rule): `dist/index.html`, `dist/privacy/index.html`, `dist/404.html`, `dist/sitemap.xml`, `dist/robots.txt`, `dist/llms.txt`, `dist/site.webmanifest`, `dist/og-image.png`, `dist/favicon.svg` exist; no file in `dist` (html, txt, xml, json, js, css) contains `MacDroid`; every `href`/`src` in `dist/**/*.html` that isn't `http(s):`, `mailto:` or `#…` starts with `/macdorid/`; each page has exactly one `<h1>`, one canonical and an `og:image`; `index.html` JSON-LD parses and has `operatingSystem: "macOS"`; while `SITE.playUrl` is null no `href` contains `play.google.com`; the hero `<h1>` text is "Your phone lives here now." in the HTML (not only in canvas).
+- [ ] **Step 2: Write `scripts/check-dist.mjs`** (fails with a message and exit 1 on the first broken rule): `dist/index.html`, `dist/privacy/index.html`, `dist/404.html`, `dist/sitemap.xml`, `dist/robots.txt`, `dist/llms.txt`, `dist/site.webmanifest`, `dist/og-image.png`, `dist/favicon.svg` exist; no file in `dist` (html, txt, xml, json, js, css) contains `MacDroid`; every `href`/`src` in `dist/**/*.html` that isn't `http(s):`, `mailto:` or `#…` starts with `/unison/`; each page has exactly one `<h1>`, one canonical and an `og:image`; `index.html` JSON-LD parses and has `operatingSystem: "macOS"`; while `SITE.playUrl` is null no `href` contains `play.google.com`; the hero `<h1>` text is "Your phone lives here now." in the HTML (not only in canvas).
 - [ ] **Step 3:** `npm run build && npm run check` → FAIL (plugin not written; placeholders unreplaced, missing files).
 - [ ] **Step 4:** Implement `seoPlugin(site): import('vite').Plugin`: `transformIndexHtml` replaces `%SEO_HEAD%` with `headTags(site, pageFor(ctx.path))` and `%JSON_LD%` with a `<script type="application/ld+json">`; `generateBundle` emits `sitemap.xml`, `robots.txt`, `llms.txt`, `site.webmanifest`. Add placeholder `public/og-image.png` and `public/favicon.svg` (copy of the icon SVG) so the check can pass; Task 3 replaces them.
 - [ ] **Step 5:** `npm test && npm run build && npm run check` → PASS, no warnings.
@@ -254,14 +254,14 @@ test('a throw counts for 2.5 s at 60 fps', () => expect(THROW_FRAMES).toBe(150))
 
 **Files:** Create `scripts/make-release.sh`. Modify `docs/handoff/DEV-GUIDE.md` (Releasing), `docs/handoff/ARCHITECTURE.md` (release artefact), `docs/handoff/CHANGELOG.md`.
 
-**Interfaces:** Produces `scripts/make-release.sh [--dry-run]`: writes `mac/build/release/Unison.dmg` and prints `SHA-256: <hex>`; without `--dry-run` it also runs `gh release create v<version> mac/build/release/Unison.dmg --repo Venu005/macdorid --title "Unison <version>" --notes <notes>` where the notes contain the SHA-256 line, the install link `https://venu005.github.io/macdorid/#install` and "Android: coming soon to Google Play".
+**Interfaces:** Produces `scripts/make-release.sh [--dry-run]`: writes `mac/build/release/Unison.dmg` and prints `SHA-256: <hex>`; without `--dry-run` it also runs `gh release create v<version> mac/build/release/Unison.dmg --repo Venu005/unison --title "Unison <version>" --notes <notes>` where the notes contain the SHA-256 line, the install link `https://venu005.github.io/unison/#install` and "Android: coming soon to Google Play".
 
 - [ ] **Step 1:** Write the script: `set -euo pipefail`; refuse to run if the "MacDroid Self-Signed" identity is missing (point at `scripts/make-signing-cert.sh`) or the git tree is dirty (unless `--dry-run`); version from `CFBundleShortVersionString` in `mac/project.yml`; `xcodegen generate`; Release `xcodebuild` into `mac/build`; stage `Unison.app` + `ln -s /Applications` in a temp folder; `hdiutil create -volname Unison -fs HFS+ -format UDZO`; `codesign --sign "MacDroid Self-Signed" --timestamp=none` the DMG; `shasum -a 256`.
 - [ ] **Step 2: Verify the dry run:** `scripts/make-release.sh --dry-run`, then:
   - `hdiutil attach -nobrowse -readonly mac/build/release/Unison.dmg` → mount shows `Unison.app` and `Applications -> /Applications`; detach.
   - `codesign -dv mac/build/release/Unison.dmg 2>&1 | grep Authority` → `Authority=MacDroid Self-Signed`.
   - `codesign -dr - <mounted>/Unison.app` → `identifier "dev.macdroid.mac" and certificate leaf = H"be20c074…"`.
-- [ ] **Step 3:** Mac gates still pass (`swift test`; Debug build, no warnings). DEV-GUIDE "Releasing" (prerequisites: cert, `gh auth` with push rights to `Venu005/macdorid`; the publishing run happens only on the owner's word). Commit `feat: release script for Unison.dmg`.
+- [ ] **Step 3:** Mac gates still pass (`swift test`; Debug build, no warnings). DEV-GUIDE "Releasing" (prerequisites: cert, `gh auth` with push rights to `Venu005/unison`; the publishing run happens only on the owner's word). Commit `feat: release script for Unison.dmg`.
 
 ---
 
@@ -279,5 +279,5 @@ test('a throw counts for 2.5 s at 60 fps', () => expect(THROW_FRAMES).toBe(150))
 
 - [ ] **Step 1:** All gates: website (`npm test`, `npm run build`, `npm run check`), Mac (`swift test`, xcodegen + Debug build), Android (`:core:test :app:testDebugUnitTest :app:assembleDebug`), all with no warnings. Update STATUS, ROADMAP, README (round table + a "Website" line) and CHANGELOG.
 - [ ] **Step 2:** Whole-branch review by a fresh reviewer; fix Critical/Important findings.
-- [ ] **Step 3: Owner check** with `cd website && npm run build && npm run preview` (open `http://localhost:4173/macdorid/`): hero, features, install, game, privacy, 404 (`/macdorid/nope`), a narrow (phone-width) window, reduced motion (System Settings → Accessibility → Display → Reduce motion).
-- [ ] **Step 4: Go-live, only on the owner's explicit word for each action** (all are public): merge `feat/website` into `main`; `git push origin main`; enable Pages with source "GitHub Actions" (`gh api -X POST repos/Venu005/macdorid/pages -f build_type=workflow`); `scripts/make-release.sh` to publish `v0.4.0`; then confirm `https://venu005.github.io/macdorid/` loads, `/llms.txt` and `/sitemap.xml` load, and the Download button returns the DMG (`curl -sIL <dmgUrl> | grep -i '^content-type'`). Record the live URL in STATUS and CHANGELOG.
+- [ ] **Step 3: Owner check** with `cd website && npm run build && npm run preview` (open `http://localhost:4173/unison/`): hero, features, install, game, privacy, 404 (`/unison/nope`), a narrow (phone-width) window, reduced motion (System Settings → Accessibility → Display → Reduce motion).
+- [ ] **Step 4: Go-live, only on the owner's explicit word for each action** (all are public): merge `feat/website` into `main`; `git push origin main`; enable Pages with source "GitHub Actions" (`gh api -X POST repos/Venu005/unison/pages -f build_type=workflow`); `scripts/make-release.sh` to publish `v0.4.0`; then confirm `https://venu005.github.io/unison/` loads, `/llms.txt` and `/sitemap.xml` load, and the Download button returns the DMG (`curl -sIL <dmgUrl> | grep -i '^content-type'`). Record the live URL in STATUS and CHANGELOG.

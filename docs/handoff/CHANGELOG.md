@@ -5,6 +5,8 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
 ## 2026-10-21 — Plan 12: website (feat/website)
+- **Repo renamed** by the owner to `Venu005/unison`: site URL is now `https://venu005.github.io/unison/` (base `/unison/`), `origin` points at the new repo, plan and spec updated.
+- **Task 2 (pages, styles, SEO plugin, dist check):** `index.html` (hero, video slot, features, install steps, game, footer; the Play button is a "Coming soon to Google Play" badge), `privacy/index.html` (every Android permission and Mac entitlement in plain words, developer Venusai and contact), `404.html`. `src/seo-plugin.js` fills `%SEO_HEAD%`, `%JSON_LD%` and the URL placeholders from `site.config.js` and emits `sitemap.xml`, `robots.txt`, `llms.txt`, `site.webmanifest`. `npm run check` fails the build on a "MacDroid" leak, a local link outside `/unison/`, a Play link while Play isn't live, a wrong JSON-LD OS or a hero `<h1>` that isn't real text (shown failing on a planted "MacDroid" and on a `/privacy/` link). Verified: `npm test` 6/6, `npm run build` (no warnings), `npm run check` ok.
 - **Task 1 (scaffold, config, SEO module):** `website/` Vite package (vite 8.3.5, vitest 5.0.5, three 0.160.0, all exact). `site.config.js` is the single source of the site's name, URLs, developer and Play status. `src/seo.js` generates head tags, JSON-LD (`operatingSystem` "macOS" while Play is null), sitemap, robots, `llms.txt` and the web manifest. Verified: `npm test` 6/6 (RED first: module missing).
 
 ## 2026-10-21 — Plan 12: website plan written (feat/website)

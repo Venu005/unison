@@ -1,14 +1,14 @@
 // The one place the site's identity and URLs live (Plan 12). Renaming the repo or adding a domain
 // means editing `url` and `base` here; everything else (canonical, OG, sitemap, JSON-LD, llms.txt) follows.
-const repo = 'https://github.com/Venu005/macdorid';
+const repo = 'https://github.com/Venu005/unison';
 
 export default {
   name: 'Unison',
   tagline: 'Your phone lives here now.',
   description:
     'Unison connects your Android phone and your Mac over your own Wi-Fi: files, notifications, clipboard, calls and your screen. Free. No account, no cloud.',
-  url: 'https://venu005.github.io/macdorid/',
-  base: '/macdorid/',
+  url: 'https://venu005.github.io/unison/',
+  base: '/unison/',
   repo,
   dmgUrl: `${repo}/releases/latest/download/Unison.dmg`,
   releasesUrl: `${repo}/releases/latest`,

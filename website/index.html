@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    %SEO_HEAD%
+    %JSON_LD%
+    <link rel="stylesheet" href="/src/styles/base.css">
+    <link rel="stylesheet" href="/src/styles/sections.css">
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <nav class="top" aria-label="Main">
+      <b>Unison</b>
+      <a class="opt" href="#video">Demo</a><a href="#features">Features</a><a href="#install">Install</a>
+      <a class="dl" href="#install">Download</a>
+    </nav>
+
+    <main>
+      <section id="hero" aria-labelledby="hero-title">
+        <canvas aria-hidden="true"></canvas>
+        <img class="still" src="%BASE_URL%favicon.svg" alt="" width="420" height="420">
+        <div class="copy">
+          <span class="eyebrow">Free · Mac + Android · No account</span>
+          <h1 id="hero-title">Your phone<br>lives here<br>now.</h1>
+          <p>Files, notifications, clipboard, calls and your phone's screen, straight over your own Wi-Fi. Nothing goes through a cloud.</p>
+          <div class="ctas">
+            <a class="btn p" href="#install">Download for Mac</a>
+            <span class="btn s" data-play>Coming soon to Google Play</span>
+          </div>
+        </div>
+        <div class="scroll mono" aria-hidden="true">scroll ↓</div>
+        <div class="grain"></div>
+      </section>
+
+      <section id="video" aria-labelledby="video-title">
+        <span class="eyebrow">60-second tour</span>
+        <h2 class="big" id="video-title">See it in action.</h2>
+        <!-- Set data-video-src (and optionally data-video-poster) to show the demo; main.js swaps the placeholder for a player. -->
+        <div class="player" data-video-src="" data-video-poster="">
+          <div class="play" aria-hidden="true">▶</div>
+          <div class="note mono">Demo video coming soon</div>
+        </div>
+      </section>
+
+      <section id="features" aria-labelledby="features-title">
+        <div class="copy">
+          <span class="eyebrow">Everything, both ways</span>
+          <h2 class="big" id="features-title">Phone. Mac.<br>One link.</h2>
+          <p>Encrypted end to end and paired by QR code. Your stuff goes straight across your Wi-Fi and never touches a server.</p>
+        </div>
+        <div class="stage"><canvas aria-hidden="true"></canvas><div class="hint mono" aria-hidden="true">drag to spin it round · the phone flips to show its light</div></div>
+        <ul class="feature-grid">
+          <li class="feature" data-f="files" style="--c:#4CB873"><i aria-hidden="true">⬆</i><div><b>Send files both ways</b><span>Drop on the menu bar or share from Android. Resumes if Wi-Fi drops.</span></div></li>
+          <li class="feature" data-f="notifs" style="--c:#6fb6ff"><i aria-hidden="true">✉</i><div><b>Notifications + replies</b><span>See and answer your phone's notifications on your Mac.</span></div></li>
+          <li class="feature" data-f="clip" style="--c:#F9C9A6"><i aria-hidden="true">⎘</i><div><b>Shared clipboard</b><span>Copy on one, paste on the other. Text, links and images.</span></div></li>
+          <li class="feature" data-f="calls" style="--c:#ff7b7b"><i aria-hidden="true">☏</i><div><b>Calls on your Mac</b><span>Answer, decline and dial from your Mac.</span></div></li>
+          <li class="feature" data-f="photos" style="--c:#ffd36b"><i aria-hidden="true">▦</i><div><b>Browse your photos</b><span>Your phone's library, with previews and drag-out to Finder.</span></div></li>
+          <li class="feature" data-f="mirror" style="--c:#c7a6ff"><i aria-hidden="true">▣</i><div><b>Mirror + control</b><span>Your phone's screen in a window, with mouse and keyboard. Plus ring my phone and media controls.</span></div></li>
+        </ul>
+      </section>
+
+      <section id="install" aria-labelledby="install-title">
+        <div class="head">
+          <div><span class="eyebrow">Install on your Mac</span><h2 class="big" id="install-title">One minute,<br>once.</h2></div>
+          <p>Unison is free and not registered with Apple, so macOS asks you to confirm it the first time. After that it opens like any other app, and updates do too.</p>
+        </div>
+        <ol class="steps">
+          <li class="step"><div class="shot mono">SCREENSHOT</div><span class="n mono">01</span><h3>Download</h3><p><a href="%DMG_URL%">Download <b>Unison.dmg</b></a>, open it and drag Unison into <b>Applications</b>.</p></li>
+          <li class="step"><div class="shot mono">SCREENSHOT</div><span class="n mono">02</span><h3>Open it once</h3><p>macOS says it can't verify Unison. Click <b>Done</b>, not Move to Trash.</p></li>
+          <li class="step"><div class="shot mono">SCREENSHOT</div><span class="n mono">03</span><h3>Open Anyway</h3><p><b>System Settings → Privacy &amp; Security</b>, scroll down, click <b>Open Anyway</b>.</p></li>
+          <li class="step"><div class="shot mono">SCREENSHOT</div><span class="n mono">04</span><h3>Confirm</h3><p>Enter your Mac password, then <b>Open Anyway</b> again.</p></li>
+          <li class="step"><div class="shot mono">SCREENSHOT</div><span class="n mono">05</span><h3>Pair your phone</h3><p><b>Allow</b> local network access. Then install the Android app (coming soon to Google Play) and scan the QR code.</p></li>
+        </ol>
+        <div class="extras">
+          <div class="extra"><h3>Comfortable with Terminal?</h3>Skip steps 2 to 4 with one command:<code class="mono">xattr -dr com.apple.quarantine /Applications/Unison.app</code></div>
+          <div class="extra"><h3>Check your download</h3>Compare the file's SHA-256 with the one in the <a href="%RELEASES_URL%">release notes</a>.<code class="mono">shasum -a 256 ~/Downloads/Unison.dmg</code></div>
+        </div>
+        <p class="why"><b>Why the warning?</b> Apple charges $99 a year to register an app. Unison is a free side project, so it isn't registered. It's open source (MIT): you can read all of the code <a href="%REPO_URL%">on GitHub</a>.</p>
+      </section>
+
+      <section id="game" aria-labelledby="game-title">
+        <canvas aria-hidden="true"></canvas>
+        <img class="still" src="%BASE_URL%favicon.svg" alt="" width="260" height="260">
+        <div class="copy">
+          <span class="eyebrow">Go on, try it</span>
+          <h2 id="game-title">Throw something at it.</h2>
+          <p><span class="mouse">Grab anything and fling it at the robot. It sends it to your phone, just like the real thing.</span><span class="touch">Open this page on a computer to throw things at the robot.</span></p>
+          <div class="ctas"><a class="btn p" href="#install">Download for Mac</a><span class="btn s" data-play>Coming soon to Google Play</span></div>
+        </div>
+        <div class="word" aria-hidden="true">Uni<span id="seat">s</span>on</div>
+        <div class="score mono" aria-hidden="true">sent to phone · <b id="sent">0</b></div>
+        <div class="toast" id="toast" role="status"></div>
+      </section>
+    </main>
+
+    <footer>
+      <span>© 2026 Unison · made by Venusai · MIT licence</span>
+      <span><a href="%BASE_URL%privacy/">Privacy</a><a href="%REPO_URL%">GitHub</a><a href="%BASE_URL%llms.txt">llms.txt</a></span>
+    </footer>
+  </body>
+</html>

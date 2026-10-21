@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    %SEO_HEAD%
+    <link rel="stylesheet" href="/src/styles/base.css">
+  </head>
+  <body>
+    <nav class="top" aria-label="Main">
+      <b>Unison</b>
+      <a href="%BASE_URL%">Home</a><a href="%BASE_URL%#install">Install</a>
+      <a class="dl" href="%BASE_URL%#install">Download</a>
+    </nav>
+
+    <main class="doc">
+      <span class="eyebrow">Last updated 21 October 2026</span>
+      <h1>Privacy policy</h1>
+      <p class="lead">Unison collects nothing. There's no account, no analytics, no ads and no server. Everything moves directly between your phone and your Mac over your own local network.</p>
+
+      <p>This policy covers the Unison Mac app, the Unison Android app and this website. Unison is made by Venusai, an individual developer.</p>
+
+      <h2>What leaves your devices</h2>
+      <p>Nothing goes to the developer or to any server. Your phone and your Mac talk directly to each other on your local network, and only after you pair them by scanning a QR code. That connection is encrypted end to end (mutual TLS 1.3), and each device only accepts the other's certificate.</p>
+
+      <h2>What stays on your devices</h2>
+      <ul>
+        <li><b>Pairing keys:</b> each device's own key and the other device's fingerprint. On the Mac they're in your keychain; on Android in the hardware-backed Keystore.</li>
+        <li><b>Files you send or receive:</b> saved where you choose (by default <code>Downloads/Unison</code> on the Mac and <code>Download/Unison</code> on the phone).</li>
+        <li><b>Recent notifications, clipboard history, app icons, photo thumbnails and album art:</b> cached on your Mac so the app can show them. You can clear clipboard history in Settings, and forgetting your phone deletes the cached photos.</li>
+      </ul>
+      <p>Uninstalling the apps removes this data.</p>
+
+      <h2>What the Android app asks for, and why</h2>
+      <ul>
+        <li><b>Local network, Wi-Fi multicast and network access:</b> to find your Mac and connect to it on your network.</li>
+        <li><b>Camera:</b> only to scan the pairing QR code. No pictures are taken or stored.</li>
+        <li><b>Notification access</b> (you turn it on in Android Settings): to show your phone's notifications on your Mac and send your replies back.</li>
+        <li><b>Notifications:</b> to tell you when files arrive and to keep the connection's status visible.</li>
+        <li><b>Photos and videos</b> (all or only the ones you pick): so you can browse and save them from your Mac.</li>
+        <li><b>Phone calls:</b> to place calls you dial from your Mac.</li>
+        <li><b>Microphone:</b> only while you mirror your screen with sound, to capture your phone's audio for your Mac. Calls are never recorded.</li>
+        <li><b>Accessibility</b> ("Unison control", off until you turn it on): so your Mac's mouse and keyboard can tap, scroll and type on your phone while you mirror it. It acts only when your Mac asks, and never sends what's on screen anywhere except to your Mac's mirror window.</li>
+        <li><b>Foreground service, wake lock and starting at boot:</b> to stay connected in the background and reconnect after your phone restarts.</li>
+      </ul>
+
+      <h2>What the Mac app asks for, and why</h2>
+      <ul>
+        <li><b>Local network:</b> to accept the connection from your phone.</li>
+        <li><b>Files you pick or drop, and your Downloads folder:</b> to send files to your phone and save the ones it sends. The app is sandboxed and can't read anything else.</li>
+        <li><b>Notifications:</b> to show your phone's notifications, calls and received files.</li>
+      </ul>
+
+      <h2>This website</h2>
+      <p>This site has no analytics, sets no cookies and loads nothing from other servers. It's hosted on GitHub Pages, and GitHub may keep standard server logs (such as IP addresses) as described in the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub Privacy Statement</a>. Downloads come from GitHub Releases under the same terms.</p>
+
+      <h2>Children</h2>
+      <p>Unison doesn't collect personal information from anyone, including children.</p>
+
+      <h2>Changes</h2>
+      <p>If this policy changes, the new version will be posted here with a new date. The full history is in the <a href="%REPO_URL%">GitHub repository</a>.</p>
+
+      <h2>Contact</h2>
+      <p>Venusai · <a href="mailto:venusaiyalamanchili@gmail.com">venusaiyalamanchili@gmail.com</a> · or open an issue <a href="%REPO_URL%/issues">on GitHub</a>.</p>
+    </main>
+
+    <footer>
+      <span>© 2026 Unison · made by Venusai · MIT licence</span>
+      <span><a href="%BASE_URL%">Home</a><a href="%REPO_URL%">GitHub</a><a href="%BASE_URL%llms.txt">llms.txt</a></span>
+    </footer>
+  </body>
+</html>
