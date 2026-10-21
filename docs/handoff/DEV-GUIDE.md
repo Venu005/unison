@@ -98,7 +98,7 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 ## Releasing the Mac app (Plan 12)
 - Prerequisites: the "MacDroid Self-Signed" identity in the login keychain (`scripts/make-signing-cert.sh`, or import the backed-up .p12), a clean git tree, and `gh` logged in with push rights to `Venu005/unison` (`venusai-glitch` is a collaborator).
 - Bump `CFBundleShortVersionString` (and `CFBundleVersion`) in `mac/project.yml` first; the tag is `v<version>`.
-- `scripts/make-release.sh --dry-run` builds Release, packages `mac/build/release/Unison.dmg` (`Unison.app` + an `Applications` shortcut), signs it and prints the SHA-256. Check: `codesign -dvv mac/build/release/Unison.dmg` shows `Authority=MacDroid Self-Signed` (plain `-dv` doesn't print it).
+- `scripts/make-release.sh --dry-run` builds Release, packages `mac/build/release/Unison.dmg` (`Unison.app` + an `Applications` shortcut) and prints the SHA-256. The DMG is deliberately **unsigned**: macOS refuses a disk image signed with a self-signed certificate ("Apple could not verify Unison.dmg") before the user sees the app. The app inside is signed (check: `codesign -dr - /Volumes/Unison/Unison.app`).
 - `scripts/make-release.sh` (no flag) does the same, then `gh release create` with the DMG and notes containing the SHA-256. It's public: run it only on the owner's word. The website's Download button always points at the latest release's `Unison.dmg`.
 
 ## Conventions
