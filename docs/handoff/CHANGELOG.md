@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Merged stable signing to main
+- **What:** `fix/stable-signing` merged into `main` locally as `7afb438` (`--no-ff`) at the owner's request. Not pushed.
+- **Verified on `main`:** `swift test` 370; Mac Debug build succeeded with no code warnings and carries the certificate-based designated requirement. Android unchanged. Still pending: the owner's check that a rebuild no longer prompts.
+
 ## 2026-10-21 — Stable self-signed code signing (fix/stable-signing)
 - **What:** every build asked for the keychain password twice, even after "Always Allow". Ad-hoc signing made macOS know the app by its cdhash, which changes every build, and the identity is two keychain items. Users of a downloaded DMG would have seen the same two prompts after every update. New `scripts/make-signing-cert.sh` creates a self-signed "MacDroid Self-Signed" code-signing identity (RSA 2048, 10 years, codeSigning EKU, key usable by codesign without asking). `project.yml` signs with it (`CODE_SIGN_STYLE: Manual`). The designated requirement is now `identifier "dev.macdroid.mac" and certificate leaf = H"be20c074…"`, the same for every build. The Release build is installed in /Applications and running; the Debug copy was quit.
 - **Verified:** Release build succeeded; `codesign -dr -` shows the certificate-based requirement; the app launched from /Applications. The owner still has to confirm that a later rebuild doesn't prompt (the first launch under the new signature asks once more).
