@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Demo video on the website (feat/demo-video)
+- **What:** the owner's 22-second demo (`brag-output/brag.mp4`, 1080p H.264, 2.8 MB) is now `website/public/demo.mp4`, re-muxed losslessly with `+faststart` so it starts before it has fully downloaded; `brag.jpg` is its poster (`demo-poster.jpg`). The player placeholder's `data-video-src`/`data-video-poster` point at them, so `main.js` swaps in a `<video controls preload="none">`. The section label is "A quick tour". `npm run check` now fails if a set demo video or poster isn't in `dist` (shown failing with `demo.mp4` removed).
+- **Verified:** `npm test` 20/20, build (no warnings), check ok (21 files).
+
 ## 2026-10-21 — Website live, first Mac release
 - **What (owner's go-ahead):** `feat/website` merged into `main` as `d232e89` (`--no-ff`) and pushed. GitHub Pages turned on with source "GitHub Actions" (needed the repo owner's admin token: `venusai-glitch` is a push-only collaborator). The `Website` workflow built, tested, checked and deployed: https://venu005.github.io/unison/. `scripts/make-release.sh` published `v0.4.0` with `Unison.dmg` (SHA-256 `3070f73dca698eb1e99e6155aa0e2ec9820ee69564059ca8bb1003159087d9b1`).
 - **Verified live:** `/unison/`, `/unison/privacy/`, `/unison/llms.txt`, `/unison/sitemap.xml`, `/unison/og-image.png` return 200; a missing deep URL returns the custom 404 page; `releases/latest/download/Unison.dmg` returns 200 (11,958,965 bytes). Deferred minors from the final review: per-frame Vector3 allocations in the game, the hero repainting its screen every frame, `/unison/robots.txt` ignored by crawlers until there's a domain (submit the sitemap in Search Console), the 404's canonical pointing home, listeners outliving `stop()`, the grab raycast using the last pointer move, and reduced motion showing the icon instead of a still frame.

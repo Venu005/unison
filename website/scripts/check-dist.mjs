@@ -40,6 +40,11 @@ if (data.operatingSystem !== os) fail(`index.html: JSON-LD operatingSystem is "$
 const h1 = index.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 if (h1 !== SITE.tagline) fail(`index.html: <h1> is "${h1}", expected "${SITE.tagline}"`);
 
+// The demo video and its poster, when set, are files the site ships (under the base path).
+for (const [, attr, url] of index.matchAll(/data-video-(src|poster)="([^"]+)"/g)) {
+  if (!url.startsWith(SITE.base) || !existsSync(join(dist, url.slice(SITE.base.length)))) fail(`index.html: demo video ${attr} "${url}" isn't in dist`);
+}
+
 // Every "Download for Mac" button downloads the DMG.
 for (const [, cls, href] of index.matchAll(/<a class="([^"]*\b(?:dl|p)\b[^"]*)" href="([^"]*)"/g)) {
   if (href !== SITE.dmgUrl) fail(`index.html: download button (.${cls}) goes to "${href}", not the DMG`);
