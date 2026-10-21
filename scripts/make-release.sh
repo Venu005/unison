@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Builds Unison.dmg and publishes it as a GitHub Release (Plan 12). Runs on the owner's Mac, because the
-# "MacDroid Self-Signed" identity (scripts/make-signing-cert.sh) only exists in that login keychain.
+# Builds Unison.dmg and publishes it as a GitHub Release (Plan 12). Runs on the owner's Mac, because the app is signed
+# with the "MacDroid Self-Signed" identity (scripts/make-signing-cert.sh), which only exists in that login keychain.
 #   scripts/make-release.sh --dry-run   build, package, sign and print the SHA-256; publish nothing
 #   scripts/make-release.sh             the same, then `gh release create v<version>` on Venu005/unison
 set -euo pipefail
@@ -39,7 +39,9 @@ ditto "$ROOT/mac/build/Build/Products/Release/Unison.app" "$STAGE/Unison.app"
 ln -s /Applications "$STAGE/Applications"
 rm -f "$DMG"
 hdiutil create -volname Unison -srcfolder "$STAGE" -fs HFS+ -format UDZO -quiet "$DMG"
-codesign --sign "$IDENTITY" --timestamp=none "$DMG"
+# The DMG stays unsigned on purpose: macOS assesses a signed disk image and refuses one signed with a self-signed
+# certificate ("Apple could not verify Unison.dmg"). Unsigned, it opens, and Gatekeeper checks only the app inside,
+# which is signed with "$IDENTITY" (keychain access and updates depend on that signature, not the DMG's).
 SHA="$(shasum -a 256 "$DMG" | cut -d' ' -f1)"
 echo "Wrote $DMG"
 echo "SHA-256: $SHA"

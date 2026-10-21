@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Unsigned DMG so the download opens (fix/unsigned-dmg)
+- **What:** while taking the install screenshots, the downloaded `Unison.dmg` was blocked before it opened ("Apple could not verify \"Unison.dmg\""): macOS assesses a signed disk image, and ours was signed with the self-signed certificate. `scripts/make-release.sh` no longer signs the DMG; the app inside stays signed with "MacDroid Self-Signed", so Gatekeeper checks only the app, which is what the site's install steps cover. The `v0.4.0` release asset was replaced with the unsigned build (`gh release upload --clobber`) and its notes now carry the new SHA-256 `cab7af9583c6c190e6e24cd4edc6fb08da1756229b71c00ab0cedf915165fedf`. DECISIONS.md and DEV-GUIDE updated.
+- **Verified:** dry run; `codesign -dv` on the DMG says "not signed at all"; the app inside keeps `certificate leaf = H"be20c074…"`; the owner opened a quarantined copy from Downloads without the DMG warning; the downloaded release asset's SHA-256 matches.
+
 ## 2026-10-21 — Visible play button on the demo video (fix/video-play-button)
 - **What:** the browser's own play button is light grey and disappeared on the light poster (owner). The player now shows a 92 px black play button of our own; pressing it turns on the native controls and plays; it comes back when the video ends. The decorative spinning glow is hidden once a real video is there.
 - **Verified:** `npm test` 20/20, build (no warnings), check ok. Merged to `main` as `7521d53` and pushed at the owner's request; the deploy passed and the live script contains the new button.
