@@ -23,6 +23,8 @@ for (const f of files.filter(f => f.endsWith('.html')).map(f => relative(dist, f
   for (const [, url] of html.matchAll(/\s(?:href|src)="([^"]*)"/g)) {
     if (/^(https?:|mailto:|#|data:)/.test(url)) continue;
     if (!url.startsWith(SITE.base)) fail(`${f}: "${url}" is not under ${SITE.base}`);
+    const file = url.slice(SITE.base.length).split(/[?#]/)[0];
+    if (/\.\w+$/.test(file) && !existsSync(join(dist, file))) fail(`${f}: "${url}" points at a file that isn't in dist`);
   }
   if ((html.match(/<h1[\s>]/g) || []).length !== 1) fail(`${f}: needs exactly one <h1>`);
   if ((html.match(/rel="canonical"/g) || []).length !== 1) fail(`${f}: needs exactly one canonical link`);
