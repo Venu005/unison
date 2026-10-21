@@ -10,7 +10,7 @@ object ClipboardPresentation {
         SendResult.NotConnected -> "Not connected to your Mac"
         SendResult.Empty -> "Clipboard is empty"
         SendResult.TooLarge -> "Too large to send"
-        SendResult.MacTooOld -> "Update MacDroid on your Mac to use this"
+        SendResult.MacTooOld -> "Update Unison on your Mac to use this"
     }
 
     fun preview(item: ClipItem): String {

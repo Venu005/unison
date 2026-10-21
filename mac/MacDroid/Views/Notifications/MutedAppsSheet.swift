@@ -9,7 +9,7 @@ struct MutedAppsSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Muted Apps").font(.title2.weight(.semibold))
-            Text("Notifications from checked apps stay on your phone. This list syncs with MacDroid on your phone.")
+            Text("Notifications from checked apps stay on your phone. This list syncs with Unison on your phone.")
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             if model.notifications.apps.isEmpty {

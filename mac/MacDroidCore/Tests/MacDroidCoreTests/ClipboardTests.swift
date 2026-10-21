@@ -240,7 +240,7 @@ import Testing
     @Test func labelsAndNotices() {
         #expect(ClipboardPresentation.directionLabel(.toPhone) == "→ phone")
         #expect(ClipboardPresentation.directionLabel(.fromPhone) == "← from phone")
-        #expect(ClipboardPresentation.pageNotice(ClipboardState(connected: true, phoneSupportsClipboard: false)) == "Update MacDroid on your phone to use this.")
+        #expect(ClipboardPresentation.pageNotice(ClipboardState(connected: true, phoneSupportsClipboard: false)) == "Update Unison on your phone to use this.")
         #expect(ClipboardPresentation.pageNotice(ClipboardState(connected: false)) == nil)
     }
 }

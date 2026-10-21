@@ -30,7 +30,7 @@ object StatusPresentation {
         ConnectionState.Connecting -> "Connecting…"
         is ConnectionState.Connected -> "Connected to ${state.macName}"
         is ConnectionState.Waiting -> "Mac not reachable — retrying in ${seconds(state.retryInMs)}s"
-        is ConnectionState.TrustFailure -> "Pairing problem — open MacDroid to re-pair"
+        is ConnectionState.TrustFailure -> "Pairing problem — open Unison to re-pair"
     }
 
     private fun seconds(ms: Long): Long = (ms + 999) / 1000

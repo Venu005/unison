@@ -40,7 +40,7 @@ class PairingViewModel(application: Application) : AndroidViewModel(application)
         val invite = PairingInvite.parse(raw)
         if (invite == null) {
             scanGate.markFailed(raw, now)
-            _state.value = UiState.Error("That QR code isn't a MacDroid pairing code.")
+            _state.value = UiState.Error("That QR code isn't a Unison pairing code.")
             return
         }
         pair(invite, raw)
@@ -118,7 +118,7 @@ class PairingViewModel(application: Application) : AndroidViewModel(application)
                 } catch (e: Exception) {
                     UiState.Error("Paired, but couldn't save the pairing on this phone (${e.message ?: e.javaClass.simpleName}). Try again.")
                 }
-                PairResult.CodeRejected -> UiState.Error("The Mac rejected the code — it may have expired. On your Mac, open MacDroid → Phone and choose Pair a Phone (or Pair a Different Phone) again.")
+                PairResult.CodeRejected -> UiState.Error("The Mac rejected the code — it may have expired. On your Mac, open Unison → Phone and choose Pair a Phone (or Pair a Different Phone) again.")
                 PairResult.FingerprintMismatch -> UiState.Error("Security check failed: this isn't the Mac that showed the code.")
                 is PairResult.Failed -> UiState.Error("Couldn't reach the Mac (${result.reason}). Make sure both devices are on the same Wi-Fi.")
             }

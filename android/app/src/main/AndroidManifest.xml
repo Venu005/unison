@@ -35,7 +35,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="MacDroid"
+        android:label="Unison"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
 
@@ -88,7 +88,7 @@
         <service
             android:name=".platform.notifications.MacDroidNotificationListener"
             android:exported="true"
-            android:label="MacDroid"
+            android:label="Unison"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
@@ -158,7 +158,7 @@
         <service
             android:name=".platform.control.MacDroidControlService"
             android:exported="false"
-            android:label="MacDroid control"
+            android:label="Unison control"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter><action android:name="android.accessibilityservice.AccessibilityService" /></intent-filter>
             <meta-data android:name="android.accessibilityservice" android:resource="@xml/control_service" />

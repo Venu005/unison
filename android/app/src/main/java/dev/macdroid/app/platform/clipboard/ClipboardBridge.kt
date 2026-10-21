@@ -57,7 +57,7 @@ class ClipboardBridge(
         val image = item.imageUri
         val clip = when {
             item.kind == ClipItem.Kind.Image && image != null -> imageClip(image)
-            else -> ClipData.newPlainText("MacDroid", item.text.orEmpty())
+            else -> ClipData.newPlainText("Unison", item.text.orEmpty())
         } ?: return
         runCatching { clipboard.setPrimaryClip(clip) }
     }

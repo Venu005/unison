@@ -21,7 +21,7 @@ public enum MirrorPresentation {
 
     public static func audioNotice(_ state: MirrorState, requested: Bool) -> String? {
         guard requested, case .streaming = state.phase, state.audio == false else { return nil }
-        return "Phone audio is off: allow the microphone permission for MacDroid on your phone"
+        return "Phone audio is off: allow the microphone permission for Unison on your phone"
     }
 
     /// Green under 100 ms, orange under 150, red above (spec §6.3).
@@ -30,7 +30,7 @@ public enum MirrorPresentation {
     /// Streaming to a phone that supports control, but its control service is off (spec §8).
     public static func controlNotice(_ state: MirrorState) -> String? {
         guard case .streaming = state.phase, state.phoneFeatures.contains(Feature.control), state.control != true else { return nil }
-        return "Turn on MacDroid control on your phone to use the mouse."
+        return "Turn on Unison control on your phone to use the mouse."
     }
 
     public static func latencyTone(_ ms: Int) -> LatencyTone { ms < 100 ? .good : ms < 150 ? .fair : .poor }

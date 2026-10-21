@@ -5,7 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class FolderLabelTest {
-    @Test fun defaultFolder() = assertEquals("Download/MacDroid", FolderLabel.of(null))
+    @Test fun defaultFolder() = assertEquals("Download/Unison", FolderLabel.of(null))
     @Test fun externalStorageTree() =
         assertEquals("Documents/MacDroid", FolderLabel.of("content://com.android.externalstorage.documents/tree/primary%3ADocuments%2FMacDroid"))
     @Test fun storageRoot() = assertEquals("Internal storage", FolderLabel.of("content://com.android.externalstorage.documents/tree/primary%3A"))

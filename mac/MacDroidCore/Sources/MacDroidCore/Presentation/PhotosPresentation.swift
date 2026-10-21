@@ -70,9 +70,9 @@ public enum PhotosPresentation {
     public static func banner(access: PhotoAccess?, visibleCount: Int) -> String? {
         switch access {
         case .partial:
-            "MacDroid can see \(visibleCount) selected \(visibleCount == 1 ? "photo" : "photos"). To see all, open MacDroid on your phone → Settings → Photos."
+            "Unison can see \(visibleCount) selected \(visibleCount == 1 ? "photo" : "photos"). To see all, open Unison on your phone → Settings → Photos."
         case .some(PhotoAccess.none):
-            "Photos are off on your phone. Open MacDroid on your phone → Settings → Photos."
+            "Photos are off on your phone. Open Unison on your phone → Settings → Photos."
         default:
             nil
         }
@@ -91,10 +91,10 @@ public enum PhotosPresentation {
     public static func message(_ error: PhotoFetchError) -> String {
         switch error {
         case .gone: "This photo is no longer on your phone"
-        case .denied: "Photos are off on your phone. Open MacDroid on your phone → Settings → Photos."
+        case .denied: "Photos are off on your phone. Open Unison on your phone → Settings → Photos."
         case .noResponse: "Your phone didn't respond"
         case .notConnected: "Phone not connected"
-        case .unsupported: "Update MacDroid on your phone to use this."
+        case .unsupported: "Update Unison on your phone to use this."
         case .failed: "Couldn't get this photo from your phone"
         }
     }

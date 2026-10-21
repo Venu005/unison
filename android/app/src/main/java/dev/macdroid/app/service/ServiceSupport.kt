@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 object StatusText {
-    const val LOCAL_NETWORK_NEEDED = "Local network permission needed — open MacDroid"
+    const val LOCAL_NETWORK_NEEDED = "Local network permission needed — open Unison"
 
     fun title(state: ConnectionState): String = dev.macdroid.app.ui.presentation.StatusPresentation.notificationTitle(state)
 }

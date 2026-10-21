@@ -1,8 +1,10 @@
 <p align="center">
-  <img src="design/icon/macdroid-icon-mac.svg" width="128" alt="MacDroid icon: a green droid peeking over a MacBook lid">
+  <img src="design/icon/macdroid-icon-mac.svg" width="128" alt="Unison icon: a green droid peeking over a MacBook lid">
 </p>
 
-<h1 align="center">MacDroid</h1>
+<h1 align="center">Unison</h1>
+
+<p align="center"><sub>Formerly MacDroid. Code and internal ids still use that name.</sub></p>
 
 <p align="center">
   Your Android phone and your Mac, working together over your own Wi-Fi.<br>
@@ -11,7 +13,7 @@
 
 ---
 
-MacDroid is a pair of native apps: a **Mac menu-bar app** and an **Android app**. You pair them once by scanning a QR code. After that they find each other on your local network and stay connected in the background, so you can see your phone's battery on the Mac and send files either way. Phone notifications and a shared clipboard come in later updates.
+Unison is a pair of native apps: a **Mac menu-bar app** and an **Android app**. You pair them once by scanning a QR code. After that they find each other on your local network and stay connected in the background, so you can see your phone's battery on the Mac and send files either way. Phone notifications and a shared clipboard come in later updates.
 
 It's built first for personal use (developed on a Nothing Phone (3) running Android 17 and a MacBook Air running macOS 26). It's designed to be publishable on the Mac App Store and Google Play: the Mac app is sandboxed, and the Android app uses only Play-friendly permissions.
 
@@ -38,7 +40,7 @@ It's built first for personal use (developed on a Nothing Phone (3) running Andr
 - Or use the **Files** tab or Home's **Send** button, which open the system Photo Picker or file picker.
 
 **Receiving:**
-- Files save automatically: `~/Downloads/MacDroid` on the Mac and `Download/MacDroid` on the phone.
+- Files save automatically: `~/Downloads/Unison` on the Mac and `Download/Unison` on the phone.
 - Each side has its own setting to pick another folder or to **ask where to save each time**.
 - A notification tells you a file arrived, with **Open** (and **Show in Finder** on the Mac).
 
@@ -97,14 +99,12 @@ The Gradle wrapper is committed.
 cd mac
 xcodegen generate                      # creates MacDroid.xcodeproj (not committed)
 xcodebuild -project MacDroid.xcodeproj -scheme MacDroid -configuration Debug -derivedDataPath build build
-open build/Build/Products/Debug/MacDroid.app
+open build/Build/Products/Debug/Unison.app
 ```
 
-MacDroid lives in the menu bar. Open it again (or press ⌘O in the popover) to show its window.
+Unison lives in the menu bar. Open it again (or press ⌘O in the popover) to show its window.
 
-Development builds are ad-hoc signed, which has two side effects:
-- macOS asks for keychain access after each rebuild. Choose **Always Allow**.
-- Files queued before a rebuild may not resume after it.
+Builds are signed with a self-signed identity, "MacDroid Self-Signed". Create it once per Mac with `scripts/make-signing-cert.sh`. With it, keychain access ("Always Allow") survives rebuilds and updates.
 
 ### Android app
 
@@ -118,8 +118,8 @@ ANDROID_SERIAL=<device> ./gradlew :app:installDebug
 
 ### Pair them
 
-1. On the Mac, open MacDroid → **Phone** → **Pair a Phone** to show a QR code.
-2. On the phone, open MacDroid and follow the setup: allow local network access, then scan the code.
+1. On the Mac, open Unison → **Phone** → **Pair a Phone** to show a QR code.
+2. On the phone, open Unison and follow the setup: allow local network access, then scan the code.
 3. You're done: the Mac shows your phone's battery, and the **Files** pages on both sides can send files.
 
 ## Tests
@@ -186,3 +186,7 @@ docs/superpowers/        Design specs, implementation plans and follow-up lists
 
 - **Mac:** Swift, SwiftUI, [Hummingbird 2](https://github.com/hummingbird-project/hummingbird), SwiftNIO and NIOSSL, swift-certificates, swift-crypto
 - **Android:** Kotlin, Jetpack Compose (Material 3), OkHttp, kotlinx.serialization, kotlinx.coroutines, CameraX and ML Kit (QR scanning)
+
+## License
+
+[MIT](LICENSE) © 2026 Venu005

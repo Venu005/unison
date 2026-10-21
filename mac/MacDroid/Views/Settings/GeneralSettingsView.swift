@@ -30,10 +30,10 @@ struct GeneralSettingsView: View {
                         }
                     }
                 }
-                Toggle("Show MacDroid in the Dock while its window is open", isOn: $showInDock)
+                Toggle("Show Unison in the Dock while its window is open", isOn: $showInDock)
                     .onChange(of: showInDock) { _, _ in DockPolicy.windowDidAppear() }
             } footer: {
-                Text("MacDroid always keeps running in the menu bar.").foregroundStyle(.secondary)
+                Text("Unison always keeps running in the menu bar.").foregroundStyle(.secondary)
             }
             Section {
                 LabeledContent("Save received files to") {
@@ -45,7 +45,7 @@ struct GeneralSettingsView: View {
                 }
                 Toggle("Ask where to save each time", isOn: $files.askEachTime)
                 if files.folderProblem {
-                    Label("MacDroid can't reach the folder you chose for received files. Choose it again in Settings.",
+                    Label("Unison can't reach the folder you chose for received files. Choose it again in Settings.",
                           systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
                 }
@@ -63,7 +63,7 @@ struct GeneralSettingsView: View {
             } header: {
                 Text("Notifications")
             } footer: {
-                Text("Notifications from your phone appear in Notification Center. Android hides one-time codes from apps like MacDroid.")
+                Text("Notifications from your phone appear in Notification Center. Android hides one-time codes from apps like Unison.")
                     .foregroundStyle(.secondary)
             }
             Section {
@@ -118,7 +118,7 @@ struct GeneralSettingsView: View {
         do {
             if enabled { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
             loginMessage = SMAppService.mainApp.status == .requiresApproval
-                ? "Approve MacDroid in System Settings → General → Login Items."
+                ? "Approve Unison in System Settings → General → Login Items."
                 : nil
         } catch {
             loginMessage = "Couldn't change the login item: \(error.localizedDescription)"

@@ -14,7 +14,7 @@ struct NotificationsView: View {
             if let notice = NotificationPresentation.pageNotice(state) { BannerView(kind: .warning, message: notice) }
             if model.macNotificationsDenied {
                 HStack {
-                    BannerView(kind: .warning, message: "MacDroid isn't allowed to show notifications on this Mac.")
+                    BannerView(kind: .warning, message: "Unison isn't allowed to show notifications on this Mac.")
                     Button("Open System Settings") {
                         if let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension") {
                             NSWorkspace.shared.open(url)

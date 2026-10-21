@@ -43,7 +43,7 @@ class EngineHarness(
     @Volatile var online = true
     val incoming = MutableSharedFlow<Message>(extraBufferCapacity = 64)
     val connected = MutableStateFlow(true)
-    val folder = File(dir, "Download/MacDroid")
+    val folder = File(dir, "Download/Unison")
     val clipboardFolder = File(dir, "clipboard")
     private val saveTarget = target ?: FolderSaveTarget(folder)
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)

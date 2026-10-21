@@ -82,15 +82,15 @@ private func item(_ id: Int, _ seconds: Int64, kind: PhotoKind = .photo, size: I
 
     @Test func accessCopy() {
         #expect(PhotosPresentation.banner(access: .full, visibleCount: 10) == nil)
-        #expect(PhotosPresentation.banner(access: .partial, visibleCount: 24) == "MacDroid can see 24 selected photos. To see all, open MacDroid on your phone → Settings → Photos.")
-        #expect(PhotosPresentation.banner(access: PhotoAccess.none, visibleCount: 0) == "Photos are off on your phone. Open MacDroid on your phone → Settings → Photos.")
+        #expect(PhotosPresentation.banner(access: .partial, visibleCount: 24) == "Unison can see 24 selected photos. To see all, open Unison on your phone → Settings → Photos.")
+        #expect(PhotosPresentation.banner(access: PhotoAccess.none, visibleCount: 0) == "Photos are off on your phone. Open Unison on your phone → Settings → Photos.")
         #expect(PhotosPresentation.phoneLine(.full) == "All")
         #expect(PhotosPresentation.phoneLine(.partial) == "Selected")
         #expect(PhotosPresentation.phoneLine(PhotoAccess.none) == "Off on phone")
         #expect(PhotosPresentation.phoneLine(nil) == nil)
         #expect(PhotosPresentation.message(.gone) == "This photo is no longer on your phone")
         #expect(PhotosPresentation.message(.noResponse) == "Your phone didn't respond")
-        #expect(PhotosPresentation.message(.unsupported) == "Update MacDroid on your phone to use this.")
+        #expect(PhotosPresentation.message(.unsupported) == "Update Unison on your phone to use this.")
     }
 }
 

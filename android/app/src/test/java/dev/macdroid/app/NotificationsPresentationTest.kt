@@ -32,7 +32,7 @@ class NotificationsPresentationTest {
 
     @Test fun oldMacAsksForAnUpdate() {
         val card = NotificationsPresentation.topCard(on, "Mac", macSupports = false, connected = true)
-        assertEquals("Update MacDroid on your Mac to use this", card.title)
+        assertEquals("Update Unison on your Mac to use this", card.title)
         assertFalse(card.showsSwitch)
     }
 

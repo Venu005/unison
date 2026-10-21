@@ -12,7 +12,7 @@ cd mac/MacDroidCore && swift test
 
 # Mac app (generates MacDroid.xcodeproj, which is not committed)
 cd mac && xcodegen generate && xcodebuild -project MacDroid.xcodeproj -scheme MacDroid -configuration Debug -derivedDataPath build build
-open mac/build/Build/Products/Debug/MacDroid.app
+open mac/build/Build/Products/Debug/Unison.app
 
 # Android
 cd android && ./gradlew :core:test :app:testDebugUnitTest :app:assembleDebug
@@ -36,16 +36,16 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 
 ## Gotchas
 - **Mirroring (Plan 7):**
-  - **Starting:** Mac → Phone page or the popover → Mirror. With MacDroid control on, auto-Start presses "Share screen"; without it, the phone posts "Mirror to <Mac>? Tap to start" (Android blocks background activity starts).
+  - **Starting:** Mac → Phone page or the popover → Mirror. With Unison control on, auto-Start presses "Share screen"; without it, the phone posts "Mirror to <Mac>? Tap to start" (Android blocks background activity starts).
   - **Locking:** Android ends screen capture when the phone locks, and shows no consent over the lock screen. Mirroring keeps the phone awake; start it on an unlocked phone.
-- **Calls (Plan 10):** grant "Make calls from your Mac" on the phone (Settings → Calls) to dial from the Mac. To make MacDroid open phone links, choose it as the default calling app in the handler app's settings (Settings → Calls says which app that is). The sandboxed app can't set this itself; from a terminal, a small Swift script calling `NSWorkspace.shared.setDefaultApplication(at:toOpenURLsWithScheme: "tel")` with the app's path also works. Call audio stays on the phone. Incoming calls need notification access, as for notification mirroring.
+- **Calls (Plan 10):** grant "Make calls from your Mac" on the phone (Settings → Calls) to dial from the Mac. To make Unison open phone links, choose it as the default calling app in the handler app's settings (Settings → Calls says which app that is). The sandboxed app can't set this itself; from a terminal, a small Swift script calling `NSWorkspace.shared.setDefaultApplication(at:toOpenURLsWithScheme: "tel")` with the app's path also works. Call audio stays on the phone. Incoming calls need notification access, as for notification mirroring.
 - **Remote control (Plan 8):**
-  - **Turning it on:** phone → MacDroid → Settings → Remote control → MacDroid control → Accessibility → turn on "MacDroid control". Don't toggle it from adb on the owner's phone.
+  - **Turning it on:** phone → Unison → Settings → Remote control → Unison control → Accessibility → turn on "Unison control". Don't toggle it from adb on the owner's phone.
   - **Auto-Start** (Settings → "Start mirroring without touching the phone", on by default in personal builds) presses "Share screen" by itself, but only on an unlocked phone and only while a session waits for consent.
   - **Testing input:** `scripts/cross-platform-test.sh` covers the messages and the gate; gestures, typing and auto-Start are checked by hand (owner checklist in `docs/superpowers/plans/2026-10-14-macdroid-mirroring-followups.md`).
-  - **Probe results:** `docs/superpowers/plans/2026-10-14-macdroid-mirroring-followups.md` (the consent dialog is System UI's "Share your screen with MacDroid?", button `android:id/button1` "Share screen").
+  - **Probe results:** `docs/superpowers/plans/2026-10-14-macdroid-mirroring-followups.md` (the consent dialog is System UI's "Share your screen with Unison?", button `android:id/button1` "Share screen").
   - **The H.264 test fixture** is regenerated with `scripts/make-h264-fixture.sh` (needs ffmpeg with libx264).
-- **Photos access (Plan 6):** Android 14+ asks for `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO` and `READ_MEDIA_VISUAL_USER_SELECTED` together ("Allow all" or "Select photos"); Android 13 has images/video only; 10–12 use `READ_EXTERNAL_STORAGE`. To test limited access: phone Settings → Apps → MacDroid → Permissions → Photos and videos → "Allow limited access". Mac thumbnails live in `~/Library/Containers/dev.macdroid.mac/Data/Library/Application Support/PhotoThumbs/`; previews and drags in `…/Data/Library/Caches/PhotoCache/` (emptied at launch).
+- **Photos access (Plan 6):** Android 14+ asks for `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO` and `READ_MEDIA_VISUAL_USER_SELECTED` together ("Allow all" or "Select photos"); Android 13 has images/video only; 10–12 use `READ_EXTERNAL_STORAGE`. To test limited access: phone Settings → Apps → Unison → Permissions → Photos and videos → "Allow limited access". Mac thumbnails live in `~/Library/Containers/dev.macdroid.mac/Data/Library/Application Support/PhotoThumbs/`; previews and drags in `…/Data/Library/Caches/PhotoCache/` (emptied at launch).
 - **App icon sources:** the source art is `design/icon/`.
   - Mac PNGs are generated, so don't hand-edit `AppIcon.appiconset`.
   - The Android vectors in `res/drawable/ic_launcher_*.xml` mirror the SVG paths (100-unit frame, scaled 0.72 and offset 18 into the 108dp canvas). Update both when the art changes.
@@ -58,14 +58,14 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - **Window not opened automatically:** in an `LSUIElement` app a SwiftUI `Window` scene is not opened at launch. `MenuBarLabel` (always alive) opens it via `WindowRequest`. `SceneBuilder` rejects `if #available`.
 - **Hidden menu-bar icon:** on a MacBook with a notch it can be hidden. Launching the app again opens the window (`applicationShouldHandleReopen`).
 - **Signing identity (once per Mac):** run `scripts/make-signing-cert.sh` before the first Mac build. It puts the self-signed "MacDroid Self-Signed" code-signing identity in the login keychain, and `project.yml` signs every build with it (Manual style). Without it the build fails with a missing-identity error. `security find-identity -p codesigning` shows it as `CSSMERR_TP_NOT_TRUSTED`; that's expected, and codesign still uses it. Back it up (Keychain Access → My Certificates → Export .p12) and ship every release with the same one.
-- **Keychain prompt:** macOS knows the app by `identifier "dev.macdroid.mac" and certificate leaf = H"…"` (check with `codesign -dr - MacDroid.app`), so after one "Always Allow" (two prompts: key and certificate items) rebuilds and updates don't ask again. Ad-hoc builds were known by their cdhash, which changes every build, so they asked every time (fixed 2026-10-21). A new certificate means one more round of prompts.
-- **Running the Release build:** `xcodebuild -project MacDroid.xcodeproj -scheme MacDroid -configuration Release -derivedDataPath build build`, then `ditto build/Build/Products/Release/MacDroid.app /Applications/MacDroid.app` and `open /Applications/MacDroid.app`. Quit any Debug copy first, so two copies don't fight over the server port.
+- **Keychain prompt:** macOS knows the app by `identifier "dev.macdroid.mac" and certificate leaf = H"…"` (check with `codesign -dr - Unison.app`), so after one "Always Allow" (two prompts: key and certificate items) rebuilds and updates don't ask again. Ad-hoc builds were known by their cdhash, which changes every build, so they asked every time (fixed 2026-10-21). A new certificate means one more round of prompts.
+- **Running the Release build:** `xcodebuild -project MacDroid.xcodeproj -scheme MacDroid -configuration Release -derivedDataPath build build`, then `ditto build/Build/Products/Release/Unison.app /Applications/Unison.app` and `open /Applications/Unison.app` (delete an old `/Applications/MacDroid.app` first: same bundle id). Quit any Debug copy first, so two copies don't fight over the server port.
 - **Android 17 local network:** apps targeting API 37 need runtime `ACCESS_LOCAL_NETWORK` before LAN sockets or NSD. Setup requests it first, and the service and boot receiver refuse to run without it.
 - **NSD addresses:** `getHost()` on API 34+ is `hostAddresses[0]`. The locator scans every address for IPv4. `stopServiceResolution` exists only on 34+.
 - **Gradle wrapper:** `gradle-wrapper.properties` has `validateDistributionUrl=false` (environment workaround). Restore validation and add `distributionSha256Sum` before publishing.
 - **Scratch folder:** `.superpowers/` is gitignored scratch for agent workflows (ledgers, review packages, screenshots, brainstorm mockups).
 
-- **Sandbox file access:** received files go to `~/Downloads/MacDroid` (Downloads entitlement) or a folder chosen in Settings (a security-scoped bookmark, kept open while the app runs). Outgoing files are remembered as read-only security-scoped bookmarks, so a resume survives a relaunch.
+- **Sandbox file access:** received files go to `~/Downloads/Unison` (Downloads entitlement) or a folder chosen in Settings (a security-scoped bookmark, kept open while the app runs). Outgoing files are remembered as read-only security-scoped bookmarks, so a resume survives a relaunch.
 - **xcodebuild noise:** lines about CoreSimulator being out of date, `DVTCoreDeviceCore`, and `appintentsmetadataprocessor` are environment logs, not compiler output. Judge a build by `** BUILD SUCCEEDED **` and by `.swift:line:col: warning|error` lines.
 
 - **Share target and URI grants:** shared URIs are handed to `ConnectionService` in an intent with `FLAG_GRANT_READ_URI_PERMISSION`. Files without a persistable grant are copied to `cache/outgoing/` only up to 100 MB, and the copies are deleted when the transfer finishes.

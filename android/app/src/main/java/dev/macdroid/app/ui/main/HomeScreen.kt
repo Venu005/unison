@@ -56,7 +56,7 @@ fun HomeScreen(onPairAgain: () -> Unit, viewModel: HomeViewModel = viewModel(), 
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text("MacDroid", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(start = 8.dp, top = 16.dp, bottom = 4.dp))
+        Text("Unison", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(start = 8.dp, top = 16.dp, bottom = 4.dp))
         StatusCard(ui.status) { action ->
             when (action) {
                 StatusAction.RetryNow -> viewModel.retryNow()
@@ -104,7 +104,7 @@ fun HomeScreen(onPairAgain: () -> Unit, viewModel: HomeViewModel = viewModel(), 
         AlertDialog(
             onDismissRequest = { confirmPairAgain = false },
             title = { Text("Pair again?") },
-            text = { Text("This phone will forget ${ui.macName ?: "your Mac"}. Then, on your Mac, open MacDroid → Phone and choose Pair a Phone (or Pair a Different Phone), and scan the new code.") },
+            text = { Text("This phone will forget ${ui.macName ?: "your Mac"}. Then, on your Mac, open Unison → Phone and choose Pair a Phone (or Pair a Different Phone), and scan the new code.") },
             confirmButton = {
                 TextButton(onClick = {
                     confirmPairAgain = false

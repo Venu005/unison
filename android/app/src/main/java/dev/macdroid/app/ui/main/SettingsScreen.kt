@@ -131,7 +131,7 @@ fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewMode
         item { SectionHeader("Remote control") }
         item {
             ListItem(
-                headlineContent = { Text("MacDroid control") },
+                headlineContent = { Text("Unison control") },
                 supportingContent = { Text(if (ui.controlOn) "On" else "Off: tap to turn on in Accessibility") },
                 leadingContent = { Icon(Icons.Rounded.TouchApp, contentDescription = null) },
                 modifier = Modifier.clickable { context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) },
@@ -141,7 +141,7 @@ fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewMode
             item {
                 ListItem(
                     headlineContent = { Text("Start mirroring without touching the phone") },
-                    supportingContent = { Text("MacDroid control presses Start on the screen-sharing prompt for you (phone unlocked)") },
+                    supportingContent = { Text("Unison control presses Start on the screen-sharing prompt for you (phone unlocked)") },
                     leadingContent = { Icon(Icons.Rounded.PlayCircle, contentDescription = null) },
                     trailingContent = { Switch(checked = ui.autoStart && ui.controlOn, enabled = ui.controlOn, onCheckedChange = viewModel::setAutoStart) },
                 )
@@ -217,7 +217,7 @@ fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewMode
         AlertDialog(
             onDismissRequest = { confirmForget = false },
             title = { Text("Forget ${mac?.name ?: "this Mac"}?") },
-            text = { Text("MacDroid will disconnect, and you'll need to pair again to reconnect.") },
+            text = { Text("Unison will disconnect, and you'll need to pair again to reconnect.") },
             confirmButton = {
                 TextButton(onClick = {
                     confirmForget = false

@@ -1,4 +1,4 @@
-# MacDroid handoff
+# Unison handoff
 
 > **Picking up?** The next action is in [ROADMAP.md](ROADMAP.md) under "Next":
 > 1. File transfer (Plan 2), notifications (Plan 3) and clipboard (Plan 4) are all **merged to `main`** (version 0.4.0).
@@ -16,7 +16,9 @@ These rules are also in the repo's `/CLAUDE.md`. Claude Desktop doesn't load tha
 - **Process:** brainstorm → spec → plan → subagent-driven execution with per-task review → owner's hands-on check → merge.
 - **Build gates** (all must pass with no warnings): see [DEV-GUIDE.md](DEV-GUIDE.md).
 
-## What MacDroid is
+## What Unison is
+**Naming:** the product is called **Unison** (renamed from MacDroid on 2026-10-21). Code, folders, the Xcode target/scheme, bundle id `dev.macdroid.mac`, Android package `dev.macdroid.*`, the keychain items, the Bonjour type `_macdroid._tcp` and the `X-MacDroid-Session` header keep the old name on purpose: changing them would break existing pairings. Anything a user sees says Unison.
+
 A clone of **LinkMyMac** (Android ↔ Mac integration). The phone and Mac pair once by QR code, then stay connected over local Wi-Fi with mutual TLS. The full feature set is planned in rounds:
 
 | Round | Scope | State |

@@ -42,7 +42,7 @@ fun FilesScreen(viewModel: FilesViewModel = viewModel()) {
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
                 ) {
                     Text(
-                        "Can't save to your chosen folder — choose it again in Settings. Until then MacDroid asks where to save each file.",
+                        "Can't save to your chosen folder — choose it again in Settings. Until then Unison asks where to save each file.",
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onErrorContainer,
                     )

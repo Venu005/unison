@@ -216,7 +216,7 @@ interface UiNode {
 object ConsentMatcher {
     private const val CONTAINER = "com.android.systemui:id/screen_share_permission_dialog"
     private const val POSITIVE = "android:id/button1"
-    private const val APP = "MacDroid"
+    private const val APP = "Unison"
     private val labels = setOf("share screen", "start", "start now")
 
     fun startButton(root: UiNode): UiNode? {

@@ -11,7 +11,7 @@ struct FilesView: View {
         let snapshot = model.transfers
         VStack(spacing: 0) {
             if model.files.folderProblem {
-                BannerView(kind: .warning, message: "MacDroid can't reach the folder you chose for received files. Choose it again in Settings.")
+                BannerView(kind: .warning, message: "Unison can't reach the folder you chose for received files. Choose it again in Settings.")
             }
             if let error = model.transientError { BannerView(kind: .error, message: error) }
             List {

@@ -10,7 +10,7 @@ struct AboutView: View {
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
                 .frame(width: 72, height: 72)
-            Text("MacDroid").font(.title2.weight(.semibold))
+            Text("Unison").font(.title2.weight(.semibold))
             Text("Version \(version) (\(build))").foregroundStyle(.secondary)
             Text("Your Android phone, connected to your Mac — locally, with no account or cloud.")
                 .multilineTextAlignment(.center)

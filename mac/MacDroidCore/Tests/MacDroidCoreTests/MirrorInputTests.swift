@@ -103,7 +103,7 @@ import Testing
         state.connected = true
         state.phoneFeatures = [Feature.mirror, Feature.control]
         state.control = false
-        #expect(MirrorPresentation.controlNotice(state) == "Turn on MacDroid control on your phone to use the mouse.")
+        #expect(MirrorPresentation.controlNotice(state) == "Turn on Unison control on your phone to use the mouse.")
         state.control = true
         #expect(MirrorPresentation.controlNotice(state) == nil)
     }

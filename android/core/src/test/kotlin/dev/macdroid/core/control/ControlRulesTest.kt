@@ -100,9 +100,9 @@ class ControlRulesTest {
     @Test fun onlyTheMirroringConsentIsMatched() {
         val share = Node("android:id/button1", "Share screen", clickable = true)
         val dialog = Node(children = listOf(Node("com.android.systemui:id/screen_share_permission_dialog", children = listOf(
-            Node(text = "Share your screen with MacDroid?"), Node("android:id/button2", "Cancel", true), share))))
+            Node(text = "Share your screen with Unison?"), Node("android:id/button2", "Cancel", true), share))))
         assertSame(share, ConsentMatcher.startButton(dialog))
-        val older = Node(children = listOf(Node(text = "Start recording or casting with MacDroid?"), Node(null, "Start now", true)))
+        val older = Node(children = listOf(Node(text = "Start recording or casting with Unison?"), Node(null, "Start now", true)))
         assertEquals("Start now", ConsentMatcher.startButton(older)?.text)
         val other = Node(children = listOf(Node(text = "Start a workout?"), Node(null, "Start", true)))
         assertNull(ConsentMatcher.startButton(other))
@@ -149,7 +149,7 @@ class ControlRulesTest {
         val recorder = Node(children = listOf(Node("com.android.systemui:id/screen_share_permission_dialog", children = listOf(
             Node(text = "Start recording?"), Node("android:id/button1", "Start", true)))))
         assertNull(ConsentMatcher.startButton(recorder))
-        val shade = Node(children = listOf(Node(text = "MacDroid"), Node(text = "Mirror to MacBook? Tap to start"),
+        val shade = Node(children = listOf(Node(text = "Unison"), Node(text = "Mirror to MacBook? Tap to start"),
             Node(text = "Stopwatch"), Node(null, "Start", true)))
         assertNull(ConsentMatcher.startButton(shade))
     }

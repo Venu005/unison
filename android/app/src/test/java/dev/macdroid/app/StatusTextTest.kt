@@ -12,10 +12,10 @@ class StatusTextTest {
         assertEquals("Connecting…", StatusText.title(ConnectionState.Connecting))
         assertEquals("Not paired", StatusText.title(ConnectionState.NotPaired))
         assertEquals("Disconnected", StatusText.title(ConnectionState.Stopped))
-        assertEquals("Pairing problem — open MacDroid to re-pair", StatusText.title(ConnectionState.TrustFailure("x")))
+        assertEquals("Pairing problem — open Unison to re-pair", StatusText.title(ConnectionState.TrustFailure("x")))
     }
 
     @Test fun localNetworkPermissionNotice() {
-        assertEquals("Local network permission needed — open MacDroid", StatusText.LOCAL_NETWORK_NEEDED)
+        assertEquals("Local network permission needed — open Unison", StatusText.LOCAL_NETWORK_NEEDED)
     }
 }

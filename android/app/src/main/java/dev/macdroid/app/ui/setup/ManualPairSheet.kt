@@ -35,7 +35,7 @@ fun ManualPairSheet(onDismiss: () -> Unit, onSubmit: (host: String, port: String
         ) {
             Text("Enter pairing details", style = MaterialTheme.typography.titleLarge)
             Text(
-                "Find these under “Can't scan?” in MacDroid on your Mac.",
+                "Find these under “Can't scan?” in Unison on your Mac.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

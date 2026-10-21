@@ -208,7 +208,7 @@ final class AppModel {
         mirrorRenderer = MirrorRenderer(meter: mirrorSession.meter, audio: mirrorAudioPlayer,
                                         requestKeyFrame: { Task { await mirrorSession.requestKeyFrame() } })
         if temporary {
-            warnings.append("MacDroid couldn't open its keychain, so pairing is unavailable until you restart MacDroid.")
+            warnings.append("Unison couldn't open its keychain, so pairing is unavailable until you restart Unison.")
         }
     }
 
@@ -222,7 +222,7 @@ final class AppModel {
             do {
                 try await server.run { [weak self] port in await self?.serverStarted(port: port) }
             } catch {
-                self?.warnings.append("MacDroid's connection service stopped (\(error.localizedDescription)). Quit and reopen MacDroid.")
+                self?.warnings.append("Unison's connection service stopped (\(error.localizedDescription)). Quit and reopen Unison.")
             }
         })
         tasks.append(Task { [weak self, hub] in
@@ -402,7 +402,7 @@ final class AppModel {
             case .sent: break
             case .noLink: await notifyInfo("No link in the selection")
             case .notConnected: await notifyInfo("Your phone isn't connected")
-            case .unsupported: await notifyInfo("Update MacDroid on your phone to use this")
+            case .unsupported: await notifyInfo("Update Unison on your phone to use this")
             }
         }
     }
@@ -410,7 +410,7 @@ final class AppModel {
     private func notifyInfo(_ text: String) async {
         guard await router.ensureAuthorized() else { return }
         let content = UNMutableNotificationContent()
-        content.title = "MacDroid"
+        content.title = "Unison"
         content.body = text
         try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "dev.macdroid.info", content: content, trigger: nil))
     }
@@ -889,13 +889,13 @@ final class AppModel {
 
     private func beginPairing() async {
         guard !usingTemporaryIdentity else {
-            transientError = "Pairing is unavailable because MacDroid couldn't open its keychain. Quit and reopen MacDroid to try again."
+            transientError = "Pairing is unavailable because Unison couldn't open its keychain. Quit and reopen Unison to try again."
             return
         }
         guard !isOpeningWindow else { return }
         isOpeningWindow = true
         defer { isOpeningWindow = false }
-        guard let port = listeningPort else { transientError = "MacDroid is still starting — try again in a moment."; return }
+        guard let port = listeningPort else { transientError = "Unison is still starting — try again in a moment."; return }
         guard let host = LocalAddress.primaryIPv4() else { transientError = "No network connection. Join Wi-Fi and try again."; return }
         transientError = nil
         pairingExpired = false
