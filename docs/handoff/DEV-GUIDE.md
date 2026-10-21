@@ -90,6 +90,12 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - `npm test`: Vitest unit tests (`test/`). `npm run build`: static site into `website/dist`. `npm run check`: post-build assertions on `dist` (no "MacDroid", links under the base path, SEO files present). `npm run preview`: serve `dist` at `http://localhost:4173/unison/`.
 - Site identity and every URL (site, repo, DMG, Play) live only in `website/site.config.js`.
 
+## Releasing the Mac app (Plan 12)
+- Prerequisites: the "MacDroid Self-Signed" identity in the login keychain (`scripts/make-signing-cert.sh`, or import the backed-up .p12), a clean git tree, and `gh` logged in with push rights to `Venu005/unison` (`venusai-glitch` is a collaborator).
+- Bump `CFBundleShortVersionString` (and `CFBundleVersion`) in `mac/project.yml` first; the tag is `v<version>`.
+- `scripts/make-release.sh --dry-run` builds Release, packages `mac/build/release/Unison.dmg` (`Unison.app` + an `Applications` shortcut), signs it and prints the SHA-256. Check: `codesign -dvv mac/build/release/Unison.dmg` shows `Authority=MacDroid Self-Signed` (plain `-dv` doesn't print it).
+- `scripts/make-release.sh` (no flag) does the same, then `gh release create` with the DMG and notes containing the SHA-256. It's public: run it only on the owner's word. The website's Download button always points at the latest release's `Unison.dmg`.
+
 ## Conventions
 - Swift Testing (`@Test`, `#expect`) on the Mac and JUnit4 on Android; TDD for logic.
 - Pure presentation and state logic lives in testable types; views stay thin.
