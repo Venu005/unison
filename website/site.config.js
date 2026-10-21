@@ -15,7 +15,7 @@ export default {
   // null until the Play listing is live: the page shows a "Coming soon to Google Play" badge instead of a link.
   playUrl: null,
   version: '0.4.0',
-  developer: { name: 'Venusai', email: 'venusaiyalamanchili@gmail.com' },
+  developer: { name: 'Venusai', email: 'venusaiyalamanchili@gmail.com', url: 'https://github.com/Venu005' },
   license: 'MIT',
   // Search-engine ownership proofs. Google's is the file public/google<token>.html; Bing reads public/BingSiteAuth.xml
   // or this code as a meta tag on the home page.

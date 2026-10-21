@@ -34,7 +34,7 @@ export function headTags(site, page) {
 }
 
 export function jsonLd(site) {
-  const person = { '@type': 'Person', name: site.developer.name, email: site.developer.email };
+  const person = { '@type': 'Person', name: site.developer.name, email: site.developer.email, url: site.developer.url };
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
