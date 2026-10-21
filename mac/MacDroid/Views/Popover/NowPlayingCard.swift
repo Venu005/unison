@@ -62,13 +62,9 @@ struct NowPlayingCard: View {
     }
 
     private func artwork(_ url: URL?) -> some View {
-        Group {
-            if let url, let image = NSImage(contentsOf: url) {
-                Image(nsImage: image).resizable().scaledToFill()
-            } else {
-                Image(systemName: "music.note").font(.system(size: 18)).foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity).background(.quaternary)
-            }
+        DownscaledImageView(url: url, size: 44, fill: true) {
+            Image(systemName: "music.note").font(.system(size: 18)).foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, maxHeight: .infinity).background(.quaternary)
         }
         .frame(width: 44, height: 44)
         .clipShape(RoundedRectangle(cornerRadius: 8))

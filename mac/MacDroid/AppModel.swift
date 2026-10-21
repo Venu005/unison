@@ -85,7 +85,12 @@ final class AppModel {
     private(set) var photoBusy: Set<String> = []
     @ObservationIgnored let photoThumbnails: ThumbnailCache
     @ObservationIgnored private let photosClient: PhotosClient
-    @ObservationIgnored private let thumbImages = NSCache<NSString, NSImage>()
+    /// Bounded (memory pass): a long scroll through the library used to keep every decoded thumbnail until memory ran low.
+    @ObservationIgnored private let thumbImages: NSCache<NSString, NSImage> = {
+        let cache = NSCache<NSString, NSImage>()
+        cache.countLimit = 600
+        return cache
+    }()
     @ObservationIgnored private var pendingThumbs: Set<String> = []
     @ObservationIgnored private var thumbFlush: Task<Void, Never>?
     /// Thumbnails that arrived, applied together every 100 ms so a batch of 60 redraws the grid once.
