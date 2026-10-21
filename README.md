@@ -160,6 +160,10 @@ docs/handoff/            Living project docs: status, architecture, decisions, d
 docs/superpowers/        Design specs, implementation plans and follow-up lists
 ```
 
+## Website
+
+The site lives in [`website/`](website/) and is published to GitHub Pages at https://venu005.github.io/unison/ (once enabled). Mac releases (`Unison.dmg`) are built with `scripts/make-release.sh`. See the [developer guide](docs/handoff/DEV-GUIDE.md).
+
 ## Documentation
 
 - [**Handoff**](docs/handoff/README.md): start here to work on the project.

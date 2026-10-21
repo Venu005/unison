@@ -81,7 +81,8 @@ The owner's planned features, with status:
 
 Also noted earlier: SMS (personal build only, Play-restricted), USB transport via `adb reverse`, Wi-Fi Direct, and the parked Finder Share extension.
 
-## Website (in progress, 2026-10-21)
+## Website (Plan 12, built on `feat/website` 2026-10-21)
+- Plan: `docs/superpowers/plans/2026-10-21-unison-website-12.md`. Next: whole-branch review, owner check (`npm run preview`), then on the owner's word: merge, push, enable Pages, publish `v0.4.0`.
 - Landing page, install steps, privacy page and the first `Unison.dmg` release on GitHub Pages / GitHub Releases. Design: `docs/superpowers/specs/2026-10-21-unison-website-design.md`.
 
 ## Before publishing
