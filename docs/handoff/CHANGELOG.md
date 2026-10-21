@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Google Search Console verification (chore/search-console)
+- **What:** the owner's Search Console verification file is served at `/unison/google5e78a886f56186ac.html` (`website/public/`, copied verbatim). `npm run check` requires it and skips `google<token>.html` files in its per-page rules (they're plain text, not pages). Next for the owner: verify the URL-prefix property, then submit `sitemap.xml`, since crawlers won't find `/unison/robots.txt`.
+- **Verified:** build (no warnings), check ok (27 files); after deploy the live URL returns the exact text.
+
 ## 2026-10-21 — Real install screenshots (feat/install-screenshots)
 - **What:** the five install steps now show real screenshots taken on the owner's Mac (macOS 26) with a quarantined copy of the release DMG: the DMG window, "\"Unison\" Not Opened" (only a Done button on this macOS), Privacy & Security's "\"Unison\" was blocked… Open Anyway", the "Open \"Unison\"?" confirmation, and Unison's pairing screen with the QR code blurred (it holds the Mac's local address and a live code). Cropped to the relevant part (no sidebar with the Apple Account, no other files) and padded to 800×600 PNGs in `website/public/install/` (334 KB total). Step 2 and 4 copy now follow the real order: click Done; then Open Anyway, then password or Touch ID. `npm run check` also fails if a local `src`/`href` points at a file missing from `dist` (shown failing with one screenshot removed).
 - **Verified:** `npm test` 20/20, build (no warnings), check ok (26 files). Merged to `main` as `e4e1d93` and pushed at the owner's request; the deploy passed and all five `/unison/install/step-N.png` return 200.
