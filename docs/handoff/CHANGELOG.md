@@ -4,6 +4,12 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Memory pass on the Mac app (perf/image-decoding)
+- **What:** the owner asked for the Mac app to stay light, so the Mac code was read for memory and CPU hotspots. Rewriting in Go or Rust was ruled out (see DECISIONS.md). Transfers (chunked, progress throttled to 4 Hz), mirroring (hardware decode, drop to key frame), the notification list (50) and clipboard history (capped) were already fine. Two real problems were fixed:
+  1. **Icons, Now Playing art and clipboard images** were drawn with `NSImage(contentsOf:)` in `body`. That re-read the file on every redraw, on the main thread, and decoded it at full size (a 5K screenshot is about 60 MB for a 28 pt square). The new `DownscaledImages` (MacDroidCore) decodes with ImageIO at the drawn pixel size into a bounded `NSCache` (300 images, 32 MB). The new `DownscaledImageView` (app, `Views/Shared`) loads it off the main thread; `AppIconView`, `NowPlayingCard` and `ClipboardView` use it.
+  2. **The photo grid's decoded thumbnails** (`AppModel.thumbImages`) are capped at 600; the cache had no limit before.
+- **Verified:** `DownscaledImagesTests` RED→GREEN (`aLargeImageIsDecodedAtTheSizeItIsDrawn`, `aSmallImageIsNotEnlarged`, `aMissingOrBrokenFileGivesNil`, `loadKeepsTheDecodeForLaterDrawsAtThatSize`); `swift test` 370; Mac app build, no code warnings; `:core:test :app:testDebugUnitTest :app:assembleDebug` passed (Android unchanged). Not yet measured on the running app with the phone connected.
+
 ## 2026-10-16 — Merged the backlog clean-up (Plan 11) to main
 - **What:** `fix/backlog` merged into `main` locally as `d11b73f` (`--no-ff`) at the owner's request. Not pushed. New builds installed on the owner's phone (wireless adb, `:app:installDebug`) and the Mac (Debug build relaunched).
 - **Verified on `main`:** `swift test` 366; Mac app build (no code warnings); `:core:test :app:testDebugUnitTest :app:assembleDebug` (no warnings); cross-platform test passed.

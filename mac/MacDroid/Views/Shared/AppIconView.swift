@@ -7,17 +7,12 @@ struct AppIconView: View {
     var size: CGFloat = 20
 
     var body: some View {
-        if let url, let image = NSImage(contentsOf: url) {
-            Image(nsImage: image)
-                .resizable()
-                .interpolation(.high)
-                .frame(width: size, height: size)
-                .clipShape(RoundedRectangle(cornerRadius: size * 0.22))
-        } else {
+        DownscaledImageView(url: url, size: size) {
             Image(systemName: "app.fill")
                 .resizable()
                 .foregroundStyle(.secondary)
-                .frame(width: size, height: size)
         }
+        .frame(width: size, height: size)
+        .clipShape(RoundedRectangle(cornerRadius: size * 0.22))
     }
 }

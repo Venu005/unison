@@ -66,11 +66,11 @@ private struct ClipboardRow: View {
     @ViewBuilder private var icon: some View {
         switch item.kind {
         case .image:
-            if let image = NSImage(contentsOf: model.clipboardImageURL(item)) {
-                Image(nsImage: image).resizable().scaledToFill().frame(width: 28, height: 28).clipShape(RoundedRectangle(cornerRadius: 6))
-            } else {
-                Image(systemName: "photo").frame(width: 28, height: 28)
+            DownscaledImageView(url: model.clipboardImageURL(item), size: 28, fill: true) {
+                Image(systemName: "photo")
             }
+            .frame(width: 28, height: 28)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
         case .link:
             Image(systemName: "link").frame(width: 28, height: 28).background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
         case .text:
