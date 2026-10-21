@@ -84,6 +84,23 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - **Mac app logs:** MacDroidCore's logs go to the unified log under subsystem `dev.macdroid.mac` (`OSLogHandler`). Watch them with `log stream --predicate 'subsystem == "dev.macdroid.mac"' --style compact`.
 - **Security-scoped bookmarks and signing:** bookmarks are tied to the app's signature too. They broke across ad-hoc rebuilds ("The original file is no longer available"); with the stable self-signed identity they should survive rebuilds.
 
+## Website (`website/`, Plan 12)
+- Node 24 + npm. `cd website && npm ci` once.
+- `npm run dev`: local server with live reload at `http://localhost:5173/unison/` (the site always lives under the base path from `site.config.js`).
+- `npm test`: Vitest unit tests (`test/`). `npm run build`: static site into `website/dist`. `npm run check`: post-build assertions on `dist` (no "MacDroid", links under the base path, SEO files present). `npm run preview`: serve `dist` at `http://localhost:4173/unison/`.
+- Site identity and every URL (site, repo, DMG, Play) live only in `website/site.config.js`.
+
+## Deploying the website (Plan 12)
+- `.github/workflows/website.yml` runs `npm ci`, `npm test`, `npm run build`, `npm run check` and deploys `website/dist` to GitHub Pages on every push to `main` that touches `website/**` (or from the Actions tab, "Run workflow").
+- One-time setup: repo Settings → Pages → Source "GitHub Actions" (or `gh api -X POST repos/Venu005/unison/pages -f build_type=workflow`).
+- Action versions are pinned to major tags (checkout v7, setup-node v7, upload-pages-artifact v5, deploy-pages v5).
+
+## Releasing the Mac app (Plan 12)
+- Prerequisites: the "MacDroid Self-Signed" identity in the login keychain (`scripts/make-signing-cert.sh`, or import the backed-up .p12), a clean git tree, and `gh` logged in with push rights to `Venu005/unison` (`venusai-glitch` is a collaborator).
+- Bump `CFBundleShortVersionString` (and `CFBundleVersion`) in `mac/project.yml` first; the tag is `v<version>`.
+- `scripts/make-release.sh --dry-run` builds Release, packages `mac/build/release/Unison.dmg` (`Unison.app` + an `Applications` shortcut), signs it and prints the SHA-256. Check: `codesign -dvv mac/build/release/Unison.dmg` shows `Authority=MacDroid Self-Signed` (plain `-dv` doesn't print it).
+- `scripts/make-release.sh` (no flag) does the same, then `gh release create` with the DMG and notes containing the SHA-256. It's public: run it only on the owner's word. The website's Download button always points at the latest release's `Unison.dmg`.
+
 ## Conventions
 - Swift Testing (`@Test`, `#expect`) on the Mac and JUnit4 on Android; TDD for logic.
 - Pure presentation and state logic lives in testable types; views stay thin.

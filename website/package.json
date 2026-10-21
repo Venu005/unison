@@ -1,0 +1,19 @@
+{
+  "name": "unison-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "check": "node scripts/check-dist.mjs"
+  },
+  "dependencies": {
+    "three": "0.160.0"
+  },
+  "devDependencies": {
+    "vite": "8.3.5",
+    "vitest": "5.0.5"
+  }
+}
