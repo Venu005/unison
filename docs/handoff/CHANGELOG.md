@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-21 — Real install screenshots (feat/install-screenshots)
+- **What:** the five install steps now show real screenshots taken on the owner's Mac (macOS 26) with a quarantined copy of the release DMG: the DMG window, "\"Unison\" Not Opened" (only a Done button on this macOS), Privacy & Security's "\"Unison\" was blocked… Open Anyway", the "Open \"Unison\"?" confirmation, and Unison's pairing screen with the QR code blurred (it holds the Mac's local address and a live code). Cropped to the relevant part (no sidebar with the Apple Account, no other files) and padded to 800×600 PNGs in `website/public/install/` (334 KB total). Step 2 and 4 copy now follow the real order: click Done; then Open Anyway, then password or Touch ID. `npm run check` also fails if a local `src`/`href` points at a file missing from `dist` (shown failing with one screenshot removed).
+- **Verified:** `npm test` 20/20, build (no warnings), check ok (26 files).
+
 ## 2026-10-21 — Unsigned DMG so the download opens (fix/unsigned-dmg)
 - **What:** while taking the install screenshots, the downloaded `Unison.dmg` was blocked before it opened ("Apple could not verify \"Unison.dmg\""): macOS assesses a signed disk image, and ours was signed with the self-signed certificate. `scripts/make-release.sh` no longer signs the DMG; the app inside stays signed with "MacDroid Self-Signed", so Gatekeeper checks only the app, which is what the site's install steps cover. The `v0.4.0` release asset was replaced with the unsigned build (`gh release upload --clobber`) and its notes now carry the new SHA-256 `cab7af9583c6c190e6e24cd4edc6fb08da1756229b71c00ab0cedf915165fedf`. DECISIONS.md and DEV-GUIDE updated.
 - **Verified:** dry run; `codesign -dv` on the DMG says "not signed at all"; the app inside keeps `certificate leaf = H"be20c074…"`; the owner opened a quarantined copy from Downloads without the DMG warning; the downloaded release asset's SHA-256 matches.

@@ -67,6 +67,7 @@
 .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 54px 0 0; padding: 0; list-style: none; }
 .step { border-radius: 20px; background: #111316; border: 1px solid rgba(255,255,255,.07); padding: 16px; transition: transform .3s, border-color .3s; }
 .step:hover { transform: translateY(-6px); border-color: rgba(76,184,115,.5); }
+.step img.shot { display: block; width: 100%; height: auto; object-fit: cover; border: 1px solid rgba(255,255,255,.06); }
 .step .shot { aspect-ratio: 4/3; border-radius: 12px; background: repeating-linear-gradient(-45deg, #16191c 0 10px, #131518 10px 20px); display: grid; place-items: center; color: #5d666e; font-size: 11px; margin-bottom: 14px; }
 .step .n { font-size: 12px; color: var(--green); }
 .step h3 { margin: 6px 0 6px; font-size: 17px; letter-spacing: -.01em; }
