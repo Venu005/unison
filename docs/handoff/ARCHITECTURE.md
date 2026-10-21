@@ -98,6 +98,20 @@ Mac app (`mac/MacDroid/`):
   - `ui/theme/`: Material You, with a fallback palette.
   - `ui/share/ShareActivity`: the "Send to Mac" share target (ACTION_SEND / SEND_MULTIPLE, `*/*`). It has no UI: it hands the URIs to `ConnectionService` with a read grant and shows a toast, or says "Connect to your Mac first" and opens the app.
 
+## Website and releases (Plan 12)
+Static site in `website/`, built with Vite and deployed to GitHub Pages at `https://venu005.github.io/unison/` by `.github/workflows/website.yml` (pushes to `main` touching `website/**`, or manual run).
+
+| Part | Files | Notes |
+|---|---|---|
+| Identity | `site.config.js` | The only place for the name, site URL and base (`/unison/`), repo, DMG and release URLs, Play status (`playUrl: null` = "coming soon"), version, developer |
+| SEO | `src/seo.js` (pure, tested), `src/seo-plugin.js` | Head tags (canonical, OG, Twitter, icons, manifest), JSON-LD `SoftwareApplication`, `sitemap.xml`, `robots.txt`, `llms.txt`, `site.webmanifest`; the plugin fills `%SEO_HEAD%`, `%JSON_LD%`, `%BASE_URL%`, `%DMG_URL%`, `%RELEASES_URL%`, `%REPO_URL%` in the pages |
+| Pages | `index.html`, `privacy/index.html`, `404.html`, `src/styles/` | All copy is real HTML; canvases are `aria-hidden` |
+| 3D | `src/capability.js`, `src/main.js`, `src/three/shared.js`, `src/scenes/{hero,features,game}.js`, `src/game/rules.js` | `chooseQuality` picks `full` / `lite` / `static` once per visit; each scene module loads only when its section is near and exposes `mount(section, quality) -> { stop }`; `run()` pauses rendering off-screen and in hidden tabs; the game's catch rule is `catchDecision` |
+| Guard | `scripts/check-dist.mjs` (`npm run check`) | Fails the build on "MacDroid", links outside `/unison/`, a Play link before launch, wrong JSON-LD OS, or a hero headline that isn't HTML |
+| Assets | `scripts/render-assets.sh`, `og/og-image.svg` | Icons and the 1200×630 preview image, rendered with `scripts/render-icon.swift` |
+
+Mac downloads: `scripts/make-release.sh` builds the Release app, packages `Unison.dmg` (app + Applications shortcut), signs it with "MacDroid Self-Signed" and publishes a GitHub Release on `Venu005/unison`; the site links to `releases/latest/download/Unison.dmg`.
+
 ## Branding
 - **App icon:** the peeking droid.
   - Source: `design/icon/`.

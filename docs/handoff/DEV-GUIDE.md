@@ -90,6 +90,11 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - `npm test`: Vitest unit tests (`test/`). `npm run build`: static site into `website/dist`. `npm run check`: post-build assertions on `dist` (no "MacDroid", links under the base path, SEO files present). `npm run preview`: serve `dist` at `http://localhost:4173/unison/`.
 - Site identity and every URL (site, repo, DMG, Play) live only in `website/site.config.js`.
 
+## Deploying the website (Plan 12)
+- `.github/workflows/website.yml` runs `npm ci`, `npm test`, `npm run build`, `npm run check` and deploys `website/dist` to GitHub Pages on every push to `main` that touches `website/**` (or from the Actions tab, "Run workflow").
+- One-time setup: repo Settings → Pages → Source "GitHub Actions" (or `gh api -X POST repos/Venu005/unison/pages -f build_type=workflow`).
+- Action versions are pinned to major tags (checkout v7, setup-node v7, upload-pages-artifact v5, deploy-pages v5).
+
 ## Releasing the Mac app (Plan 12)
 - Prerequisites: the "MacDroid Self-Signed" identity in the login keychain (`scripts/make-signing-cert.sh`, or import the backed-up .p12), a clean git tree, and `gh` logged in with push rights to `Venu005/unison` (`venusai-glitch` is a collaborator).
 - Bump `CFBundleShortVersionString` (and `CFBundleVersion`) in `mac/project.yml` first; the tag is `v<version>`.
