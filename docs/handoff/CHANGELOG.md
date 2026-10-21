@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Footer credit links to the developer's GitHub (feat/footer-github)
+- **What:** "made by Venusai" in the home and privacy footers is a link to https://github.com/Venu005 (`rel="author"`), underlined on hover and focus. The URL lives in `site.config.js` `developer.url` (pages use `%DEV_URL%`) and is also the JSON-LD author/publisher `url`. Owner's request.
+- **Verified:** `seo.test.js` author assertion RED→GREEN, `npm test` 21/21, build (no warnings), check ok; live after deploy.
+
 ## 2026-10-22 — Bing Webmaster Tools verification (chore/bing-webmaster)
 - **What:** Bing's GSC import found no sites (the Google property was minutes old), so the site was added to Bing by hand. Its proof is served both ways: `website/public/BingSiteAuth.xml` at `/unison/BingSiteAuth.xml`, and `<meta name="msvalidate.01">` on the home page from `site.config.js` `verification.bing`. `npm run check` requires the XML file. Test `the home page carries the Bing verification tag; other pages do not` (RED→GREEN).
 - **Verified:** `npm test` 21/21, build (no warnings), check ok (28 files); after deploy both proofs are live.

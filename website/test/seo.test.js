@@ -23,7 +23,7 @@ test('jsonLd is a free macOS app by Venusai while Play is not live', () => {
   expect(j['@type']).toBe('SoftwareApplication');
   expect(j.operatingSystem).toBe('macOS');
   expect(j.offers).toMatchObject({ '@type': 'Offer', price: '0' });
-  expect(j.author).toMatchObject({ name: 'Venusai', email: 'venusaiyalamanchili@gmail.com' });
+  expect(j.author).toMatchObject({ name: 'Venusai', email: 'venusaiyalamanchili@gmail.com', url: 'https://github.com/Venu005' });
   expect(j.downloadUrl).toBe(SITE.dmgUrl);
   expect(jsonLd({ ...SITE, playUrl: 'https://play.google.com/x' }).operatingSystem).toBe('macOS, Android');
 });

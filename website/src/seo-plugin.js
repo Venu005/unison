@@ -16,6 +16,7 @@ export default function seoPlugin(site) {
           .replaceAll('%DMG_URL%', site.dmgUrl)
           .replaceAll('%RELEASES_URL%', site.releasesUrl)
           .replaceAll('%REPO_URL%', site.repo)
+          .replaceAll('%DEV_URL%', site.developer.url)
           .replaceAll('%BASE_URL%', site.base);
       },
     },
