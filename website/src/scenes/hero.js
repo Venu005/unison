@@ -11,9 +11,12 @@ const SLIDE_SECONDS = 3.2;
 
 export function mount(section, quality) {
   const s = setup(section, { exposure: 1.05, quality });
-  s.camera.position.set(0, 1.1, 9.8);
   const world = new THREE.Group(); s.scene.add(world);
-  s.onResize = w => world.position.set(w < 900 ? 0 : 2.1, w < 900 ? -1.6 : -0.7, 0);
+  s.onResize = w => {
+    const wide = w >= 900;
+    s.camera.position.set(0, 1.1, wide ? 8.4 : 9.8);
+    world.position.set(wide ? 2.3 : 0, wide ? -0.55 : -1.6, 0);
+  };
   s.resize();
 
   const key = new THREE.DirectionalLight(0xfff1e6, 2.4); key.position.set(-4, 6, 6);

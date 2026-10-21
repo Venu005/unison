@@ -10,4 +10,5 @@ test('phones and touch-only small screens get lite', () => {
   expect(chooseQuality({ ...base, width: 390, coarsePointer: true })).toBe('lite');
   expect(chooseQuality({ ...base, width: 820, coarsePointer: true })).toBe('lite');
 });
-test('weak machines get lite', () => expect(chooseQuality({ ...base, cores: 2 })).toBe('lite'));
+// Browsers fake the core count (Brave randomises it for privacy), so it never lowers the tier.
+test('the reported core count is ignored', () => expect(chooseQuality({ ...base, cores: 2 })).toBe('full'));

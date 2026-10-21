@@ -10,8 +10,9 @@ export const GREEN = 0x4CB873, PEACH = 0xF9C9A6, INK = 0x1F2933;
 
 export function setup(section, { alpha = true, exposure = 1, quality = 'full' } = {}) {
   const canvas = section.querySelector('canvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: quality === 'full', alpha, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(quality === 'full' ? Math.min(devicePixelRatio, 2) : 1);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha, powerPreference: 'high-performance' });
+  // Sharp on Retina; lite caps at 1.5x to stay light on phones.
+  renderer.setPixelRatio(Math.min(devicePixelRatio, quality === 'full' ? 2 : 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = exposure;

@@ -29,7 +29,6 @@ const quality = chooseQuality({
   reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
   width: innerWidth,
   coarsePointer: matchMedia('(pointer: coarse)').matches,
-  cores: navigator.hardwareConcurrency || 4,
 });
 document.documentElement.dataset.quality = quality;
 document.documentElement.dataset.pointer = matchMedia('(pointer: coarse)').matches ? 'coarse' : 'fine';
