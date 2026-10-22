@@ -1,9 +1,12 @@
 package dev.macdroid.app.ui.main
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Folder
@@ -23,6 +27,7 @@ import androidx.compose.material.icons.rounded.LinkOff
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.PhotoLibrary
 import androidx.compose.material.icons.rounded.PlayCircle
+import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material.icons.rounded.SaveAs
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Sync
@@ -191,6 +196,15 @@ fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewMode
         }
         item {
             ListItem(
+                headlineContent = { Text("Unison website") },
+                supportingContent = { Text("venu005.github.io/unison") },
+                leadingContent = { Icon(Icons.Rounded.Public, contentDescription = null) },
+                trailingContent = { Icon(Icons.AutoMirrored.Rounded.OpenInNew, contentDescription = null) },
+                modifier = Modifier.clickable { context.openWebsite() },
+            )
+        }
+        item {
+            ListItem(
                 headlineContent = { Text("Forget this Mac", color = MaterialTheme.colorScheme.error) },
                 leadingContent = { Icon(Icons.Rounded.LinkOff, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
                 modifier = Modifier.clickable(enabled = ui.mac != null) { confirmForget = true },
@@ -247,4 +261,13 @@ private fun Context.openNotificationSettings() {
 
 private fun Context.openBatterySettings() {
     runCatching { startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) }
+}
+
+// The home page only: the Play build never links to tips or payments (Google Play Payments policy, Plan 13).
+private fun Context.openWebsite() {
+    try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://venu005.github.io/unison/")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    } catch (_: ActivityNotFoundException) {
+        Toast.makeText(this, "No browser to open the website", Toast.LENGTH_SHORT).show()
+    }
 }

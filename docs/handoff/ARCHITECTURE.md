@@ -108,7 +108,12 @@ Static site in `website/`, built with Vite and deployed to GitHub Pages at `http
 | Pages | `index.html`, `privacy/index.html`, `404.html`, `src/styles/` | All copy is real HTML; canvases are `aria-hidden` |
 | 3D | `src/capability.js`, `src/main.js`, `src/three/shared.js`, `src/scenes/{hero,features,game}.js`, `src/game/rules.js` | `chooseQuality` picks `full` / `lite` / `static` once per visit; each scene module loads only when its section is near and exposes `mount(section, quality) -> { stop }`; `run()` pauses rendering off-screen and in hidden tabs; the game's catch rule is `catchDecision` |
 | Guard | `scripts/check-dist.mjs` (`npm run check`) | Fails the build on "MacDroid", links outside `/unison/`, a Play link before launch, wrong JSON-LD OS, or a hero headline that isn't HTML |
+| Support (Plan 13) | `src/support.js` (tested), `src/support/story.js` (tested), `src/scenes/support.js`, `makeFullRobot()` in `src/three/shared.js`, `public/support-still.png` | `#support` (copy, GitHub Sponsors button, UPI QR) is cut out at build time while `sponsorUrl` is `null`, and its UPI block while `upiId` is `null`; the bean bag scene is driven by `storyAt`/`createIdle`, and its canvas sits in a `.stage` so phones get a band above the copy; `check-dist` requires the Android robot credit on every page and the right support state |
 | Assets | `scripts/render-assets.sh`, `og/og-image.svg` | Icons and the 1200×630 preview image, rendered with `scripts/render-icon.swift` |
+
+Tips in the apps (Plan 13):
+- **Mac:** Settings → About has a "Support Unison" button that opens `…/unison/#support`.
+- **Android:** Settings → About only has a "Unison website" row that opens the home page. Google Play's Payments policy rules out tip links, and `NoPaymentLinksTest` keeps payment wording out of `android/app/src/main`.
 
 Mac downloads: `scripts/make-release.sh` builds the Release app, packages `Unison.dmg` (app + Applications shortcut), signs it with "MacDroid Self-Signed" and publishes a GitHub Release on `Venu005/unison`; the site links to `releases/latest/download/Unison.dmg`.
 

@@ -90,6 +90,18 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - `npm test`: Vitest unit tests (`test/`). `npm run build`: static site into `website/dist`. `npm run check`: post-build assertions on `dist` (no "MacDroid", links under the base path, SEO files present). `npm run preview`: serve `dist` at `http://localhost:4173/unison/`.
 - Site identity and every URL (site, repo, DMG, Play) live only in `website/site.config.js`.
 
+## Support section (`#support`, Plan 13)
+- **Hidden by default.** The section and its nav and footer links are left out of the build while `sponsorUrl` is `null` in `website/site.config.js`. The UPI block is left out while `upiId` is `null`.
+  - **To go live:** set `sponsorUrl: 'https://github.com/sponsors/Venu005'`, and optionally `upiId: 'name@bank'`, which is checked at build time. Then run `npm test && npm run build && npm run check` and push.
+- **Preview it locally without editing the config:**
+  - Run `UNISON_SPONSOR_URL=https://github.com/sponsors/Venu005 UNISON_UPI_ID=name@bank npm run build && npm run preview`, or prefix `npx vite` with the same variables.
+  - Don't run `npm run check` on such a build: it checks against the real config and will fail on purpose.
+- **Re-rendering the motion-off picture (`public/support-still.png`, 820×520, transparent):**
+  1. Build with `UNISON_SPONSOR_URL` set, run `npm run preview`, and open `http://localhost:4173/unison/?still` at a 1400×900 window. That URL renders one frozen, mid-cheers frame on a transparent page.
+  2. Screenshot `#support .stage` with a transparent background. On 2026-10-22 this used Playwright `locator.screenshot({ omitBackground: true })`, with `playwright-core` installed outside the repo and pointed at a local Chromium.
+  3. Crop it: `sips -c 520 820 --cropOffset 100 580 raw.png --out public/support-still.png`.
+  4. Keep the file under 300 KB.
+
 ## Deploying the website (Plan 12)
 - `.github/workflows/website.yml` runs `npm ci`, `npm test`, `npm run build`, `npm run check` and deploys `website/dist` to GitHub Pages on every push to `main` that touches `website/**` (or from the Actions tab, "Run workflow").
 - One-time setup: repo Settings → Pages → Source "GitHub Actions" (or `gh api -X POST repos/Venu005/unison/pages -f build_type=workflow`).

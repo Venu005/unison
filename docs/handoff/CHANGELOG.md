@@ -4,6 +4,65 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Plan 13: Support Unison (feat/support)
+- **Task 1, support settings and build-time filter:**
+  - `website/src/support.js` provides `upiLink(id)` and `applySupport(html, site)`. It keeps or cuts the `<!-- support:… -->` and `<!-- upi:… -->` blocks, fills `%SPONSOR_URL%`, `%UPI_ID%` and `%UPI_LINK%`, and inlines the UPI QR code as SVG (dev dependency `qrcode` 1.5.4).
+  - A malformed UPI ID stops the build.
+  - `site.config.js` gains `sponsorUrl: null` and `upiId: null`.
+  - Tests: `test/support.test.js` (7). `npm test` passes 28/28.
+- **Final review fixes** (fresh reviewer, whole branch):
+  - **Android guard.** `NoPaymentLinksTest` now scans visible strings (string literals and `<string>` bodies, skipping dotted identifiers) for support or supporters, tip or tips, donate, sponsor, chai and buy me. Before, it missed "Support" and "tip". New tests: `catchesMoneyWordingInVisibleText` (RED→GREEN) and `ignoresIdentifiersThatOnlyLookLikeIt`.
+  - **UPI on desktop.** The UPI block is a plain `<div data-upi-href>`, and `main.js` turns it into a `upi:` link only on touch screens, because desktop browsers can't open `upi:`.
+  - **QR size.** The QR code has the standard 4-module quiet zone and is 120 px wide, so it is easier to scan from a laptop screen.
+  - Tests: website 34/34 (RED→GREEN for both new website tests). Playwright: desktop shows a `DIV` with a 120 px QR; touch shows an `A` with `href=upi://pay?…`.
+- **Task 7, handoff:**
+  - ARCHITECTURE (Support row and the app links), STATUS, ROADMAP and the README round table updated. The spec's Mac label is changed to "Support Unison".
+  - All gates passed: website 32/32 with build and check OK; Android build successful; `swift test` 370/370; `xcodebuild` succeeded (Task 6).
+- **Task 6, app links:**
+  - **Mac:** About gains a "Support Unison" button that opens `…/unison/#support`. It has no "…", per the owner's button rule.
+  - **Android:** Settings → About gains a "Unison website" row that opens the home page (`ACTION_VIEW`, with a toast if no browser is installed).
+  - `NoPaymentLinksTest` fails if `android/app/src/main` ever contains a Sponsors, UPI or `#support` link, or the words sponsor, donate, tip jar or buy me (Google Play Payments policy).
+  - **Verified:** `NoPaymentLinksTest` went RED→GREEN. Android `:core:test :app:testDebugUnitTest :app:assembleDebug` built successfully. `swift test` passed 370 tests, and `xcodebuild` succeeded. The only output line containing "warning" was Xcode's AppIntents metadata note, which is a tool log, not a compiler warning.
+- **Task 5, still picture:**
+  - `?still` renders one frozen frame: seated, mid-cheers, on a transparent page (`html.still-render`).
+  - The frame was cropped into `public/support-still.png` (820×520, 142 KB). The static quality level shows it, with a faded right edge where the rug runs off.
+  - **Verified:** reduced-motion screenshots at 1400 px and 390 px show the picture and working copy, and no scene loads. The steps are in DEV-GUIDE.
+- **Task 4, bean bag scene:**
+  - `makeFullRobot()` in `shared.js` builds the whole robot from `makeRobot`'s head, a lathe torso, and capsule arms and legs on pivots. `makeRobot` itself is unchanged.
+  - `src/scenes/support.js` is ported from the spike and driven by `storyAt`/`createIdle`. The robot walks in, hops into the bag and cheers; hovering Sponsor makes it cheer, and clicking makes it sip while the link still opens.
+  - On `lite` the robot starts seated and the bag has fewer segments.
+  - The canvas sits in a `.stage` block passed to `setup()`, so phones get a correctly sized band above the copy. The pointer is still tracked over the whole section.
+  - **Verified:** Playwright screenshots with the env overrides show the walk-in, the seated cheers, the hover cheer, and phone width 390 px (no sideways scroll, no console errors). `npm test` passes 32/32, and the build and check pass.
+- **Task 3, story timeline:**
+  - `website/src/support/story.js` holds `STORY` (the timings), `storyAt(t)` and `createIdle(random)`.
+  - The first seated action is a cheers; after that it alternates with sips every 4.5–6.5 s.
+  - A click asks for a sip. It is ignored before the robot sits, and it pushes the next idle action back.
+  - Tests: `test/story.test.js` (4). `npm test` passes 32/32.
+- **Task 2, Support section markup:**
+  - `#support` added to `index.html` after the game section. It is wrapped in support markers, as are the nav (`.opt`) and footer "Support" links.
+  - The page's styles are in `sections.css`, which also stacks the scene above the copy below 900 px.
+  - The Android robot credit (CC BY 3.0) is in the footer of the home, privacy and 404 pages. The 404 page gains a footer to hold it.
+  - `seo-plugin.js` runs `applySupport`. `vite.config.js` accepts `UNISON_SPONSOR_URL` and `UNISON_UPI_ID` for a local preview.
+  - `check-dist` changes:
+    - skips `upi:` links;
+    - requires the credit on every page;
+    - fails if the section or a Sponsors link ships while `sponsorUrl` is null, or if either is missing once it is set.
+  - **Verified:**
+    - Default build: check passes on 28 files, and the page has 0 `id="support"`.
+    - Preview build with the env overrides: Playwright screenshots at 1400 px and 390 px show the copy, button, QR code and credit, with no sideways scroll.
+
+## 2026-10-22 — Support Unison (tips): design spec (docs/support-spec)
+- **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-support-design.md`.
+  - **Payment route:** one-time tips through GitHub Sponsors, with a UPI QR code on the website as an extra.
+  - **Website:** a new "Support Unison" section with a 3D scene. The full robot walks in with cutting chai, flops into a bean bag, cheers the visitor and sips.
+  - **Mac:** a "Support Unison…" button in About.
+  - **Android:** only a plain "Unison website" link, with no money wording, for Google Play's Payments policy.
+  - The section stays hidden until `sponsorUrl` is set in `site.config.js`.
+  - The owner-approved 3D spike is saved as `website/reference/support-beanbag-spike.html`.
+- **Plan:** `docs/superpowers/plans/2026-10-22-unison-support-13.md` has 7 tasks: support config and build-time filter, markup and checks, the story timeline, the full robot and the bean bag scene, the still picture, the Mac and Android links, and the handoff. The Mac button is labelled "Support Unison" with no "…", per the owner's existing button rule.
+- **Why:** the owner wants a way to receive tips from India and abroad while Unison stays free.
+- **Verified:** docs only. The spike was checked in headless Chromium renders and approved by the owner.
+
 ## 2026-10-22 — README: drop the "Formerly MacDroid" line (docs/readme-tagline)
 - **What:** removed the sub-heading "Formerly MacDroid. Code and internal ids still use that name." from the top of `README.md` at the owner's request. The naming note for contributors stays in `CLAUDE.md` and `docs/handoff/README.md`.
 - **Verified:** docs only; the footer change before it is live (merge `fe551bf`, deploy passed).

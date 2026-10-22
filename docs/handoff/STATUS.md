@@ -12,6 +12,10 @@
 - `main` also has the memory pass (images decoded at drawn size, photo thumbnails capped), merged 2026-10-21 as `bf9adf8`; `swift test` 370.
 - `main` also has photos (Plan 6: browse the phone's photos and videos, Quick Look, Save to Mac, drag out), merged 2026-10-14 as `37b425c`; its 9 follow-up minors merged as `2807ce9`; `swift test` 274.
 ## In flight
+- **Support Unison (Plan 13): built** on `feat/support` (2026-10-22), which contains `docs/support-spec`, and not merged yet.
+  - Website section and scene, Mac About button and Android website row are done, and all gates pass.
+  - The section stays hidden until `sponsorUrl` is set.
+  - Waiting on the owner: the hands-on check, GitHub Sponsors approval and the UPI ID.
 - **Website (Plan 12): live** at https://venu005.github.io/unison/ (merged to `main` 2026-10-21 as `d232e89`, deployed by GitHub Actions). **Mac release `v0.4.0` published** (`Unison.dmg`, unsigned DMG with the signed app inside, SHA-256 `cab7af95…fedf`); the Download buttons work. Android shows "coming soon". The demo video is on the page (merged `5527121`). Deferred minors: see the Plan 12 CHANGELOG entry.
 - **Rename to Unison:** merged to `main` 2026-10-21 as `b67246c`; both devices run the renamed builds. MIT licence added.
 - **Stable signing (`fix/stable-signing`, 2026-10-21):** builds are signed with the self-signed "MacDroid Self-Signed" identity, so keychain "Always Allow" should survive rebuilds and updates. Merged to `main` on 2026-10-21 as `7afb438`. Release build installed in /Applications and running. Pending: the owner's check that a rebuild no longer prompts.
