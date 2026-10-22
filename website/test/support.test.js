@@ -47,8 +47,8 @@ test('rejects a malformed UPI ID', async () => {
   await expect(applySupport(page, { ...on, upiId: 'my name@okicici' })).rejects.toThrow('is not a UPI ID');
 });
 
-test('ships with Sponsors and UPI off', () => {
-  expect(SITE.sponsorUrl).toBe(null);
+test('ships with Sponsors live and UPI off', () => {
+  expect(SITE.sponsorUrl).toBe('https://github.com/sponsors/Venu005');
   expect(SITE.upiId).toBe(null);
 });
 

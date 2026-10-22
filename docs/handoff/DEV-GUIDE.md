@@ -91,6 +91,7 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - Site identity and every URL (site, repo, DMG, Play) live only in `website/site.config.js`.
 
 ## Support section (`#support`, Plan 13)
+- **Now live** (`sponsorUrl` set 2026-10-22). Setting it back to `null` hides the section again.
 - **Hidden by default.** The section and its nav and footer links are left out of the build while `sponsorUrl` is `null` in `website/site.config.js`. The UPI block is left out while `upiId` is `null`.
   - **To go live:** set `sponsorUrl: 'https://github.com/sponsors/Venu005'`, and optionally `upiId: 'name@bank'`, which is checked at build time. Then run `npm test && npm run build && npm run check` and push.
 - **Preview it locally without editing the config:**

@@ -14,8 +14,8 @@ export default {
   releasesUrl: `${repo}/releases/latest`,
   // null until the Play listing is live: the page shows a "Coming soon to Google Play" badge instead of a link.
   playUrl: null,
-  // null until GitHub Sponsors approves the profile: the page then leaves out the Support section and its links (Plan 13).
-  sponsorUrl: null,
+  // GitHub Sponsors (approved 2026-10-22). null leaves out the Support section and its links (Plan 13).
+  sponsorUrl: 'https://github.com/sponsors/Venu005',
   // null for no UPI block in the Support section; a UPI ID (name@bank) adds the QR code and link.
   upiId: null,
   version: '0.4.0',
