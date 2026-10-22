@@ -4,6 +4,18 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Release 0.4.1: Mac and Android builds with the Support links (chore/release-0.4.1)
+- **What:** bumped the versions to 0.4.1 so the new app builds carry Plan 13's links (Mac About "Support Unison", Android "Unison website").
+  - Mac: `CFBundleShortVersionString` 0.4.1 and `CFBundleVersion` 5 in `mac/project.yml`.
+  - Android: `versionName` 0.4.1 and `versionCode` 5.
+  - `site.config.js` `version` set to 0.4.1.
+- **Installed:**
+  - **Android:** the debug APK, on the owner's Nothing Phone (3) over wireless debugging (`adb install -r`, so the pairing is kept). The phone reports versionName 0.4.1, versionCode 5.
+  - **Mac:** the Release `Unison.app` from `scripts/make-release.sh --dry-run`, into `/Applications`. It is signed with the same "MacDroid Self-Signed" leaf `H"be20c074…"`, so keychain access and the pairing are kept, and it was launched.
+- **Release:** DMG SHA-256 `60f1eb66a40482675b4976e859ddef4b8fe3b69a31a44430ef7e254388ab2453`, published as GitHub Release `v0.4.1` with the script's notes.
+  - The publish was run as `gh release create` by hand, because `make-release.sh` refuses to publish with untracked files in the tree (the owner's `.claude/` and `brag-output/`, which were left alone).
+- **Verified:** Android `:core:test :app:testDebugUnitTest :app:assembleDebug` built successfully with no warnings; the release build succeeded.
+
 ## 2026-10-22 — Support section live: GitHub Sponsors approved (chore/sponsors-live)
 - **Merged** to `main` as `9bdf207` and pushed on the owner's go-ahead. This also pushed Plan 13 (`c6cb7bd`), which had been merged locally.
 - **UPI:** `upiId` set to the owner's ID (`…@oksbi`), so the QR code and the pay link on phones are in the build. Test `ships with Sponsors and UPI live` went RED→GREEN; 34/34, check OK. The owner scans the QR code with a real app before the push.
