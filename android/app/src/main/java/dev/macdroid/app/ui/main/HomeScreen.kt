@@ -60,7 +60,8 @@ fun HomeScreen(onPairAgain: () -> Unit, viewModel: HomeViewModel = viewModel(), 
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("Unison", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(start = 8.dp, top = 16.dp, bottom = 4.dp))
-        StatusCard(ui.status) { action ->
+        // Step 1 of the tour points here on a paired phone that isn't connected yet.
+        StatusCard(ui.status, modifier = Modifier.tourTarget(TourTarget.StatusCard)) { action ->
             when (action) {
                 StatusAction.RetryNow -> viewModel.retryNow()
                 StatusAction.Connect -> viewModel.connect()

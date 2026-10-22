@@ -60,14 +60,14 @@ class TourFlowTest {
         val again = TourFlow(t.state())
         assertNull(again.current)
         assertTrue(again.finished)
-        again.restart(paired = false)
+        again.restart()
         assertEquals(TourTarget.ScanQr, again.current?.target)
         assertFalse(again.finished)
     }
 
     @Test fun walkingEveryStepFinishes() {
         val t = fresh()
-        TourTarget.entries.forEach { assertTrue(it.name, t.done(it)) }
+        TourFlow.STEPS.forEach { assertTrue(it.target.name, t.done(it.target)) }
         assertTrue(t.finished)
         assertNull(t.current)
     }
@@ -88,12 +88,35 @@ class TourFlowTest {
         assertEquals(TourTarget.ClipboardTab, t.current?.target)
     }
 
-    @Test fun restartOnAPairedPhoneSkipsConnecting() {
+    // Owner, 2026-10-22: "Show the tour again" on a paired but disconnected phone must start at step 1, not "tap Send".
+    @Test fun restartAlwaysStartsAtConnect() {
         val t = fresh().apply { finishConnect(); end() }
-        t.restart(paired = true)
-        assertEquals(TourTarget.Send, t.current?.target)
-        t.restart(paired = false)
+        t.restart()
         assertEquals(TourTarget.ScanQr, t.current?.target)
+        assertFalse(t.finished)
+    }
+
+    @Test fun pairedButOffTheConnectScreenPointsAtTheStatusCard() {
+        val d = fresh().display(onConnectScreen = false)!!
+        assertEquals(TourTarget.StatusCard, d.target)
+        assertEquals("Open Unison on your Mac and keep it on the same Wi-Fi. This phone connects by itself.", d.tip)
+    }
+
+    @Test fun onTheConnectScreenItPointsAtScan() {
+        assertEquals(TourTarget.ScanQr, fresh().display(onConnectScreen = true)!!.target)
+    }
+
+    @Test fun aDeclinedPromptPointsBackAtScan() {
+        val t = fresh().apply { done(TourTarget.ScanQr); denied(TourTarget.AllowLocalNetwork) }
+        val d = t.display(onConnectScreen = true)!!
+        assertEquals(TourTarget.ScanQr, d.target)
+        assertEquals("Unison needs this to reach your Mac. Tap Scan the QR code to try again.", d.tip)
+    }
+
+    @Test fun laterStepsShowTheirOwnTarget() {
+        val t = fresh().apply { finishConnect() }
+        assertEquals(TourTarget.Send, t.display(onConnectScreen = false)!!.target)
+        assertNull(fresh().apply { finishConnect(); end() }.display(onConnectScreen = false))
     }
 
     @Test fun copyMatchesTheSpec() {

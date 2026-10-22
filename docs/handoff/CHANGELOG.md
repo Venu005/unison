@@ -50,6 +50,12 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - Someone who finished setup before this change doesn't get the tour automatically.
   - **Verified:** `TourFlowTest` 11/11, including `pairingFinishesTheConnectStep`, `aGroupAlreadyDoneSkipsItself` and `restartOnAPairedPhoneSkipsConnecting`, all RED→GREEN. `SetupFlowTest` was rewritten (`welcomeIsGoneConnectComesFirst` RED→GREEN). The gate built successfully with no warnings.
   - The debug build is installed on the owner's phone (`install -r`, pairing kept). The tour walk on the device is the owner's to do (no automated taps or screenshots on their phone).
+- **Tour fix (owner's on-device check):** "Show the tour again" on a paired but disconnected phone jumped to step 2. Changes:
+  - Step 1 now means *connected*: `AppNavHost` finishes it on `ConnectionState.Connected`, not on pairing.
+  - `restart()` always starts at step 1.
+  - `TourFlow.display(onConnectScreen)` decides the highlight. On the Connect screen it's Scan, or Scan with the retry tip after a declined prompt. Anywhere else, step 1 points at Home's connection card (`TourTarget.StatusCard`): "Open Unison on your Mac and keep it on the same Wi-Fi. This phone connects by itself."
+  - `tourTarget` forgets a control when it leaves the screen.
+  - **Verified:** `TourFlowTest` 15/15, with `restartAlwaysStartsAtConnect`, `pairedButOffTheConnectScreenPointsAtTheStatusCard`, `onTheConnectScreenItPointsAtScan`, `aDeclinedPromptPointsBackAtScan` and `laterStepsShowTheirOwnTarget` all RED→GREEN. The gate built successfully with no warnings.
 - **Task 6, release signing (part 1, before the key):**
   - The `release` build reads the upload key from a gitignored `android/keystore.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`). Without that file, `bundle`/`package`/`assemble*Release` stop with "Release signing needs android/keystore.properties", and debug and the gates still build.
   - `.gitignore` adds `android/keystore.properties` and `*.jks`.

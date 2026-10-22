@@ -25,6 +25,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -38,10 +39,11 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
-/** Marks a control the tour can highlight. Controls in popups, sheets and system dialogs get a bubble only. */
-fun Modifier.tourTarget(target: TourTarget): Modifier = this.then(Modifier.onGloballyPositioned { coords ->
-    TourTargets.registry?.bounds?.set(target, coords.boundsInRoot())
-})
+/** Marks a control the tour can highlight; it's forgotten when it leaves the screen. Popups, sheets and system dialogs get a bubble only. */
+fun Modifier.tourTarget(target: TourTarget): Modifier = composed {
+    DisposableEffect(target) { onDispose { TourTargets.registry?.bounds?.remove(target) } }
+    Modifier.onGloballyPositioned { coords -> TourTargets.registry?.bounds?.set(target, coords.boundsInRoot()) }
+}
 
 /** Set by [CoachMarkHost], read by [tourTarget] (a modifier can't read composition locals). */
 internal object TourTargets {
@@ -65,11 +67,11 @@ fun CoachMarkHost(tour: TourController, content: @Composable () -> Unit) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         content()
         val step = tour.current
-        // After a declined prompt, point back at Scan, which asks again.
-        val target = if (step != null && tour.retry && step.target in setOf(TourTarget.AllowLocalNetwork, TourTarget.AllowCamera)) TourTarget.ScanQr else step?.target
+        val display = tour.display(onConnectScreen = TourTarget.ScanQr in tour.bounds)
+        val target = display?.target
         val rect = target?.let { tour.bounds[it] }
         val floating = step != null && target in FLOATING
-        if (step != null && (rect != null || floating)) {
+        if (step != null && display != null && (rect != null || floating)) {
             if (!floating && rect != null) Spotlight(rect)
             val heightPx = with(LocalDensity.current) { maxHeight.toPx() }
             val below = rect != null && !floating && rect.center.y < heightPx / 2
@@ -80,7 +82,7 @@ fun CoachMarkHost(tour: TourController, content: @Composable () -> Unit) {
                 Modifier.fillMaxSize().then(if (floating) Modifier.safeDrawingPadding().padding(top = 8.dp) else Modifier)
                     .padding(top = if (below) top else 0.dp, bottom = if (!below && !floating) bottom else 0.dp),
                 contentAlignment = if (below || floating) Alignment.TopCenter else Alignment.BottomCenter,
-            ) { Bubble(tour, step) }
+            ) { Bubble(tour, step, display.tip) }
         }
     }
     if (tour.showFinish) {
@@ -113,7 +115,7 @@ private fun Spotlight(rect: androidx.compose.ui.geometry.Rect) {
 }
 
 @Composable
-private fun Bubble(tour: TourController, step: TourStep) {
+private fun Bubble(tour: TourController, step: TourStep, tip: String) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -122,7 +124,6 @@ private fun Bubble(tour: TourController, step: TourStep) {
         Column(Modifier.padding(start = 16.dp, end = 8.dp, top = 14.dp, bottom = 4.dp)) {
             Text("STEP ${step.group + 1} OF ${tour.stepCount}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
             Text(step.title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 4.dp))
-            val tip = if (tour.retry) "Unison needs this to reach your Mac. Tap Scan the QR code to try again." else step.tip
             Text(tip, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 2.dp, end = 8.dp))
             if (step.skippable) {
                 Row(Modifier.fillMaxWidth()) {

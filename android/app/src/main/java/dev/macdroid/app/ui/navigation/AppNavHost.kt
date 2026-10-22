@@ -22,6 +22,7 @@ import dev.macdroid.app.ui.setup.SetupViewModel
 import dev.macdroid.app.ui.tour.CoachMarkHost
 import dev.macdroid.app.ui.tour.LocalTour
 import dev.macdroid.app.ui.tour.TourController
+import dev.macdroid.core.connection.ConnectionState
 
 object Routes {
     const val SETUP = "setup"
@@ -55,10 +56,11 @@ fun AppNavHost(graph: AppGraph) {
         }
     }
 
-    // The guided tour (Plan 14) spans setup and the main screens; pairing finishes its first step.
+    // The guided tour (Plan 14) spans setup and the main screens; being connected to the Mac finishes its first step.
     val tour = remember { TourController(context, setupDone = graph.uiPrefs.setupDone) }
-    val paired by graph.pairingStore.paired.collectAsStateWithLifecycle()
-    LaunchedEffect(paired != null) { if (paired != null) tour.connected() }
+    val connection by graph.connectionManager.state.collectAsStateWithLifecycle()
+    val connected = connection is ConnectionState.Connected
+    LaunchedEffect(connected, tour.current?.group) { if (connected) tour.connected() }
 
     CompositionLocalProvider(LocalTour provides tour) {
         CoachMarkHost(tour) {

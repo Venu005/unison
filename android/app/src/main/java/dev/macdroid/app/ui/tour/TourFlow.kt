@@ -1,7 +1,14 @@
 package dev.macdroid.app.ui.tour
 
 /** Each control the tour can highlight, in tour order (spec: "The guided tour", prototype v2). */
-enum class TourTarget { ScanQr, AllowLocalNetwork, AllowCamera, Send, SendPhotos, NotificationsTab, TurnOnNotifications, NotificationsAgree, ClipboardTab, SendClipboard, SettingsTab, ControlSwitch, ControlAgree }
+enum class TourTarget {
+    ScanQr, AllowLocalNetwork, AllowCamera, Send, SendPhotos, NotificationsTab, TurnOnNotifications, NotificationsAgree, ClipboardTab, SendClipboard, SettingsTab, ControlSwitch, ControlAgree,
+    /** Home's connection card: step 1 on a phone that's paired but not connected (no step of its own). */
+    StatusCard,
+}
+
+/** What the bubble points at and says right now. */
+data class TourDisplay(val target: TourTarget, val tip: String)
 
 data class TourStep(val group: Int, val target: TourTarget, val title: String, val tip: String, val skippable: Boolean)
 
@@ -47,7 +54,7 @@ class TourFlow(saved: TourPrefs.State) {
         finished = true
     }
 
-    /** Pairing worked: "Connect to your Mac" is done, whichever of its prompts were already answered. */
+    /** The phone is connected to its Mac: "Connect to your Mac" is done, whichever of its prompts were already answered. */
     fun connected() {
         if (current?.group == 0) jumpTo(firstOf(1))
     }
@@ -57,10 +64,24 @@ class TourFlow(saved: TourPrefs.State) {
         if (current?.group == group) jumpTo(STEPS.indexOfLast { it.group == group } + 1)
     }
 
-    /** "Show the tour again". A paired phone starts after connecting; it's never asked to pair again. */
-    fun restart(paired: Boolean) {
+    /** "Show the tour again": always from step 1, which finishes by itself once the phone is connected. */
+    fun restart() {
         finished = false
-        jumpTo(if (paired) firstOf(1) else 0)
+        jumpTo(0)
+    }
+
+    /**
+     * What to highlight. Step 1 on the Connect screen points at Scan (also after a declined prompt, which Scan asks
+     * again); anywhere else, on a paired phone, it points at the connection card and says to open the Mac app.
+     */
+    fun display(onConnectScreen: Boolean): TourDisplay? {
+        val step = current ?: return null
+        return when {
+            step.group != 0 -> TourDisplay(step.target, step.tip)
+            !onConnectScreen -> TourDisplay(TourTarget.StatusCard, "Open Unison on your Mac and keep it on the same Wi-Fi. This phone connects by itself.")
+            retry -> TourDisplay(TourTarget.ScanQr, "Unison needs this to reach your Mac. Tap Scan the QR code to try again.")
+            else -> TourDisplay(step.target, step.tip)
+        }
     }
 
     private fun firstOf(group: Int) = STEPS.indexOfFirst { it.group == group }

@@ -27,7 +27,7 @@ class TourController(private val context: Context, setupDone: Boolean) {
     var showFinish by mutableStateOf(false)
 
     val current: TourStep? get() = changes.let { flow.current }
-    val retry: Boolean get() = changes.let { flow.retry }
+    fun display(onConnectScreen: Boolean): TourDisplay? = changes.let { flow.display(onConnectScreen) }
     val stepCount: Int get() = flow.groups.size
 
     fun done(target: TourTarget) = update { flow.done(target) }
@@ -36,7 +36,7 @@ class TourController(private val context: Context, setupDone: Boolean) {
     fun skipGroup(group: Int) = update { flow.skipGroup(group); true }
     fun skipStep() = update { flow.skipStep(); true }
     fun end() = update { flow.end(); true }
-    fun restart(paired: Boolean) = update { flow.restart(paired); true }
+    fun restart() = update { flow.restart(); true }
 
     private fun update(change: () -> Boolean) {
         val wasActive = !flow.finished

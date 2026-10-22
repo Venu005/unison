@@ -198,7 +198,7 @@ fun SettingsScreen(onForget: () -> Unit, onShowTour: () -> Unit = {}, viewModel:
                 headlineContent = { Text("Show the tour again") },
                 supportingContent = { Text("A quick hands-on walk through Unison") },
                 leadingContent = { Icon(Icons.Rounded.Lightbulb, contentDescription = null) },
-                modifier = Modifier.clickable { tour?.restart(paired = ui.mac != null); onShowTour() },
+                modifier = Modifier.clickable { tour?.restart(); onShowTour() },
             )
         }
         item {
