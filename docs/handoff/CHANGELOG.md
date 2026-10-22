@@ -56,6 +56,18 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - Version 0.5.0 (versionCode 6).
   - `BuildConfig.PHOTOS_GALLERY` (true) gates the setup Photos step and Settings → Photos. `docs/play/photos-fallback.md` gives the exact edits if Play rejects the declaration.
   - **Verified:** `PhotosGalleryFlagTest` RED→GREEN; the gate built successfully; `git check-ignore` matches both files; `bundleRelease` without the key fails with the message.
+- **Task 8, part 1, Play paperwork and privacy page:**
+  - `docs/play/` holds the following, ready to paste:
+    - `listing.md` (78-character short description, full description, category, contacts, what to keep out);
+    - `declarations.md` (Accessibility as not a tool with no data collected, both foreground service types, Photos and videos, the other App content answers);
+    - `data-safety.md` ("No data collected", relying on end-to-end encryption between the user's own devices, plus a pre-submit dependency check);
+    - `app-access.md` (reviewer steps with the Mac app and Gatekeeper);
+    - `video-scripts.md` (5 shot lists);
+    - `closed-test.md` (12+ testers for 14 days);
+    - `screenshots.md`;
+    - `photos-fallback.md`.
+  - The privacy page's Accessibility line now matches Plan 14: it reads the text box being typed into, which stays on the phone, and watches no other app. Dated 22 Oct.
+  - **Verified:** website 34/34, build OK, check OK (30 files).
 
 ## 2026-10-22 — Unison on Google Play: design spec (docs/play-store-spec)
 - **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`, with the clickable guided-tour prototype saved as `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`.
