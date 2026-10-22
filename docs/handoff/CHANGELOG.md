@@ -12,6 +12,10 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - On the Mac, `MirrorSession` shows "Tap Start on your phone…" at once (`consentHint` defaults to `.zero`).
   - DECISIONS rows for auto-Start are marked removed.
   - **Verified:** `ControlServiceConfigTest` (3) and `consentHintShowsAtOnceByDefault` went RED→GREEN. Android gate built successfully with no warnings; `swift test` 371/371; `xcodebuild` succeeded.
+- **Task 2, on-device QR decoding:**
+  - `ui/qr/QrDecode` (ZXing `core` 3.5.3: Y-plane `PlanarYUVLuminanceSource`, `QRCodeReader` with `TRY_HARDER`, retried inverted) replaces ML Kit in `QrScanner`. ML Kit reported diagnostics to Google through `datatransport`.
+  - `com.google.mlkit:barcode-scanning` was removed.
+  - **Verified:** `QrDecodeTest` (4: plain, row padding, inverted, no code) and `NoTelemetryTest` went RED→GREEN. `releaseRuntimeClasspath` has 0 mlkit/datatransport matches. The gate built successfully with no warnings. Scanning on the phone is checked in Task 7 (fresh install).
 
 ## 2026-10-22 — Unison on Google Play: design spec (docs/play-store-spec)
 - **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`, with the clickable guided-tour prototype saved as `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`.
