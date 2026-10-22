@@ -5,6 +5,16 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
 ## 2026-10-22 — Plan 13: Support Unison (feat/support)
+- **Merged** to `main` as `c6cb7bd` on the owner's choice (local merge, not pushed). On the merged tree every gate passed: website 34/34 with check OK, Android build successful, `swift test` 370/370, `xcodebuild` succeeded.
+- **Deferred minors from the final review:**
+  - `sponsorUrl` isn't validated;
+  - check-dist doesn't catch an unmarked `href="#support"`;
+  - the chai glass's transmission material also runs on `lite`;
+  - the head turn isn't clamped on narrow fine-pointer windows;
+  - the "♥" is read aloud and there's no new-tab hint;
+  - ROADMAP still says "Support Unison…";
+  - `support-still.png` ships while the section is hidden.
+- **Owner checklist:** preview the section; click the Mac button; tap the Android row; test the QR code and the UPI link with two real UPI apps before setting `upiId`.
 - **Task 1, support settings and build-time filter:**
   - `website/src/support.js` provides `upiLink(id)` and `applySupport(html, site)`. It keeps or cuts the `<!-- support:… -->` and `<!-- upi:… -->` blocks, fills `%SPONSOR_URL%`, `%UPI_ID%` and `%UPI_LINK%`, and inlines the UPI QR code as SVG (dev dependency `qrcode` 1.5.4).
   - A malformed UPI ID stops the build.
