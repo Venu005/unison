@@ -11,9 +11,11 @@
 
 ---
 
-Unison is a pair of native apps: a **Mac menu-bar app** and an **Android app**. You pair them once by scanning a QR code. After that they find each other on your local network and stay connected in the background, so you can see your phone's battery on the Mac and send files either way. Phone notifications and a shared clipboard come in later updates.
+Unison is a pair of native apps: a **Mac menu-bar app** and an **Android app**. You pair them once by scanning a QR code. After that they find each other on your local network and stay connected in the background. Send files either way, see and answer your phone's notifications and calls on the Mac, share the clipboard, browse your photos, and mirror and control your phone's screen.
 
-It's built first for personal use (developed on a Nothing Phone (3) running Android 17 and a MacBook Air running macOS 26). It's designed to be publishable on the Mac App Store and Google Play: the Mac app is sandboxed, and the Android app uses only Play-friendly permissions.
+**Get it:** the Mac app is a free download from **[venu005.github.io/unison](https://venu005.github.io/unison/)**. The Android app is coming soon to Google Play.
+
+It's built by one person (developed on a Nothing Phone (3) running Android 17 and a MacBook Air running macOS 26). The Mac app is sandboxed, and the Android app is being prepared for Google Play.
 
 ## Features
 
@@ -22,10 +24,14 @@ It's built first for personal use (developed on a Nothing Phone (3) running Andr
 | **Pairing** by QR code (or manual entry with fingerprint check), forget & re-pair on either side | ✅ |
 | **Always-on connection** over local Wi-Fi with auto-reconnect (Wi-Fi drops, sleep/wake, reboots) | ✅ |
 | **Phone battery** level and charging state in the Mac menu bar | ✅ |
-| **File transfer, both ways** — resumable, SHA-256 checked, up to 3 at once | ✅ |
-| Android notifications mirrored to the Mac (reply, dismiss) | Planned (Plan 3) |
-| Clipboard sync (Mac → phone automatic, phone → Mac on demand) | Planned (Plan 4) |
-| "Share → Send to phone" from Finder | Planned |
+| **File transfer, both ways**: resumable, SHA-256 checked, up to 3 at once | ✅ |
+| **Notifications** mirrored to the Mac: reply, action buttons, dismiss both ways, per-app mutes | ✅ |
+| **Clipboard**: Mac → phone automatic, phone → Mac in one tap, Mac history | ✅ |
+| **Calls** on the Mac: answer, decline, hang up, number pad and `tel:` links (audio stays on the phone) | ✅ |
+| **Photos**: browse the phone's photos and videos on the Mac, preview, save, drag out | ✅ |
+| **Screen mirroring** with phone audio, and **remote control** from the Mac's mouse and keyboard | ✅ |
+| **Small wins**: ring my phone, media controls, open links on the other device | ✅ |
+| "Share → Send to phone" from Finder | Parked |
 
 ### File transfer
 
@@ -118,7 +124,7 @@ ANDROID_SERIAL=<device> ./gradlew :app:installDebug
 
 1. On the Mac, open Unison → **Phone** → **Pair a Phone** to show a QR code.
 2. On the phone, open Unison and follow the setup: allow local network access, then scan the code.
-3. You're done: the Mac shows your phone's battery, and the **Files** pages on both sides can send files.
+3. You're done: the Mac shows your phone's battery, and the features above work from both sides.
 
 ## Tests
 
@@ -162,6 +168,13 @@ docs/superpowers/        Design specs, implementation plans and follow-up lists
 
 The site lives in [`website/`](website/) and is published at https://venu005.github.io/unison/; download the Mac app from [Releases](https://github.com/Venu005/unison/releases/latest). Mac releases (`Unison.dmg`) are built with `scripts/make-release.sh`. See the [developer guide](docs/handoff/DEV-GUIDE.md).
 
+## Support Unison
+
+Unison is free, with no ads and no account. If it saves you time, you can leave a one-time tip:
+
+- **[Sponsor on GitHub](https://github.com/sponsors/Venu005)** (one-time or monthly)
+- **In India:** UPI from the [Support section](https://venu005.github.io/unison/#support) of the website
+
 ## Documentation
 
 - [**Handoff**](docs/handoff/README.md): start here to work on the project.
@@ -179,10 +192,10 @@ The site lives in [`website/`](website/) and is published at https://venu005.git
 1. ✅ Connection core: pairing, encrypted link, auto-reconnect, battery
 2. ✅ Native UI (macOS menu bar + window, Material You on Android) and app icons
 3. ✅ File transfer both ways
-4. ⏭ Notifications mirrored to the Mac, with reply and dismiss
-5. Clipboard sync
-6. Finder "Share → Send to phone"
-7. Later: photo gallery, SMS, screen mirroring, phone as webcam, USB transport
+4. ✅ Notifications, clipboard, calls, photos, screen mirroring and remote control
+5. ✅ Website, Mac download and the Support section
+6. ⏭ Google Play release: guided first-run tour, permission explanations, closed test
+7. Later: Finder "Share → Send to phone", SMS, phone as webcam or mic, USB transport
 
 ## Built with
 

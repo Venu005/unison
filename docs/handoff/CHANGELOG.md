@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Support section moved above the game; README refreshed (feat/support-before-game)
+- **What:** on the home page, Support ("Buy the robot a chai.") now comes before "Throw something at it.", which is the last section above the footer. Owner's request.
+- **README:** the intro, the feature table (everything shipped so far), the "Get it" line, a new "Support Unison" section (GitHub Sponsors, plus UPI through the site), pairing step 3 and the roadmap now match what's built.
+- **Verified:** website 34/34, build OK, check OK (30 files). The built page has `id="support"` before `id="game"`, and a Playwright screenshot shows Support followed by the game.
 ## 2026-10-22 — Plan 14: Unison on Google Play (feat/play-store)
 - **Task 1, auto-Start removed and Unison control declared honestly:**
   - Deleted: the auto-press in `MacDroidControlService.onAccessibilityEvent`, `ControlPrefs`, `NodeAdapter`, `ConsentMatcher`/`UiNode` (core), `MirrorPhoneSession.awaitingConsent`, the Settings row "Start mirroring without touching the phone", and `BuildConfig.STORE_BUILD`, with their tests.
