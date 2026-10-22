@@ -16,6 +16,16 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - `ui/qr/QrDecode` (ZXing `core` 3.5.3: Y-plane `PlanarYUVLuminanceSource`, `QRCodeReader` with `TRY_HARDER`, retried inverted) replaces ML Kit in `QrScanner`. ML Kit reported diagnostics to Google through `datatransport`.
   - `com.google.mlkit:barcode-scanning` was removed.
   - **Verified:** `QrDecodeTest` (4: plain, row padding, inverted, no code) and `NoTelemetryTest` went RED→GREEN. `releaseRuntimeClasspath` has 0 mlkit/datatransport matches. The gate built successfully with no warnings. Scanning on the phone is checked in Task 7 (fresh install).
+- **Task 3, disclosures:**
+  - `ui/disclosure/Disclosures` (`Gated`: Notifications, Accessibility, Photos, Microphone, Calls; what, where and why copy; `canAgree`).
+  - `DisclosureSheet` (Material 3 bottom sheet, Agree and Not now, and a checkbox for Unison control) and `rememberDisclosed`.
+  - The sheet now comes before every launch point:
+    - Notifications: the setup step and the Notifications tab;
+    - Photos: the setup step and Settings;
+    - Unison control: Settings, only when it's off;
+    - Microphone: Settings, and `MirrorConsentActivity`, where Not now mirrors without sound;
+    - Calls: Settings.
+  - **Verified:** `DisclosureRulesTest` (5) went RED→GREEN. A grep audit of every permission or settings launch found each one inside `onAgree`; the two exceptions only open settings for something already granted. The gate built successfully with no warnings.
 
 ## 2026-10-22 — Unison on Google Play: design spec (docs/play-store-spec)
 - **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`, with the clickable guided-tour prototype saved as `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`.

@@ -35,6 +35,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.macdroid.app.ui.disclosure.Gated
+import dev.macdroid.app.ui.disclosure.rememberDisclosed
 import dev.macdroid.app.ui.presentation.NotificationsPresentation
 import dev.macdroid.core.notifications.SeenApp
 import java.time.LocalDate
@@ -44,6 +46,7 @@ import java.time.LocalDate
 fun NotificationsScreen(viewModel: NotificationsViewModel = viewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val askAccess = rememberDisclosed(Gated.Notifications) { context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refreshAccess() }
     val today = remember { LocalDate.now().toEpochDay() }
     val card = NotificationsPresentation.topCard(state.notifications, state.macName, state.macSupports, state.connected)
@@ -58,7 +61,7 @@ fun NotificationsScreen(viewModel: NotificationsViewModel = viewModel()) {
                     }
                     if (card.showsSwitch) Switch(checked = state.notifications.forwarding, onCheckedChange = viewModel::setForwarding)
                     card.actionLabel?.let { label ->
-                        Button(onClick = { context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }) { Text(label) }
+                        Button(onClick = askAccess) { Text(label) }
                     }
                 }
             }

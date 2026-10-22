@@ -9,8 +9,12 @@ import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import dev.macdroid.app.graph
+import dev.macdroid.app.ui.disclosure.DisclosureSheet
+import dev.macdroid.app.ui.disclosure.Gated
+import dev.macdroid.app.ui.theme.MacDroidTheme
 import dev.macdroid.core.protocol.MirrorStartBody
 
 /** Wakes the screen, asks for the microphone if audio is wanted, then shows Android's capture consent (spec §3.1). */
@@ -29,7 +33,12 @@ class MirrorConsentActivity : ComponentActivity() {
         if (savedInstanceState != null) return
         val wantsAudio = intent.getBooleanExtra(EXTRA_AUDIO, false)
         if (wantsAudio && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            microphone.launch(Manifest.permission.RECORD_AUDIO)
+            // Google Play's prominent disclosure first (Plan 14); "Not now" mirrors without the phone's sound.
+            setContent {
+                MacDroidTheme {
+                    DisclosureSheet(Gated.Microphone, onAgree = { setContent {}; microphone.launch(Manifest.permission.RECORD_AUDIO) }, onNotNow = { setContent {}; askCapture() })
+                }
+            }
         } else {
             askCapture()
         }

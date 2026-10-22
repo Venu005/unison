@@ -44,9 +44,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.macdroid.app.ui.presentation.PhotosAccessText
 import dev.macdroid.app.platform.Permissions
 import dev.macdroid.app.ui.PairingViewModel
+import dev.macdroid.app.ui.disclosure.Gated
+import dev.macdroid.app.ui.disclosure.rememberDisclosed
+import dev.macdroid.app.ui.presentation.PhotosAccessText
 
 @Composable
 fun SetupScreen(viewModel: SetupViewModel, pairingViewModel: PairingViewModel = viewModel()) {
@@ -112,18 +114,19 @@ private fun NotificationsStep(needsPermission: Boolean, onResult: () -> Unit, on
         onResult()
         if (!Permissions.hasNotificationAccess(context)) openAccess()
     }
+    val ask = rememberDisclosed(Gated.Notifications) {
+        when {
+            needsPermission -> launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            !Permissions.hasNotificationAccess(context) -> openAccess()
+            else -> onResult()
+        }
+    }
     StepLayout(
         icon = Icons.Rounded.NotificationsActive,
         title = "See phone notifications on your Mac",
         body = "Reply to messages and clear notifications from your Mac. Unison only sends them to your paired Mac — never to the internet.",
         primaryLabel = "Allow notification access",
-        onPrimary = {
-            when {
-                needsPermission -> launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                !Permissions.hasNotificationAccess(context) -> openAccess()
-                else -> onResult()
-            }
-        },
+        onPrimary = { if (!needsPermission && Permissions.hasNotificationAccess(context)) onResult() else ask() },
         secondaryLabel = "Not now",
         onSecondary = onSkip,
     )
@@ -146,12 +149,13 @@ private fun FilesStep(onDone: (Uri?) -> Unit) {
 @Composable
 private fun PhotosStep(onDone: () -> Unit) {
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { onDone() }
+    val ask = rememberDisclosed(Gated.Photos) { launcher.launch(PhotosAccessText.permissions(Build.VERSION.SDK_INT)) }
     StepLayout(
         icon = Icons.Rounded.PhotoLibrary,
         title = "See your photos on your Mac",
         body = "Browse and save your photos and videos from your Mac. You choose all photos or just some.",
         primaryLabel = "Choose access",
-        onPrimary = { launcher.launch(PhotosAccessText.permissions(Build.VERSION.SDK_INT)) },
+        onPrimary = ask,
         secondaryLabel = "Not now",
         onSecondary = onDone,
     )
