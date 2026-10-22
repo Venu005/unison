@@ -10,6 +10,11 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - A malformed UPI ID stops the build.
   - `site.config.js` gains `sponsorUrl: null` and `upiId: null`.
   - Tests: `test/support.test.js` (7). `npm test` passes 28/28.
+- **Task 3, story timeline:**
+  - `website/src/support/story.js` holds `STORY` (the timings), `storyAt(t)` and `createIdle(random)`.
+  - The first seated action is a cheers; after that it alternates with sips every 4.5–6.5 s.
+  - A click asks for a sip. It is ignored before the robot sits, and it pushes the next idle action back.
+  - Tests: `test/story.test.js` (4). `npm test` passes 32/32.
 - **Task 2, Support section markup:**
   - `#support` added to `index.html` after the game section. It is wrapped in support markers, as are the nav (`.opt`) and footer "Support" links.
   - The page's styles are in `sections.css`, which also stacks the scene above the copy below 900 px.
