@@ -113,6 +113,14 @@ import Testing
         #expect(await h.session.state.sessionId == "s2")
     }
 
+    // Plan 14: the phone no longer presses Start itself, so the Mac asks for the tap straight away.
+    @Test func consentHintShowsAtOnceByDefault() async {
+        let session = MirrorSession(send: { _ in })
+        await session.connectionChanged(.connected(PeerInfo(device: "Phone", app: "0.7.0", features: ProtocolInfo.features)))
+        _ = await session.start(MirrorOptions())
+        #expect(await session.state.phase == .starting(waitingForTap: true))
+    }
+
     // Review Focus #5
     @Test func disconnectStopsTheSession() async {
         let h = Harness()

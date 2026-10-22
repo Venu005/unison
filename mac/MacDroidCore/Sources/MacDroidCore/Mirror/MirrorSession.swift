@@ -87,7 +87,7 @@ public actor MirrorSession {
     public init(
         now: @escaping @Sendable () -> Int64 = MonotonicClock.micros,
         makeId: @escaping @Sendable () -> String = { UUID().uuidString.lowercased() },
-        consentHint: Duration = .seconds(20),
+        consentHint: Duration = .zero,  // the phone no longer presses Start itself (Plan 14): ask for the tap at once
         consentTimeout: Duration = .seconds(60),
         pingEvery: Duration = .seconds(2),
         send: @escaping @Sendable (Message) async throws -> Void
@@ -125,7 +125,7 @@ public actor MirrorSession {
         meter.reset()
         update {
             $0.sessionId = id
-            $0.phase = .starting(waitingForTap: false)
+            $0.phase = .starting(waitingForTap: consentHint == .zero)
             $0.audio = nil
             $0.control = nil
         }

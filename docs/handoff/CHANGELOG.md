@@ -4,6 +4,15 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Plan 14: Unison on Google Play (feat/play-store)
+- **Task 1, auto-Start removed and Unison control declared honestly:**
+  - Deleted: the auto-press in `MacDroidControlService.onAccessibilityEvent`, `ControlPrefs`, `NodeAdapter`, `ConsentMatcher`/`UiNode` (core), `MirrorPhoneSession.awaitingConsent`, the Settings row "Start mirroring without touching the phone", and `BuildConfig.STORE_BUILD`, with their tests.
+  - `control_service.xml` sets `isAccessibilityTool="false"`, drops the System UI `packageNames`, and narrows events to `typeViewFocused`. Gestures and window content stay.
+  - The service description no longer mentions pressing Start.
+  - On the Mac, `MirrorSession` shows "Tap Start on your phone…" at once (`consentHint` defaults to `.zero`).
+  - DECISIONS rows for auto-Start are marked removed.
+  - **Verified:** `ControlServiceConfigTest` (3) and `consentHintShowsAtOnceByDefault` went RED→GREEN. Android gate built successfully with no warnings; `swift test` 371/371; `xcodebuild` succeeded.
+
 ## 2026-10-22 — Unison on Google Play: design spec (docs/play-store-spec)
 - **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`, with the clickable guided-tour prototype saved as `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`.
   - **Scope:** the Play build ships every feature, including Unison control with `isAccessibilityTool="false"` and a full disclosure. Auto-Start is off.

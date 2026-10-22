@@ -26,7 +26,6 @@ import androidx.compose.material.icons.rounded.Laptop
 import androidx.compose.material.icons.rounded.LinkOff
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.PhotoLibrary
-import androidx.compose.material.icons.rounded.PlayCircle
 import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material.icons.rounded.SaveAs
 import androidx.compose.material.icons.rounded.Shield
@@ -141,16 +140,6 @@ fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewMode
                 leadingContent = { Icon(Icons.Rounded.TouchApp, contentDescription = null) },
                 modifier = Modifier.clickable { context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) },
             )
-        }
-        if (!BuildConfig.STORE_BUILD) {
-            item {
-                ListItem(
-                    headlineContent = { Text("Start mirroring without touching the phone") },
-                    supportingContent = { Text("Unison control presses Start on the screen-sharing prompt for you (phone unlocked)") },
-                    leadingContent = { Icon(Icons.Rounded.PlayCircle, contentDescription = null) },
-                    trailingContent = { Switch(checked = ui.autoStart && ui.controlOn, enabled = ui.controlOn, onCheckedChange = viewModel::setAutoStart) },
-                )
-            }
         }
         item {
             ListItem(

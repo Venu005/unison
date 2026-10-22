@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="control_service_description">Lets your paired Mac tap, scroll and type on this phone while you mirror it, and press Start on the screen-sharing prompt for you. Unison only acts when your Mac asks, and never sends what\'s on screen anywhere except to your Mac\'s mirror window.</string>
+    <string name="control_service_description">Uses Android\'s Accessibility service to tap, scroll and type on this phone, only while you mirror it and only when your Mac asks. To type, it reads the text box you\'re typing into so it can edit it. Nothing leaves this phone except to your Mac\'s mirror window.</string>
 </resources>

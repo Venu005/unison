@@ -115,18 +115,6 @@ class MirrorRulesTest {
         assertEquals(VideoAdmit.Send, policy.video(keyFrame = true, queuedBytes = 1_000))
     }
 
-    // Review Focus #1 (arming) and #2 (gating)
-    @Test fun notArmedWithoutAWaitingSession() {
-        val s = session()
-        assertFalse(s.awaitingConsent)
-        s.start(start)
-        assertTrue(s.awaitingConsent)
-        s.streaming(864, 1920, 0, audio = false, control = true)
-        assertFalse(s.awaitingConsent)
-        s.ended(MirrorStopReason.User)
-        assertFalse(s.awaitingConsent)
-    }
-
     @Test fun controlChangeResendsTheState() {
         val s = session()
         s.controlChanged(true) // no session: nothing

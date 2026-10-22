@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dev.macdroid.app.graph
 import dev.macdroid.app.platform.Permissions
-import dev.macdroid.app.platform.control.ControlPrefs
 import dev.macdroid.app.platform.control.MacDroidControlService
 import dev.macdroid.app.service.ConnectionService
 import dev.macdroid.app.ui.presentation.PhotosAccessText
@@ -26,7 +25,6 @@ data class SettingsUi(
     val batteryUnrestricted: Boolean,
     val photosAccess: PhotoAccess = PhotoAccess.None,
     val controlOn: Boolean = false,
-    val autoStart: Boolean = true,
     val microphoneAllowed: Boolean = false,
     val callsAllowed: Boolean = false,
 ) {
@@ -67,10 +65,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         refresh()
     }
 
-    fun setAutoStart(on: Boolean) {
-        ControlPrefs.setAutoStart(getApplication(), on)
-        refresh()
-    }
 
     private fun read(): SettingsUi {
         val app = getApplication<Application>()
@@ -81,7 +75,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             batteryUnrestricted = app.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(app.packageName),
             photosAccess = graph.photosBridge.access.value,
             controlOn = MacDroidControlService.running.value,
-            autoStart = ControlPrefs.autoStart(app),
             microphoneAllowed = Permissions.granted(app, android.Manifest.permission.RECORD_AUDIO),
             callsAllowed = Permissions.granted(app, android.Manifest.permission.CALL_PHONE),
         )

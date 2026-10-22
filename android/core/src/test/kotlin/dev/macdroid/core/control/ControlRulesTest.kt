@@ -3,7 +3,6 @@ package dev.macdroid.core.control
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -93,23 +92,6 @@ class ControlRulesTest {
         assertEquals("hi " to 3, TextEdit.backspace(text, text.length, text.length))
     }
 
-    private data class Node(override val viewId: String? = null, override val text: String? = null, override val clickable: Boolean = false,
-                            override val children: List<UiNode> = emptyList()) : UiNode
-
-    // Review Focus #1
-    @Test fun onlyTheMirroringConsentIsMatched() {
-        val share = Node("android:id/button1", "Share screen", clickable = true)
-        val dialog = Node(children = listOf(Node("com.android.systemui:id/screen_share_permission_dialog", children = listOf(
-            Node(text = "Share your screen with Unison?"), Node("android:id/button2", "Cancel", true), share))))
-        assertSame(share, ConsentMatcher.startButton(dialog))
-        val older = Node(children = listOf(Node(text = "Start recording or casting with Unison?"), Node(null, "Start now", true)))
-        assertEquals("Start now", ConsentMatcher.startButton(older)?.text)
-        val other = Node(children = listOf(Node(text = "Start a workout?"), Node(null, "Start", true)))
-        assertNull(ConsentMatcher.startButton(other))
-        val otherApp = Node(children = listOf(Node(text = "Share your screen with Zoom?"), Node(null, "Share screen", true)))
-        assertNull(ConsentMatcher.startButton(otherApp))
-    }
-
     // Final review C1: a wheel notch or a slow scroll must never become a tap on the phone.
     @Test fun tinyScrollsNeverBecomeATap() {
         val b = ScrollBuffer()
@@ -142,16 +124,6 @@ class ControlRulesTest {
         val swipe = b.take(1080, 2400)!!
         assertEquals(216f, swipe.fromX, 0.5f)
         assertEquals(480f - 96f, swipe.toY, 0.5f)
-    }
-
-    // Final review I3: the shade or another app's dialog with "MacDroid" somewhere must not be pressed.
-    @Test fun consentNeedsMacDroidNamedInTheDialog() {
-        val recorder = Node(children = listOf(Node("com.android.systemui:id/screen_share_permission_dialog", children = listOf(
-            Node(text = "Start recording?"), Node("android:id/button1", "Start", true)))))
-        assertNull(ConsentMatcher.startButton(recorder))
-        val shade = Node(children = listOf(Node(text = "Unison"), Node(text = "Mirror to MacBook? Tap to start"),
-            Node(text = "Stopwatch"), Node(null, "Start", true)))
-        assertNull(ConsentMatcher.startButton(shade))
     }
 
     // Final review I5: Return in a single-line field submits instead of adding a newline.
