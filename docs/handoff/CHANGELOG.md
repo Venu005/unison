@@ -26,6 +26,11 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
     - Microphone: Settings, and `MirrorConsentActivity`, where Not now mirrors without sound;
     - Calls: Settings.
   - **Verified:** `DisclosureRulesTest` (5) went RED→GREEN. A grep audit of every permission or settings launch found each one inside `onAgree`; the two exceptions only open settings for something already granted. The gate built successfully with no warnings.
+- **Task 4, tour state machine:**
+  - `ui/tour/TourFlow` has 13 `TourTarget`s in 5 groups, with the spec's titles and the prototype's tips.
+  - `done` advances only on the highlighted action. `denied` keeps the step open with `retry`. `skipStep`/`end` are blocked during "Connect to your Mac". `restart` starts over.
+  - `TourPrefs` (SharedPreferences `tour`) saves the index and the finished flag.
+  - **Verified:** `TourFlowTest` (8) went RED→GREEN, and the gate built successfully.
 
 ## 2026-10-22 — Unison on Google Play: design spec (docs/play-store-spec)
 - **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`, with the clickable guided-tour prototype saved as `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`.
