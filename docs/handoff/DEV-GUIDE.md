@@ -117,6 +117,21 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - `scripts/make-release.sh --dry-run` builds Release, packages `mac/build/release/Unison.dmg` (`Unison.app` + an `Applications` shortcut) and prints the SHA-256. The DMG is deliberately **unsigned**: macOS refuses a disk image signed with a self-signed certificate ("Apple could not verify Unison.dmg") before the user sees the app. The app inside is signed (check: `codesign -dr - /Volumes/Unison/Unison.app`).
 - `scripts/make-release.sh` (no flag) does the same, then `gh release create` with the DMG and notes containing the SHA-256. It's public: run it only on the owner's word. The website's Download button always points at the latest release's `Unison.dmg`.
 
+## Releasing on Google Play (Plan 14)
+- **The upload key** is `~/Keystores/unison-upload.jks` (PKCS12, alias `upload`, created 2026-10-22). Its SHA-256 certificate fingerprint starts `1A:78:2E:A4:A2:36:80:04`.
+  - The password is only in the gitignored `android/keystore.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`).
+  - **The owner keeps a backup** of the `.jks` and the password in their password manager. Losing them means asking Google for an upload-key reset.
+- **Build:** run `cd android && ./gradlew :app:bundleRelease`. The output is `app/build/outputs/bundle/release/app-release.aab`. Check it with `jarsigner -verify …aab`, which should say "jar verified". Without `keystore.properties`, release tasks stop with a clear message; debug and the gates are unaffected.
+- **Play App Signing:** Google re-signs the bundle for users. So an APK built here can't update a copy installed from Play, and the reverse is also true.
+- **The owner's phone moves over once:**
+  1. uninstall the debug copy, which loses its pairing;
+  2. install the signed build (`bundletool build-apks --connected-device` plus `install-apks`, or join the closed test);
+  3. scan the Mac's QR code.
+
+  After that, test on that phone through Play's internal or closed track, or uninstall and reinstall.
+- Bump `versionCode` and `versionName` in `android/app/build.gradle.kts` for every upload.
+- The paperwork for Play Console is in `docs/play/`.
+
 ## Conventions
 - Swift Testing (`@Test`, `#expect`) on the Mac and JUnit4 on Android; TDD for logic.
 - Pure presentation and state logic lives in testable types; views stay thin.

@@ -62,6 +62,7 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - Version 0.5.0 (versionCode 6).
   - `BuildConfig.PHOTOS_GALLERY` (true) gates the setup Photos step and Settings → Photos. `docs/play/photos-fallback.md` gives the exact edits if Play rejects the declaration.
   - **Verified:** `PhotosGalleryFlagTest` RED→GREEN; the gate built successfully; `git check-ignore` matches both files; `bundleRelease` without the key fails with the message.
+- **Task 6, part 2 (owner's go-ahead):** created the upload key `~/Keystores/unison-upload.jks` (RSA 4096, PKCS12, alias `upload`, 10000 days, CN=Venusai, C=IN, SHA-256 `1A:78:2E:A4…`) with a generated password. The password is written only to the gitignored `android/keystore.properties` (mode 600). `bundleRelease` builds a signed `app-release.aab` (17 MB) and `jarsigner -verify` says "jar verified". DEV-GUIDE gains "Releasing on Google Play".
 - **Task 8, part 1, Play paperwork and privacy page:**
   - `docs/play/` holds the following, ready to paste:
     - `listing.md` (78-character short description, full description, category, contacts, what to keep out);
