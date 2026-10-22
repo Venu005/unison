@@ -138,14 +138,16 @@ fun SettingsScreen(onForget: () -> Unit, onShowTour: () -> Unit = {}, viewModel:
                 trailingContent = { Switch(checked = files.askEachTime, onCheckedChange = filesViewModel::setAskEachTime) },
             )
         }
-        item { SectionHeader("Photos") }
-        item {
-            ListItem(
-                headlineContent = { Text("Photos on your Mac") },
-                supportingContent = { Text(ui.photosSummary) },
-                leadingContent = { Icon(Icons.Rounded.PhotoLibrary, contentDescription = null) },
-                modifier = Modifier.clickable { askPhotos() },
-            )
+        if (BuildConfig.PHOTOS_GALLERY) {
+            item { SectionHeader("Photos") }
+            item {
+                ListItem(
+                    headlineContent = { Text("Photos on your Mac") },
+                    supportingContent = { Text(ui.photosSummary) },
+                    leadingContent = { Icon(Icons.Rounded.PhotoLibrary, contentDescription = null) },
+                    modifier = Modifier.clickable { askPhotos() },
+                )
+            }
         }
         item { SectionHeader("Remote control") }
         item {

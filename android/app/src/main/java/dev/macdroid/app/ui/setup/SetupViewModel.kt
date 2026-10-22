@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import dev.macdroid.app.BuildConfig
 import dev.macdroid.app.graph
 import dev.macdroid.app.platform.Permissions
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -100,6 +101,7 @@ class SetupViewModel(application: Application, private val saved: SavedStateHand
         batteryDone = battery,
         filesStepDone = l.filesStepDone,
         photosStepDone = l.photosStepDone,
+        photosGallery = BuildConfig.PHOTOS_GALLERY,
     )
 
     private fun readLocal(): Local {

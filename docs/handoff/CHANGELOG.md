@@ -50,6 +50,12 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - Someone who finished setup before this change doesn't get the tour automatically.
   - **Verified:** `TourFlowTest` 11/11, including `pairingFinishesTheConnectStep`, `aGroupAlreadyDoneSkipsItself` and `restartOnAPairedPhoneSkipsConnecting`, all RED→GREEN. `SetupFlowTest` was rewritten (`welcomeIsGoneConnectComesFirst` RED→GREEN). The gate built successfully with no warnings.
   - The debug build is installed on the owner's phone (`install -r`, pairing kept). The tour walk on the device is the owner's to do (no automated taps or screenshots on their phone).
+- **Task 6, release signing (part 1, before the key):**
+  - The `release` build reads the upload key from a gitignored `android/keystore.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`). Without that file, `bundle`/`package`/`assemble*Release` stop with "Release signing needs android/keystore.properties", and debug and the gates still build.
+  - `.gitignore` adds `android/keystore.properties` and `*.jks`.
+  - Version 0.5.0 (versionCode 6).
+  - `BuildConfig.PHOTOS_GALLERY` (true) gates the setup Photos step and Settings → Photos. `docs/play/photos-fallback.md` gives the exact edits if Play rejects the declaration.
+  - **Verified:** `PhotosGalleryFlagTest` RED→GREEN; the gate built successfully; `git check-ignore` matches both files; `bundleRelease` without the key fails with the message.
 
 ## 2026-10-22 — Unison on Google Play: design spec (docs/play-store-spec)
 - **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`, with the clickable guided-tour prototype saved as `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`.

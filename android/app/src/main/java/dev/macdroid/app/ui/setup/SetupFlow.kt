@@ -12,6 +12,8 @@ data class SetupInputs(
     val filesStepDone: Boolean = false,
     /** The optional first-run step "See your photos on your Mac" was answered (photos spec §2). */
     val photosStepDone: Boolean = false,
+    /** `BuildConfig.PHOTOS_GALLERY`: off only in the Play fallback (docs/play/photos-fallback.md). */
+    val photosGallery: Boolean = true,
 )
 
 /**
@@ -32,7 +34,7 @@ object SetupFlow {
                 // Normally granted from the Scan button already; shown only if pairing somehow got past without it.
                 if (i.needsLocalNetwork) add(SetupStep.LocalNetwork)
                 add(SetupStep.Files)
-                add(SetupStep.Photos)
+                if (i.photosGallery) add(SetupStep.Photos)
                 add(SetupStep.Battery)
             }
         }

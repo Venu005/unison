@@ -1,8 +1,15 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
+
+// Release signing for Google Play (Plan 14): the upload key's details live in android/keystore.properties, which is
+// gitignored. Without it, debug and the gates still build; release tasks stop with a clear message.
+val uploadKey: Properties? = rootProject.file("keystore.properties").takeIf { it.exists() }
+    ?.let { f -> Properties().apply { f.inputStream().use { load(it) } } }
 
 android {
     namespace = "dev.macdroid.app"
@@ -12,9 +19,26 @@ android {
         applicationId = "dev.macdroid.app"
         minSdk = 29
         targetSdk = 37
-        versionCode = 5
-        versionName = "0.4.1"
+        versionCode = 6
+        versionName = "0.5.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // "Photos on your Mac" (broad photo access). docs/play/photos-fallback.md turns it off if Play rejects the declaration.
+        buildConfigField("boolean", "PHOTOS_GALLERY", "true")
+    }
+    signingConfigs {
+        if (uploadKey != null) {
+            create("upload") {
+                storeFile = file(uploadKey.getProperty("storeFile").replaceFirst("~", System.getProperty("user.home")))
+                storePassword = uploadKey.getProperty("storePassword")
+                keyAlias = uploadKey.getProperty("keyAlias")
+                keyPassword = uploadKey.getProperty("keyPassword")
+            }
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.findByName("upload")
+        }
     }
     buildFeatures {
         compose = true
@@ -49,4 +73,11 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.7.0")
     androidTestImplementation("com.squareup.okhttp3:mockwebserver3:5.5.0")
     androidTestImplementation("com.squareup.okhttp3:okhttp-tls:5.5.0")
+}
+
+// A release build must never come out unsigned or debug-signed: stop early and say what's missing.
+tasks.configureEach {
+    if (uploadKey == null && name.endsWith("Release") && (name.startsWith("bundle") || name.startsWith("package") || name.startsWith("assemble"))) {
+        doFirst { throw GradleException("Release signing needs android/keystore.properties (see DEV-GUIDE: Releasing on Google Play)") }
+    }
 }
