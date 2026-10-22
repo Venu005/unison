@@ -24,17 +24,13 @@ class SetupViewModel(application: Application, private val saved: SavedStateHand
     private data class Local(
         val setupDone: Boolean,
         val hasLocalNetwork: Boolean,
-        val hasNotifications: Boolean,
-        val notificationsSkipped: Boolean,
         val filesStepDone: Boolean,
-        val hasNotificationAccess: Boolean,
         val photosStepDone: Boolean,
     )
 
     private val graph = application.graph
     private val local = MutableStateFlow(readLocal())
     // Kept in the saved state, so the process being killed mid-setup resumes at the same step (Plan 11).
-    private val welcomeDone = saved.getMutableStateFlow(WELCOME_DONE, false)
     private val batteryDone = saved.getMutableStateFlow(BATTERY_DONE, false)
     private var sawUnpaired = graph.pairingStore.paired.value == null
 
@@ -55,12 +51,12 @@ class SetupViewModel(application: Application, private val saved: SavedStateHand
         .map { it?.name }
         .stateIn(viewModelScope, SharingStarted.Eagerly, graph.pairingStore.paired.value?.name)
 
-    val state: StateFlow<SetupUiState> = combine(local, welcomeDone, batteryDone, paired, graph.uiPrefs.keepConnectedFlow) { l, welcome, battery, isPaired, keep ->
-        SetupUiState.from(inputs(l, welcome, battery, isPaired), keep)
+    val state: StateFlow<SetupUiState> = combine(local, batteryDone, paired, graph.uiPrefs.keepConnectedFlow) { l, battery, isPaired, keep ->
+        SetupUiState.from(inputs(l, battery, isPaired), keep)
     }.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
-        SetupUiState.from(inputs(local.value, welcomeDone.value, batteryDone.value, graph.pairingStore.paired.value != null), graph.uiPrefs.keepConnected),
+        SetupUiState.from(inputs(local.value, batteryDone.value, graph.pairingStore.paired.value != null), graph.uiPrefs.keepConnected),
     )
 
     /** Re-read permissions and preferences (call on resume and after a permission prompt). */
@@ -68,15 +64,6 @@ class SetupViewModel(application: Application, private val saved: SavedStateHand
         graph.notificationBridge.refreshAccess()
         graph.photosBridge.refreshAccess()
         local.value = readLocal()
-    }
-
-    fun completeWelcome() {
-        welcomeDone.value = true
-    }
-
-    fun skipNotifications() {
-        graph.uiPrefs.notificationsSkipped = true
-        refresh()
     }
 
     /** "Where should files from your Mac go?": null keeps Download/MacDroid; a tree URI is a folder the user chose. */
@@ -105,18 +92,13 @@ class SetupViewModel(application: Application, private val saved: SavedStateHand
         refresh()
     }
 
-    private fun inputs(l: Local, welcome: Boolean, battery: Boolean, isPaired: Boolean) = SetupInputs(
+    private fun inputs(l: Local, battery: Boolean, isPaired: Boolean) = SetupInputs(
         setupDone = l.setupDone,
-        welcomeDone = welcome,
         needsLocalNetwork = Permissions.needsLocalNetwork,
         hasLocalNetwork = l.hasLocalNetwork,
         paired = isPaired,
-        needsNotifications = Permissions.needsNotifications,
-        hasNotifications = l.hasNotifications,
-        notificationsSkipped = l.notificationsSkipped,
         batteryDone = battery,
         filesStepDone = l.filesStepDone,
-        hasNotificationAccess = l.hasNotificationAccess,
         photosStepDone = l.photosStepDone,
     )
 
@@ -125,17 +107,13 @@ class SetupViewModel(application: Application, private val saved: SavedStateHand
         return Local(
             setupDone = graph.uiPrefs.setupDone,
             hasLocalNetwork = Permissions.hasLocalNetwork(app),
-            hasNotifications = Permissions.hasNotifications(app),
-            notificationsSkipped = graph.uiPrefs.notificationsSkipped,
             filesStepDone = graph.filesPrefs.filesStepDone,
-            hasNotificationAccess = Permissions.hasNotificationAccess(app),
             photosStepDone = graph.uiPrefs.photosStepDone,
         )
     }
 
     private companion object {
         const val SUCCESS_PAUSE_MS = 1_000L
-        const val WELCOME_DONE = "welcomeDone"
         const val BATTERY_DONE = "batteryDone"
     }
 }

@@ -122,10 +122,6 @@ class UiPrefs(context: Context) {
             _keepConnected.value = value
         }
 
-    var notificationsSkipped: Boolean
-        get() = prefs.getBoolean("notificationsSkipped", false)
-        set(value) { prefs.edit().putBoolean("notificationsSkipped", value).apply() }
-
     var photosStepDone: Boolean
         get() = prefs.getBoolean("photosStepDone", false)
         set(value) { prefs.edit().putBoolean("photosStepDone", value).apply() }

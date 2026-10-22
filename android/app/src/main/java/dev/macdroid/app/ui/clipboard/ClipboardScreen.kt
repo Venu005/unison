@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Notes
 import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.Link
-import androidx.compose.material.icons.automirrored.rounded.Notes
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,6 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.macdroid.app.ui.presentation.ClipboardPresentation
+import dev.macdroid.app.ui.tour.LocalTour
+import dev.macdroid.app.ui.tour.TourTarget
+import dev.macdroid.app.ui.tour.tourTarget
 import dev.macdroid.core.clipboard.ClipItem
 import kotlinx.coroutines.launch
 
@@ -52,7 +55,9 @@ fun ClipboardScreen(viewModel: ClipboardViewModel = viewModel()) {
                     Text("Send clipboard to Mac", style = MaterialTheme.typography.titleMedium)
                     Text("Copies what's on this phone's clipboard to your Mac", style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Button(onClick = {
+                    val tour = LocalTour.current
+                    Button(modifier = Modifier.tourTarget(TourTarget.SendClipboard), onClick = {
+                        tour?.done(TourTarget.SendClipboard)
                         // The app is in front, so reading the clipboard here is allowed.
                         val clip = context.getSystemService(ClipboardManager::class.java).primaryClip
                         scope.launch {

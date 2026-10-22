@@ -41,6 +41,9 @@ import dev.macdroid.app.ui.files.openReceived
 import dev.macdroid.app.ui.files.rememberSendPickers
 import dev.macdroid.app.ui.presentation.StatusAction
 import dev.macdroid.app.ui.presentation.TransferPresentation
+import dev.macdroid.app.ui.tour.LocalTour
+import dev.macdroid.app.ui.tour.TourTarget
+import dev.macdroid.app.ui.tour.tourTarget
 
 @Composable
 fun HomeScreen(onPairAgain: () -> Unit, viewModel: HomeViewModel = viewModel(), filesViewModel: FilesViewModel = viewModel()) {
@@ -85,9 +88,11 @@ fun HomeScreen(onPairAgain: () -> Unit, viewModel: HomeViewModel = viewModel(), 
         Spacer(Modifier.height(88.dp)) // room for the Send button
     }
     Box(Modifier.align(Alignment.BottomEnd).padding(16.dp)) {
+        val tour = LocalTour.current
         ExtendedFloatingActionButton(
+            modifier = Modifier.tourTarget(TourTarget.Send),
             onClick = {
-                if (files.connected) sendMenu = true
+                if (files.connected) { sendMenu = true; tour?.done(TourTarget.Send) }
                 else Toast.makeText(context, "Connect to your Mac first", Toast.LENGTH_SHORT).show() // was silent (Plan 11)
             },
             icon = { Icon(Icons.AutoMirrored.Rounded.Send, contentDescription = null) },
@@ -95,7 +100,7 @@ fun HomeScreen(onPairAgain: () -> Unit, viewModel: HomeViewModel = viewModel(), 
             expanded = true,
         )
         DropdownMenu(expanded = sendMenu, onDismissRequest = { sendMenu = false }) {
-            DropdownMenuItem(text = { Text("Photos") }, onClick = { sendMenu = false; pickers.pickPhotos() })
+            DropdownMenuItem(text = { Text("Photos") }, onClick = { sendMenu = false; tour?.done(TourTarget.SendPhotos); pickers.pickPhotos() })
             DropdownMenuItem(text = { Text("Files") }, onClick = { sendMenu = false; pickers.pickFiles() })
         }
     }

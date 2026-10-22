@@ -1,6 +1,5 @@
 package dev.macdroid.app.ui.setup
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -23,8 +22,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Folder
-import androidx.compose.material.icons.rounded.Laptop
-import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.PhotoLibrary
 import androidx.compose.material.icons.rounded.Wifi
 import androidx.compose.material3.Button
@@ -63,14 +60,8 @@ fun SetupScreen(viewModel: SetupViewModel, pairingViewModel: PairingViewModel = 
         }
         AnimatedContent(targetState = state.step, label = "setup-step", modifier = Modifier.weight(1f)) { step ->
             when (step) {
-                SetupStep.Welcome -> WelcomeStep(onContinue = viewModel::completeWelcome)
                 SetupStep.LocalNetwork -> LocalNetworkStep(onResult = viewModel::refresh)
                 SetupStep.PairMac -> PairStep(pairingViewModel, macName)
-                SetupStep.Notifications -> NotificationsStep(
-                    needsPermission = Permissions.needsNotifications && !Permissions.hasNotifications(LocalContext.current),
-                    onResult = viewModel::refresh,
-                    onSkip = viewModel::skipNotifications,
-                )
                 SetupStep.Files -> FilesStep(onDone = viewModel::completeFiles)
                 SetupStep.Photos -> PhotosStep(onDone = viewModel::completePhotos)
                 SetupStep.Battery -> BatteryStep(onDone = viewModel::completeBattery)
@@ -78,17 +69,6 @@ fun SetupScreen(viewModel: SetupViewModel, pairingViewModel: PairingViewModel = 
             }
         }
     }
-}
-
-@Composable
-private fun WelcomeStep(onContinue: () -> Unit) {
-    StepLayout(
-        icon = Icons.Rounded.Laptop,
-        title = "Welcome to Unison",
-        body = "Your phone and your Mac, working together — right over your Wi-Fi. No account, and nothing leaves your network.",
-        primaryLabel = "Get started",
-        onPrimary = onContinue,
-    )
 }
 
 @Composable
@@ -103,32 +83,6 @@ private fun LocalNetworkStep(onResult: () -> Unit) {
         onPrimary = { launcher.launch(Permissions.ACCESS_LOCAL_NETWORK) },
         secondaryLabel = "Open settings",
         onSecondary = { context.openAppSettings() },
-    )
-}
-
-@Composable
-private fun NotificationsStep(needsPermission: Boolean, onResult: () -> Unit, onSkip: () -> Unit) {
-    val context = LocalContext.current
-    val openAccess = { context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-        onResult()
-        if (!Permissions.hasNotificationAccess(context)) openAccess()
-    }
-    val ask = rememberDisclosed(Gated.Notifications) {
-        when {
-            needsPermission -> launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            !Permissions.hasNotificationAccess(context) -> openAccess()
-            else -> onResult()
-        }
-    }
-    StepLayout(
-        icon = Icons.Rounded.NotificationsActive,
-        title = "See phone notifications on your Mac",
-        body = "Reply to messages and clear notifications from your Mac. Unison only sends them to your paired Mac — never to the internet.",
-        primaryLabel = "Allow notification access",
-        onPrimary = { if (!needsPermission && Permissions.hasNotificationAccess(context)) onResult() else ask() },
-        secondaryLabel = "Not now",
-        onSecondary = onSkip,
     )
 }
 

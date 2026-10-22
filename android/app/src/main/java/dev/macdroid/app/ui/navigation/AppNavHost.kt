@@ -2,6 +2,7 @@ package dev.macdroid.app.ui.navigation
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -18,6 +19,9 @@ import dev.macdroid.app.service.ConnectionService
 import dev.macdroid.app.ui.main.MainScreen
 import dev.macdroid.app.ui.setup.SetupScreen
 import dev.macdroid.app.ui.setup.SetupViewModel
+import dev.macdroid.app.ui.tour.CoachMarkHost
+import dev.macdroid.app.ui.tour.LocalTour
+import dev.macdroid.app.ui.tour.TourController
 
 object Routes {
     const val SETUP = "setup"
@@ -51,13 +55,22 @@ fun AppNavHost(graph: AppGraph) {
         }
     }
 
-    NavHost(nav, startDestination = start) {
-        composable(Routes.SETUP) { SetupScreen(setupViewModel) }
-        composable(Routes.MAIN) {
-            MainScreen(onForget = {
-                forgetMac(context, graph)
-                setupViewModel.refresh()
-            })
+    // The guided tour (Plan 14) spans setup and the main screens; pairing finishes its first step.
+    val tour = remember { TourController(context, setupDone = graph.uiPrefs.setupDone) }
+    val paired by graph.pairingStore.paired.collectAsStateWithLifecycle()
+    LaunchedEffect(paired != null) { if (paired != null) tour.connected() }
+
+    CompositionLocalProvider(LocalTour provides tour) {
+        CoachMarkHost(tour) {
+            NavHost(nav, startDestination = start) {
+                composable(Routes.SETUP) { SetupScreen(setupViewModel) }
+                composable(Routes.MAIN) {
+                    MainScreen(onForget = {
+                        forgetMac(context, graph)
+                        setupViewModel.refresh()
+                    })
+                }
+            }
         }
     }
 }

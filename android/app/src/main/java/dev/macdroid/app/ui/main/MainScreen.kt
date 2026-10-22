@@ -25,13 +25,16 @@ import androidx.navigation.compose.rememberNavController
 import dev.macdroid.app.ui.clipboard.ClipboardScreen
 import dev.macdroid.app.ui.files.FilesScreen
 import dev.macdroid.app.ui.notifications.NotificationsScreen
+import dev.macdroid.app.ui.tour.LocalTour
+import dev.macdroid.app.ui.tour.TourTarget
+import dev.macdroid.app.ui.tour.tourTarget
 
-enum class MainTab(val route: String, val label: String, val icon: ImageVector) {
-    Home("home", "Home", Icons.Rounded.Home),
-    Notifications("notifications", "Notifications", Icons.Rounded.Notifications),
-    Clipboard("clipboard", "Clipboard", Icons.Rounded.ContentPaste),
-    Files("files", "Files", Icons.Rounded.Folder),
-    Settings("settings", "Settings", Icons.Rounded.Settings),
+enum class MainTab(val route: String, val label: String, val icon: ImageVector, val tourTarget: TourTarget?) {
+    Home("home", "Home", Icons.Rounded.Home, null),
+    Notifications("notifications", "Notifications", Icons.Rounded.Notifications, TourTarget.NotificationsTab),
+    Clipboard("clipboard", "Clipboard", Icons.Rounded.ContentPaste, TourTarget.ClipboardTab),
+    Files("files", "Files", Icons.Rounded.Folder, null),
+    Settings("settings", "Settings", Icons.Rounded.Settings, TourTarget.SettingsTab),
 }
 
 @Composable
@@ -39,13 +42,23 @@ fun MainScreen(onForget: () -> Unit) {
     val tabs = rememberNavController()
     val backStack by tabs.currentBackStackEntryAsState()
     val current = backStack?.destination?.route
+    val tour = LocalTour.current
+    val goHome = {
+        tabs.navigate(MainTab.Home.route) {
+            popUpTo(tabs.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
     Scaffold(
         bottomBar = {
             NavigationBar {
                 MainTab.entries.forEach { tab ->
                     NavigationBarItem(
                         selected = current == tab.route,
+                        modifier = tab.tourTarget?.let { Modifier.tourTarget(it) } ?: Modifier,
                         onClick = {
+                            tab.tourTarget?.let { tour?.done(it) }
                             tabs.navigate(tab.route) {
                                 popUpTo(tabs.graph.findStartDestination().id) { saveState = true }
                                 launchSingleTop = true
@@ -64,7 +77,7 @@ fun MainScreen(onForget: () -> Unit) {
             composable(MainTab.Notifications.route) { NotificationsScreen() }
             composable(MainTab.Clipboard.route) { ClipboardScreen() }
             composable(MainTab.Files.route) { FilesScreen() }
-            composable(MainTab.Settings.route) { SettingsScreen(onForget = onForget) }
+            composable(MainTab.Settings.route) { SettingsScreen(onForget = onForget, onShowTour = goHome) }
         }
     }
 }

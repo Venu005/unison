@@ -1,7 +1,10 @@
 package dev.macdroid.app.ui.notifications
 
+import android.Manifest
 import android.content.Intent
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,9 +39,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.macdroid.app.platform.Permissions
 import dev.macdroid.app.ui.disclosure.Gated
 import dev.macdroid.app.ui.disclosure.rememberDisclosed
 import dev.macdroid.app.ui.presentation.NotificationsPresentation
+import dev.macdroid.app.ui.tour.LocalTour
+import dev.macdroid.app.ui.tour.TourTarget
+import dev.macdroid.app.ui.tour.tourTarget
 import dev.macdroid.core.notifications.SeenApp
 import java.time.LocalDate
 
@@ -46,7 +54,14 @@ import java.time.LocalDate
 fun NotificationsScreen(viewModel: NotificationsViewModel = viewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val askAccess = rememberDisclosed(Gated.Notifications) { context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }
+    val tour = LocalTour.current
+    val openAccess = { context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }
+    // Unison's own status notification needs "post notifications" too (it used to be asked in setup).
+    val postNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { openAccess() }
+    val askAccess = rememberDisclosed(Gated.Notifications) {
+        tour?.done(TourTarget.NotificationsAgree)
+        if (Permissions.needsNotifications && !Permissions.hasNotifications(context)) postNotifications.launch(Manifest.permission.POST_NOTIFICATIONS) else openAccess()
+    }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refreshAccess() }
     val today = remember { LocalDate.now().toEpochDay() }
     val card = NotificationsPresentation.topCard(state.notifications, state.macName, state.macSupports, state.connected)
@@ -60,8 +75,10 @@ fun NotificationsScreen(viewModel: NotificationsViewModel = viewModel()) {
                         Text(card.subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     if (card.showsSwitch) Switch(checked = state.notifications.forwarding, onCheckedChange = viewModel::setForwarding)
+                    // Already on: the tour's notifications step has nothing to do here.
+                    LaunchedEffect(card.actionLabel == null) { if (card.actionLabel == null) tour?.skipGroup(2) }
                     card.actionLabel?.let { label ->
-                        Button(onClick = askAccess) { Text(label) }
+                        Button(onClick = { tour?.done(TourTarget.TurnOnNotifications); askAccess() }, modifier = Modifier.tourTarget(TourTarget.TurnOnNotifications)) { Text(label) }
                     }
                 }
             }

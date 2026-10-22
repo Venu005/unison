@@ -1,18 +1,26 @@
 package dev.macdroid.app.ui.setup
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ErrorOutline
@@ -46,6 +54,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.macdroid.app.platform.Permissions
 import dev.macdroid.app.ui.PairingViewModel
 import dev.macdroid.app.ui.QrCameraPreview
+import dev.macdroid.app.ui.tour.LocalTour
+import dev.macdroid.app.ui.tour.TourTarget
+import dev.macdroid.app.ui.tour.tourTarget
 import dev.macdroid.core.tls.Fingerprint
 
 /** The hero setup step: camera inline, manual entry as a fallback, result shown in place. */
@@ -62,16 +73,46 @@ fun PairStep(viewModel: PairingViewModel, macName: String?) {
     }
     var showManual by rememberSaveable { mutableStateOf(false) }
     var cameraAsked by rememberSaveable { mutableStateOf(false) }
+    // The camera opens only after Scan, which first asks for local network and camera access (tour step 1, Plan 14).
+    var scanning by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
+    val tour = LocalTour.current
+    val camera = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        cameraAsked = true
+        if (granted) { tour?.done(TourTarget.AllowCamera); scanning = true } else tour?.denied(TourTarget.AllowCamera)
+    }
+    val askCamera = {
+        if (Permissions.granted(context, Manifest.permission.CAMERA)) { tour?.done(TourTarget.AllowCamera); scanning = true }
+        else camera.launch(Manifest.permission.CAMERA)
+    }
+    val localNetwork = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) { tour?.done(TourTarget.AllowLocalNetwork); askCamera() } else tour?.denied(TourTarget.AllowLocalNetwork)
+    }
+    val scan = {
+        tour?.done(TourTarget.ScanQr)
+        if (Permissions.needsLocalNetwork && !Permissions.hasLocalNetwork(context)) localNetwork.launch(Permissions.ACCESS_LOCAL_NETWORK)
+        else { tour?.done(TourTarget.AllowLocalNetwork); askCamera() }
+    }
 
-    Column(Modifier.fillMaxSize().padding(horizontal = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Pair with your Mac", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.fillMaxWidth().padding(top = 24.dp))
-        Text(
-            "On your Mac, open Unison → Phone and choose Pair a Phone (or Pair a Different Phone).",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 20.dp),
-        )
-        Box(
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("Connect to your Mac", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.fillMaxWidth().padding(top = 24.dp, bottom = 12.dp))
+        if (!scanning && state == PairingViewModel.UiState.Idle) {
+            NumberedCard(1, "Install Unison on your Mac (free, macOS 14 or later). On the Mac, open:") {
+                Row(
+                    Modifier.fillMaxWidth().padding(top = 8.dp).clip(RoundedCornerShape(10.dp)).background(MaterialTheme.colorScheme.surface).padding(start = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(MAC_APP_URL, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                    TextButton(onClick = {
+                        context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText("Unison for Mac", "https://$MAC_APP_URL"))
+                        Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
+                    }) { Text("Copy") }
+                }
+            }
+            NumberedCard(2, "Open Unison on the Mac. It shows a QR code.")
+            NumberedCard(3, "Scan it with this phone. You only do this once.")
+            Button(onClick = scan, modifier = Modifier.fillMaxWidth().padding(top = 8.dp).height(52.dp).tourTarget(TourTarget.ScanQr)) { Text("Scan the QR code") }
+        } else Box(
             Modifier.fillMaxWidth().aspectRatio(1f).clip(RoundedCornerShape(28.dp)).background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center,
         ) {
@@ -88,7 +129,7 @@ fun PairStep(viewModel: PairingViewModel, macName: String?) {
             onClick = { showManual = true },
             enabled = state == PairingViewModel.UiState.Idle,
             modifier = Modifier.padding(vertical = 12.dp),
-        ) { Text("Enter code manually") }
+        ) { Text("Can't scan? Type the code instead") }
     }
 
     if (showManual) {
@@ -113,6 +154,22 @@ fun PairStep(viewModel: PairingViewModel, macName: String?) {
             confirmButton = { TextButton(onClick = viewModel::confirmFingerprint) { Text("They match") } },
             dismissButton = { TextButton(onClick = viewModel::reset) { Text("Cancel") } },
         )
+    }
+}
+
+/** Where Play users get the Mac app; a plain link with no payment wording (Play policy, Plan 13/14). */
+private const val MAC_APP_URL = "venu005.github.io/unison"
+
+@Composable
+private fun NumberedCard(n: Int, text: String, extra: @Composable () -> Unit = {}) {
+    Column(Modifier.fillMaxWidth().padding(vertical = 6.dp).clip(RoundedCornerShape(20.dp)).background(MaterialTheme.colorScheme.surfaceVariant).padding(16.dp)) {
+        Row(verticalAlignment = Alignment.Top) {
+            Box(Modifier.size(24.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary), contentAlignment = Alignment.Center) {
+                Text("$n", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.labelMedium)
+            }
+            Text(text, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(start = 10.dp))
+        }
+        extra()
     }
 }
 

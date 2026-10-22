@@ -60,7 +60,7 @@ class TourFlowTest {
         val again = TourFlow(t.state())
         assertNull(again.current)
         assertTrue(again.finished)
-        again.restart()
+        again.restart(paired = false)
         assertEquals(TourTarget.ScanQr, again.current?.target)
         assertFalse(again.finished)
     }
@@ -70,6 +70,30 @@ class TourFlowTest {
         TourTarget.entries.forEach { assertTrue(it.name, t.done(it)) }
         assertTrue(t.finished)
         assertNull(t.current)
+    }
+
+    @Test fun pairingFinishesTheConnectStep() {
+        val t = fresh().apply { done(TourTarget.ScanQr) }
+        t.connected()
+        assertEquals(TourTarget.Send, t.current?.target)
+        t.connected()
+        assertEquals(TourTarget.Send, t.current?.target)
+    }
+
+    @Test fun aGroupAlreadyDoneSkipsItself() {
+        val t = TourFlow(TourPrefs.State(index = 5, finished = false))
+        t.skipGroup(3)
+        assertEquals(TourTarget.NotificationsTab, t.current?.target)
+        t.skipGroup(2)
+        assertEquals(TourTarget.ClipboardTab, t.current?.target)
+    }
+
+    @Test fun restartOnAPairedPhoneSkipsConnecting() {
+        val t = fresh().apply { finishConnect(); end() }
+        t.restart(paired = true)
+        assertEquals(TourTarget.Send, t.current?.target)
+        t.restart(paired = false)
+        assertEquals(TourTarget.ScanQr, t.current?.target)
     }
 
     @Test fun copyMatchesTheSpec() {

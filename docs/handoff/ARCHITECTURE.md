@@ -111,6 +111,13 @@ Static site in `website/`, built with Vite and deployed to GitHub Pages at `http
 | Support (Plan 13) | `src/support.js` (tested), `src/support/story.js` (tested), `src/scenes/support.js`, `makeFullRobot()` in `src/three/shared.js`, `public/support-still.png` | `#support` (copy, GitHub Sponsors button, UPI QR) is cut out at build time while `sponsorUrl` is `null`, and its UPI block while `upiId` is `null`; the bean bag scene is driven by `storyAt`/`createIdle`, and its canvas sits in a `.stage` so phones get a band above the copy; `check-dist` requires the Android robot credit on every page and the right support state |
 | Assets | `scripts/render-assets.sh`, `og/og-image.svg` | Icons and the 1200×630 preview image, rendered with `scripts/render-icon.swift` |
 
+Guided tour (Plan 14, Android):
+- `ui/tour/TourFlow` is a pure state machine with 5 groups and 13 targets.
+- `TourController` saves progress through `TourPrefs` and is provided as `LocalTour` from `AppNavHost`.
+- `CoachMarkHost` draws the spotlight and bubble over the tagged composables (`Modifier.tourTarget`).
+- Step 1 is the setup "Connect to your Mac" screen (`PairStep`). The rest run on Home, Notifications, Clipboard and Settings.
+- Disclosures: `ui/disclosure/Disclosures` and `DisclosureSheet`/`rememberDisclosed` come before every sensitive permission.
+
 Tips in the apps (Plan 13):
 - **Mac:** Settings → About has a "Support Unison" button that opens `…/unison/#support`.
 - **Android:** Settings → About only has a "Unison website" row that opens the home page. Google Play's Payments policy rules out tip links, and `NoPaymentLinksTest` keeps payment wording out of `android/app/src/main`.

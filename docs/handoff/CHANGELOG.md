@@ -31,6 +31,25 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - `done` advances only on the highlighted action. `denied` keeps the step open with `retry`. `skipStep`/`end` are blocked during "Connect to your Mac". `restart` starts over.
   - `TourPrefs` (SharedPreferences `tour`) saves the index and the finished flag.
   - **Verified:** `TourFlowTest` (8) went RED→GREEN, and the gate built successfully.
+- **Task 5, guided tour UI:**
+  - `TourController` (app-wide; `LocalTour`) and `CoachMarkHost`:
+    - a dimmed overlay with a pulsing ring around the `Modifier.tourTarget` bounds, and a bubble with "Step N of 5", Skip and End;
+    - touches aren't blocked;
+    - targets in a popup, sheet or system prompt get the bubble only;
+    - a "You're all set" dialog when the tour ends.
+  - **Setup:** Welcome and the setup Notifications step are removed.
+    - First run is now Connect, Local network (only if still missing), Files, Photos, Battery.
+    - `PairStep` is the new "Connect to your Mac": three numbered cards with a Copy link, then **Scan the QR code**, which asks for local network and then the camera and reports done or denied to the tour, plus "Can't scan? Type the code instead".
+    - The unused `notificationsSkipped` preference is gone.
+  - **Tour hooks:**
+    - Send and its Photos item, and the Notifications, Clipboard and Settings tabs.
+    - The notification turn-on and Agree; Agree also asks "post notifications", which moved from setup.
+    - Send clipboard, and the Unison control row and Agree.
+    - Steps whose job is already done skip themselves (notification access or control already on).
+    - Settings → About has "Show the tour again", which starts after connecting on a paired phone.
+  - Someone who finished setup before this change doesn't get the tour automatically.
+  - **Verified:** `TourFlowTest` 11/11, including `pairingFinishesTheConnectStep`, `aGroupAlreadyDoneSkipsItself` and `restartOnAPairedPhoneSkipsConnecting`, all RED→GREEN. `SetupFlowTest` was rewritten (`welcomeIsGoneConnectComesFirst` RED→GREEN). The gate built successfully with no warnings.
+  - The debug build is installed on the owner's phone (`install -r`, pairing kept). The tour walk on the device is the owner's to do (no automated taps or screenshots on their phone).
 
 ## 2026-10-22 — Unison on Google Play: design spec (docs/play-store-spec)
 - **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`, with the clickable guided-tour prototype saved as `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`.

@@ -47,10 +47,28 @@ class TourFlow(saved: TourPrefs.State) {
         finished = true
     }
 
-    fun restart() {
-        index = 0
+    /** Pairing worked: "Connect to your Mac" is done, whichever of its prompts were already answered. */
+    fun connected() {
+        if (current?.group == 0) jumpTo(firstOf(1))
+    }
+
+    /** The tour reached [group] but its job is already done (access granted earlier): move past it. */
+    fun skipGroup(group: Int) {
+        if (current?.group == group) jumpTo(STEPS.indexOfLast { it.group == group } + 1)
+    }
+
+    /** "Show the tour again". A paired phone starts after connecting; it's never asked to pair again. */
+    fun restart(paired: Boolean) {
         finished = false
+        jumpTo(if (paired) firstOf(1) else 0)
+    }
+
+    private fun firstOf(group: Int) = STEPS.indexOfFirst { it.group == group }
+
+    private fun jumpTo(i: Int) {
+        index = i
         retry = false
+        if (index >= STEPS.size) finished = true
     }
 
     fun state() = TourPrefs.State(index, finished)

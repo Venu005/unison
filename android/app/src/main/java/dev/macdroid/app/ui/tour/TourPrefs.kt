@@ -8,6 +8,8 @@ object TourPrefs {
 
     private const val PREFS = "tour"
 
+    fun saved(context: Context): Boolean = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).contains("index")
+
     fun load(context: Context): State {
         val p = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         return State(p.getInt("index", 0), p.getBoolean("finished", false))
