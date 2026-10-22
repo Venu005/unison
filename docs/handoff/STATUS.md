@@ -12,11 +12,12 @@
 - `main` also has the memory pass (images decoded at drawn size, photo thumbnails capped), merged 2026-10-21 as `bf9adf8`; `swift test` 370.
 - `main` also has photos (Plan 6: browse the phone's photos and videos, Quick Look, Save to Mac, drag out), merged 2026-10-14 as `37b425c`; its 9 follow-up minors merged as `2807ce9`; `swift test` 274.
 ## In flight
-- **Google Play release (Plan 14): built and verified on the owner's phone**, on `feat/play-store` (2026-10-22), not merged yet.
+- **Google Play release (Plan 14): merged to `main`** (2026-10-22, `554cdcb`; not pushed yet). It was verified on the owner's phone.
   - The signed 0.5.0 (versionCode 6) is installed from the release bundle.
   - The owner confirmed "everything works fine": the tour from a fresh install (connect, photo, notifications, clipboard, control), the disclosures, mirroring with a manual Start, and remote control.
   - The upload key is `~/Keystores/unison-upload.jks`; the owner backs it up.
-  - Next: the whole-branch review, merge, then the owner's Play Console setup and closed test (`docs/play/`).
+  - The whole-branch review is done and its fixes are verified on the device.
+  - Next: the owner's Play Console setup and closed test (`docs/play/`).
 - **Support Unison (Plan 13): merged to `main`** (2026-10-22, `c6cb7bd`; it includes `docs/support-spec`). GitHub Sponsors was approved on 2026-10-22, and the Support section (Sponsors and UPI) was merged to `main` as `9bdf207` and pushed, so the site deploy publishes it.
   - Website section and scene, Mac About button and Android website row are done, and all gates pass.
   - The section stays hidden until `sponsorUrl` is set.

@@ -9,6 +9,7 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
 - **README:** the intro, the feature table (everything shipped so far), the "Get it" line, a new "Support Unison" section (GitHub Sponsors, plus UPI through the site), pairing step 3 and the roadmap now match what's built.
 - **Verified:** website 34/34, build OK, check OK (30 files). The built page has `id="support"` before `id="game"`, and a Playwright screenshot shows Support followed by the game.
 ## 2026-10-22 — Plan 14: Unison on Google Play (feat/play-store)
+- **Merged** to `main` as `554cdcb` on the owner's choice (local, not pushed). On the merged tree: website 34/34 and check OK, the Android gate built successfully, `swift test` 371/371.
 - **Task 7, the owner's phone on the signed build:**
   - With the owner's go-ahead, the debug install was uninstalled and the signed 0.5.0 installed through `bundletool build-apks --connected-device` plus `install-apks` (versionCode 6).
   - The owner re-paired and ran the whole flow, reporting "everything works fine": the tour from a fresh install, both disclosure paths, mirroring with a manual Start, and remote control (tapping and typing).
