@@ -62,6 +62,9 @@ function makeSteam(scene) {
 
 export function mount(section, quality) {
   const lite = quality === 'lite', coarse = matchMedia('(pointer: coarse)').matches;
+  // `?still` renders one frozen frame (seated, mid-cheers) on a transparent page, for public/support-still.png (DEV-GUIDE).
+  const still = new URLSearchParams(location.search).has('still');
+  if (still) document.documentElement.classList.add('still-render');
   // The renderer follows the stage (the whole section on wide screens, the band above the copy on narrow ones);
   // the pointer is tracked over the whole section so the head turns toward the Sponsor button too.
   const stage = section.querySelector('.stage');
@@ -101,7 +104,7 @@ export function mount(section, quality) {
   s.resize();
 
   // The story starts when the section is well in view; on lite (phones, touch) the robot is already seated.
-  let t0 = lite ? -100 : null;
+  let t0 = lite || still ? -100 : null;
   const io = new IntersectionObserver(([e]) => { if (e.intersectionRatio > 0.4 && t0 === null) t0 = performance.now() / 1000; }, { threshold: [0.4] });
   io.observe(section);
 
@@ -114,7 +117,7 @@ export function mount(section, quality) {
   sponsor?.addEventListener('click', onClick);
 
   const stopRun = run(s, () => {
-    const now = performance.now() / 1000, t = t0 === null ? -1 : now - t0;
+    const now = still ? 100 : performance.now() / 1000, t = t0 === null ? -1 : now - t0;
     const { phase, k } = storyAt(Math.max(0, t));
     const walk = phase === 'walk' ? k : phase === 'waiting' ? 0 : 1;
     const turn = phase === 'turn' ? k : ['waiting', 'walk'].includes(phase) ? 0 : 1;
@@ -151,7 +154,7 @@ export function mount(section, quality) {
     // Arms: the left swings, then flops on the bag; the right carries the chai.
     armL.rotation.x = seated ? -0.25 + Math.sin(now * 1.3) * 0.04 : Math.sin(step) * 0.5 * swinging;
     armL.rotation.z = seated ? -0.55 : 0;
-    const act = idle.tick(now, seated);
+    const act = still ? { action: 'cheers', k: 0.5 } : idle.tick(now, seated);
     const sip = act.action === 'sip' ? Math.sin(act.k * Math.PI) : 0;
     raise += ((seated ? raiseTarget : 0) - raise) * 0.08;
     const cheers = Math.max(act.action === 'cheers' ? Math.sin(act.k * Math.PI) ** 0.6 : 0, raise) * (1 - sip);

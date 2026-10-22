@@ -10,6 +10,10 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - A malformed UPI ID stops the build.
   - `site.config.js` gains `sponsorUrl: null` and `upiId: null`.
   - Tests: `test/support.test.js` (7). `npm test` passes 28/28.
+- **Task 5, still picture:**
+  - `?still` renders one frozen frame: seated, mid-cheers, on a transparent page (`html.still-render`).
+  - The frame was cropped into `public/support-still.png` (820×520, 142 KB). The static quality level shows it, with a faded right edge where the rug runs off.
+  - **Verified:** reduced-motion screenshots at 1400 px and 390 px show the picture and working copy, and no scene loads. The steps are in DEV-GUIDE.
 - **Task 4, bean bag scene:**
   - `makeFullRobot()` in `shared.js` builds the whole robot from `makeRobot`'s head, a lathe torso, and capsule arms and legs on pivots. `makeRobot` itself is unchanged.
   - `src/scenes/support.js` is ported from the spike and driven by `storyAt`/`createIdle`. The robot walks in, hops into the bag and cheers; hovering Sponsor makes it cheer, and clicking makes it sip while the link still opens.

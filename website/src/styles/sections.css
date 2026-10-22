@@ -121,9 +121,13 @@ html[data-pointer="coarse"] #game .score, #game.static .score { display: none; }
 #support .upi svg { width: 64px; height: 64px; flex: none; border-radius: 8px; }
 #support .upi b { color: var(--text); font-weight: 500; }
 #support .still { position: absolute; right: 4vw; top: 50%; transform: translateY(-50%); width: min(52vw, 640px); height: auto; }
+#support .still { -webkit-mask-image: linear-gradient(to right, #000 80%, transparent); mask-image: linear-gradient(to right, #000 80%, transparent); }  /* the rug runs off the picture's right edge */
 @media (max-width: 900px) {
   #support { height: auto; min-height: 0; padding: min(92vw, 520px) 24px 48px; }
   #support .stage { inset: 0 0 auto 0; height: min(92vw, 520px); }
   #support .copy { position: relative; left: auto; top: auto; transform: none; max-width: none; }
   #support .still { top: 24px; right: 50%; transform: translateX(50%); width: min(86vw, 480px); }
 }
+/* `?still` (render mode for public/support-still.png): only the scene, on a transparent page */
+html.still-render, html.still-render body, html.still-render #support { background: transparent; }
+html.still-render nav, html.still-render footer, html.still-render #support .copy { visibility: hidden; }
