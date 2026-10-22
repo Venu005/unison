@@ -10,6 +10,11 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - A malformed UPI ID stops the build.
   - `site.config.js` gains `sponsorUrl: null` and `upiId: null`.
   - Tests: `test/support.test.js` (7). `npm test` passes 28/28.
+- **Task 6, app links:**
+  - **Mac:** About gains a "Support Unison" button that opens `…/unison/#support`. It has no "…", per the owner's button rule.
+  - **Android:** Settings → About gains a "Unison website" row that opens the home page (`ACTION_VIEW`, with a toast if no browser is installed).
+  - `NoPaymentLinksTest` fails if `android/app/src/main` ever contains a Sponsors, UPI or `#support` link, or the words sponsor, donate, tip jar or buy me (Google Play Payments policy).
+  - **Verified:** `NoPaymentLinksTest` went RED→GREEN. Android `:core:test :app:testDebugUnitTest :app:assembleDebug` built successfully. `swift test` passed 370 tests, and `xcodebuild` succeeded. The only output line containing "warning" was Xcode's AppIntents metadata note, which is a tool log, not a compiler warning.
 - **Task 5, still picture:**
   - `?still` renders one frozen frame: seated, mid-cheers, on a transparent page (`html.still-render`).
   - The frame was cropped into `public/support-still.png` (820×520, 142 KB). The static quality level shows it, with a faded right edge where the rug runs off.
