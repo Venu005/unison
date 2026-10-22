@@ -96,10 +96,10 @@ Also noted earlier: SMS (personal build only, Play-restricted), USB transport vi
 ## Google Play release (Plan 14, specced 2026-10-22)
 - Spec: `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`. Next: the implementation plan.
 - Scope:
-  - a Play build (release-signed AAB, honest accessibility declaration, auto-Start off);
+  - a release-signed AAB with an honest accessibility declaration;
   - the hands-on guided tour and disclosure screens;
   - ML Kit replaced by an on-device QR decoder;
-  - the personal build moved to `dev.macdroid.app.dev`;
+  - auto-Start and `STORE_BUILD` removed (one build for everyone);
   - the Play paperwork in `docs/play/`.
 - Then: the owner's closed test (12 testers, 14 days) and submission.
 

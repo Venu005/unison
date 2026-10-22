@@ -10,7 +10,8 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - **Tour:** a 5-step hands-on guided tour (connect, photo, notifications, clipboard, control).
   - **Disclosures:** a screen for each sensitive permission.
   - **Paperwork:** the declarations, Data safety ("no data collected", relying on end-to-end encryption between the user's own devices), the listing and the closed-test checklist.
-  - **Decided after the builder check:** App access instructions instead of a demo mode; replace ML Kit (it sends diagnostics to Google) with an on-device decoder; the personal build gets the `.dev` app id suffix; and a Photos fallback switch.
+  - **Decided after the builder check:** App access instructions instead of a demo mode; replace ML Kit (it sends diagnostics to Google) with an on-device decoder; and a Photos fallback.
+  - **One build for everyone (owner):** auto-Start and `STORE_BUILD` are removed entirely, so there is no separate personal build and no `.dev` app id. The owner's phone moves to the signed build once (uninstall, install, re-pair).
 - **Why:** the owner wants Unison on Play without rejections. Policy findings, with sources, are in the spec's Constraints.
 - **Verified:** docs only. The prototype was clicked through end to end in headless Chromium.
 

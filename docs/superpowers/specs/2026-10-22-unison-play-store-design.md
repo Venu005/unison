@@ -1,6 +1,6 @@
 # Unison on Google Play: design
 
-Date: 2026-10-22. Status: drafted after a brainstorm with the owner. The owner approved the scope (ship everything except auto-Start), the hands-on guided tour (prototype v2) and the paperwork list. Visual reference: `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`, a copy of the brainstorm scratch file `.superpowers/brainstorm/14446-1792661295/content/guided-tour-v2.html` (gitignored). It is a clickable HTML prototype; open it in a browser.
+Date: 2026-10-22. Status: drafted after a brainstorm with the owner. The owner approved the scope (one build for everyone that ships everything except auto-Start, which is removed), the hands-on guided tour (prototype v2) and the paperwork list. Visual reference: `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`, a copy of the brainstorm scratch file `.superpowers/brainstorm/14446-1792661295/content/guided-tour-v2.html` (gitignored). It is a clickable HTML prototype; open it in a browser.
 
 ## Why
 
@@ -16,11 +16,10 @@ Success:
 
 ## Goals
 
-1. **A Play build of the Android app** that ships every current feature: pairing, files, notifications with replies, clipboard, calls, photos, screen mirroring with phone audio, **remote control (Unison control)**, ring my phone, media controls and open-on-the-other-device. It differs from the owner's personal build in only these places:
-   - auto-Start is off (the existing `STORE_BUILD` switch);
-   - Unison control is declared honestly as not an accessibility tool;
-   - Unison control's descriptions don't mention auto-Start;
-   - the build is release-signed and packaged as an App Bundle.
+1. **One Android app for everyone that's ready for Play.** There is no separate store or personal build (owner, 2026-10-22). It ships every current feature: pairing, files, notifications with replies, clipboard, calls, photos, screen mirroring with phone audio, **remote control (Unison control)**, ring my phone, media controls and open-on-the-other-device. Compared with today:
+   - **auto-Start is removed**, together with the `STORE_BUILD` switch, its Settings row and its preference;
+   - Unison control is declared honestly as not an accessibility tool, and no longer watches System UI;
+   - releases are signed with the owner's upload key and packaged as an App Bundle.
 2. **A hands-on guided tour on first launch** (see "The guided tour"). It starts with connecting to the Mac and teaches by doing: it highlights one real control, waits for the user to use it, then moves on.
 3. **Prominent disclosure screens** that meet Google's rules for every sensitive access, shown inside the app before Android's own prompt. Where possible they double as tour steps.
 4. **The Play Console paperwork, written out ready to paste.** The owner submits it.
@@ -33,15 +32,15 @@ Success:
 - No Play Billing, ads, analytics or crash reporting, and no account. Unison collects nothing.
 - No change to the protocol, the pairing or the trust model.
 - No Mac App Store build. The Mac app stays a website DMG.
-- No change to the owner's personal build beyond also getting the tour and the disclosure screens.
+- No second build or app id. Debug builds exist only for development and behave the same as release.
 - Submitting to Play Console is not part of the code work. The owner creates the app entry, uploads the bundle, fills in the forms and records the videos. This work only prepares everything.
 
 ## Anti-goals (would make this a failure even if it works)
 
-- **Anything that could read as deceptive to a reviewer.** That includes setting `isAccessibilityTool="true"` in the Play build, a disclosure that understates what a permission touches, data safety answers that don't match the code, and auto-Start (clicking through Android's screen-share consent) in the Play build.
+- **Anything that could read as deceptive to a reviewer.** That includes setting `isAccessibilityTool="true"`, a disclosure that understates what a permission touches, data safety answers that don't match the code, and any code that clicks through Android's screen-share consent (auto-Start).
 - **A disclosure only in Settings, the store listing or the privacy policy.** Google requires it in the app's normal flow, before the permission request, with an affirmative Agree.
 - **A tour that blocks the app.** Every step after connecting can be skipped, and so can the whole tour after step 1. It never comes back on its own once finished or ended.
-- **Breaking the owner's setup.** The personal build, the gates and the existing pairing must keep working. The upload key must never be committed.
+- **Breaking the owner's setup.** The gates must keep working, and the owner's phone must end up paired again with one QR scan; see "Moving the owner's phone". The upload key must never be committed.
 
 ## Constraints
 
@@ -68,12 +67,18 @@ Success:
 
 ## What was decided (owner)
 
-### Scope of the Play build
+### Scope: one build
 - Everything ships, including Unison control (the owner chose this over leaving it for a later update).
-- Auto-Start (pressing "Start" on the screen-share prompt) stays **off** in the Play build, through the existing `BuildConfig.STORE_BUILD` and `ControlPrefs.autoStart`, with its Settings row hidden. Play users press Start themselves.
-- Unison control in the Play build:
+- **Auto-Start is removed for everyone** (the owner chose one build over keeping auto-Start in a personal build). Delete it rather than hiding it:
+  - the automatic "Start" press and the `awaitingConsent` arming in the mirroring flow;
+  - `BuildConfig.STORE_BUILD`, `ControlPrefs.autoStart`, and the Settings row "Start mirroring without touching the phone";
+  - their tests, and the DECISIONS rows, which become a "removed" note.
+  
+  Users press **Start** on Android's prompt once per mirroring session. The Mac's mirroring UI should say so where it currently assumes auto-Start, for example "Press Start on your phone".
+- Unison control:
   - `android:isAccessibilityTool="false"`;
-  - its `android:description` drops the "press Start on the screen-sharing prompt" sentence;
+  - it stops watching System UI: `control_service.xml` loses `packageNames="com.android.systemui"` and the window-state event types it only needed for auto-Start, but keeps what tapping, gestures and typing need;
+  - its `android:description` loses the auto-Start sentence;
   - it gets the full disclosure below before the user is sent to Accessibility settings.
 
 ### The guided tour (prototype v2)
@@ -108,7 +113,6 @@ The wording below is approved in substance; the builder may polish it but must n
 - **Unison control (Accessibility):**
   - Uses Android's Accessibility service to tap, scroll and type on this phone, only while you mirror it and only when your Mac asks.
   - To type, it reads the text box you're typing into so it can edit it. That text stays on the phone.
-  - It watches the system screen-sharing prompt only to know when mirroring starts.
   - Nothing is collected or sent anywhere except your Mac's mirror window.
   - Then a line: "Phones with Advanced Protection turned on don't allow this."
   - Checkbox: "I understand and allow Unison control". **Agree and open Accessibility** stays disabled until it's ticked.
@@ -120,7 +124,7 @@ The wording below is approved in substance; the builder may polish it but must n
 Each disclosure appears **every time** the user starts that permission flow until it's granted. Declining leaves the feature off, with a way to turn it on later in Settings, where the disclosure shows again. This is the "non-consent flow" Google's video must show.
 
 ### Release build and signing
-- A Play build that is release-signed with an **upload key** the owner generates and keeps outside the repo, backed up. It uses Play App Signing and is packaged as an **Android App Bundle**.
+- The `release` build is signed with an **upload key** the owner generates and keeps outside the repo, backed up. It uses Play App Signing and is packaged as an **Android App Bundle** (`bundleRelease`). Debug stays debug-signed for development.
 - The keystore path and passwords come from a local, gitignored file or from environment variables, never from the repo.
 - Version: continue from 0.4.1 (versionCode 5) upwards.
 
@@ -153,28 +157,28 @@ Each disclosure appears **every time** the user starts that permission flow unti
   - `com.google.mlkit:barcode-scanning` sends device and performance diagnostics to Google (through `datatransport`), which would make "no data collected" untrue.
   - Swap it for ZXing (core decoder on CameraX frames, or an equivalent open-source library with no network use). Pairing must work exactly as before.
   - The build must contain no ML Kit or `datatransport`. Verify with the release dependency tree, and keep a test or check that fails if they come back.
-- **The personal build gets its own app id.**
-  - The personal build, meaning every build type except the Play build, gets `applicationIdSuffix ".dev"`, so it installs next to the Play version. The Play build alone keeps `dev.macdroid.app`.
-  - The owner re-pairs the `.dev` install with the Mac once.
-  - Update the gates and docs that name the package: DEV-GUIDE's `adb` lines and anything that hard-codes `dev.macdroid.app` as an installed id. Kotlin package names don't change.
-  - The Mac side is unaffected, because pairing is by certificate, not by package.
+- **One app id: `dev.macdroid.app`.** This replaces the earlier `.dev` idea, after the owner chose one build.
+- **Moving the owner's phone.**
+  - The owner's phone has a debug-signed install today. A build signed with the upload key can't install over it, and copies installed from Play are signed with Google's app-signing key, so locally built APKs can't update them either.
+  - So the switch happens once: uninstall the debug install, install the signed build (or join the closed test on Play), then scan the Mac's QR code to pair again. After that the owner updates through Play.
+  - DEV-GUIDE must say this, and must say that day-to-day development on that phone means testing through Play's internal track or reinstalling.
+  - Nothing in the repo should automate the uninstall.
 
 ### My calls after the builder check
 - **The Mac download page is in place**: the site, the DMG, the install steps and Gatekeeper help are live. The only website change is flipping `playUrl` once production is approved, which happens after this work.
 - **A Photos fallback is ready from the start.**
-  - The Play build's broad media permissions (`READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_VISUAL_USER_SELECTED`) can be removed by one switch in its own source set or build config, without breaking anything else. Removing them turns off "Photos on your Mac" in that build, hides its tour and setup step, and leaves sending photos through the system picker working.
+  - The broad media permissions (`READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_VISUAL_USER_SELECTED`) can be removed by flipping one build-time constant and the manifest entries, without breaking anything else. Removing them turns off "Photos on your Mac", hides its tour and setup step, and leaves sending photos through the system picker working. The fallback is a small, already-written change for a resubmission, not a second build.
   - The first submission ships with the permissions and the declaration. `docs/play/` keeps the alternative declaration and Data safety text for the fallback.
 
 ## What's left to the builder
 
-- **How the Play build is produced.** My call: a `play` build type that inherits from release, sets `STORE_BUILD` to true, uses the upload signing config, and overrides `res/xml/control_service.xml` and `control_service_description` through its own source set (`src/play/`). A product flavor is also fine, but it renames tasks such as `assembleDebug`, and the CLAUDE.md gates, scripts and docs depend on those names. If a flavor is chosen, update all of them.
-- **Whether the Play build's control service drops `com.android.systemui` events**, since auto-Start is off. If it does, the disclosure's screen-share sentence goes too. Keep the disclosure exactly true to whatever the build does.
+- **Signing wiring:** read the keystore path and passwords from a gitignored `android/keystore.properties` or from environment variables. When they're absent, `assembleRelease`/`bundleRelease` must fail with a clear message, while debug and the gates still build.
 - **Tour architecture.**
   - Keep the tour logic pure and tested in `android/app` (or `core` where it fits): the steps, what completes each one, skipping, resuming, and how it's chosen relative to the existing `SetupFlow`.
   - Keep the coach-mark overlay a thin Compose layer that targets real composables, for example through `onGloballyPositioned` bounds registered by key.
   - Decide how the existing setup steps that the tour doesn't cover (Files save location, Battery "Unrestricted") fit. My call: keep them as short steps after "Connect to your Mac" or as Settings hints; don't drop them silently.
 - **Disclosure screen layout:** Material 3 bottom sheets, as in the prototype, or full screens. They must be in the normal flow and have an affirmative action.
-- **R8/minify for the Play build.** My call: leave it off for the first submission unless the bundle is unreasonably large. Turning it on means checking reflection-heavy code (serialization, OkHttp) with keep rules and a full on-device test.
+- **R8/minify for release.** My call: leave it off for the first submission unless the bundle is unreasonably large. Turning it on means checking reflection-heavy code (serialization, OkHttp) with keep rules and a full on-device test.
 - **Where the paperwork lives.** My call: `docs/play/` (listing.md, declarations.md, data-safety.md, video-scripts.md, closed-test.md).
 - **Store graphics:** screenshots and a feature graphic, or a list of exactly which screens the owner should capture. My call: the list, plus a 1024×500 feature graphic rendered from the site's art if it's practical.
 
@@ -182,15 +186,14 @@ Each disclosure appears **every time** the user starts that permission flow unti
 
 - Unit tests cover:
   - the tour state machine: order, completion per step, skip, end, resume, and that it never re-shows after finishing;
-  - the Play build's flags: `STORE_BUILD`, auto-Start off, control service metadata;
+  - that auto-Start is gone: no `STORE_BUILD`, no auto-press path, and control service metadata with `isAccessibilityTool=false` and no System UI package filter;
   - the disclosure gating: no permission intent before Agree, and Agree disabled until the box is ticked for Unison control.
-- A Play bundle builds, signs and verifies (`bundletool` or `jarsigner -verify`) on the owner's Mac.
-- An on-device run of the Play build on the owner's phone covers:
+- The release bundle builds, signs and verifies (`bundletool` or `jarsigner -verify`) on the owner's Mac.
+- An on-device run of the signed build on the owner's phone, done when the owner agrees to the one-time switch above, covers:
   - the full tour from a fresh install: Connect → photo → notifications → clipboard → control;
   - every disclosure's Agree and Not now paths;
-  - remote control working, and auto-Start not firing.
-
-  It must not disturb the owner's paired personal install. The Play build has the same package name, so install it only when the owner agrees to replace their install, or use a test device or profile.
+  - mirroring with a manual Start press;
+  - remote control working.
 - All existing gates stay green.
 
 ## Open items the owner must supply
