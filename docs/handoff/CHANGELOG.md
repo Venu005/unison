@@ -5,6 +5,7 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
 ## 2026-10-22 — Support section live: GitHub Sponsors approved (chore/sponsors-live)
+- **UPI:** `upiId` set to the owner's ID (`…@oksbi`), so the QR code and the pay link on phones are in the build. Test `ships with Sponsors and UPI live` went RED→GREEN; 34/34, check OK. The owner scans the QR code with a real app before the push.
 - **What:** the owner's GitHub Sponsors profile was approved, and `https://github.com/sponsors/Venu005` returns 200.
   - `site.config.js` sets `sponsorUrl` to that URL, so the Support section and its nav and footer links are now in the build.
   - `upiId` stays `null` until the owner tests a real ID with two UPI apps.

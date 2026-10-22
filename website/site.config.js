@@ -16,8 +16,8 @@ export default {
   playUrl: null,
   // GitHub Sponsors (approved 2026-10-22). null leaves out the Support section and its links (Plan 13).
   sponsorUrl: 'https://github.com/sponsors/Venu005',
-  // null for no UPI block in the Support section; a UPI ID (name@bank) adds the QR code and link.
-  upiId: null,
+  // The UPI block in the Support section (QR code, and a pay link on phones); null leaves it out.
+  upiId: 'venusaiyalamanchili@oksbi',
   version: '0.4.0',
   developer: { name: 'Venusai', email: 'venusaiyalamanchili@gmail.com', url: 'https://github.com/Venu005' },
   license: 'MIT',

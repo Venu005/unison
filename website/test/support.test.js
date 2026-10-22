@@ -47,9 +47,9 @@ test('rejects a malformed UPI ID', async () => {
   await expect(applySupport(page, { ...on, upiId: 'my name@okicici' })).rejects.toThrow('is not a UPI ID');
 });
 
-test('ships with Sponsors live and UPI off', () => {
+test('ships with Sponsors and UPI live', () => {
   expect(SITE.sponsorUrl).toBe('https://github.com/sponsors/Venu005');
-  expect(SITE.upiId).toBe(null);
+  expect(SITE.upiId).toBe('venusaiyalamanchili@oksbi');
 });
 
 test('the QR code has the standard 4-module quiet zone', async () => {
