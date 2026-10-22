@@ -4,6 +4,13 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Plan 13: Support Unison (feat/support)
+- **Task 1, support settings and build-time filter:**
+  - `website/src/support.js` provides `upiLink(id)` and `applySupport(html, site)`. It keeps or cuts the `<!-- support:… -->` and `<!-- upi:… -->` blocks, fills `%SPONSOR_URL%`, `%UPI_ID%` and `%UPI_LINK%`, and inlines the UPI QR code as SVG (dev dependency `qrcode` 1.5.4).
+  - A malformed UPI ID stops the build.
+  - `site.config.js` gains `sponsorUrl: null` and `upiId: null`.
+  - Tests: `test/support.test.js` (7). `npm test` passes 28/28.
+
 ## 2026-10-22 — Support Unison (tips): design spec (docs/support-spec)
 - **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-support-design.md`.
   - **Payment route:** one-time tips through GitHub Sponsors, with a UPI QR code on the website as an extra.
