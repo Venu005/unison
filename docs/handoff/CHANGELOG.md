@@ -4,6 +4,15 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Support section live: GitHub Sponsors approved (chore/sponsors-live)
+- **UPI:** `upiId` set to the owner's ID (`…@oksbi`), so the QR code and the pay link on phones are in the build. Test `ships with Sponsors and UPI live` went RED→GREEN; 34/34, check OK. The owner scans the QR code with a real app before the push.
+- **What:** the owner's GitHub Sponsors profile was approved, and `https://github.com/sponsors/Venu005` returns 200.
+  - `site.config.js` sets `sponsorUrl` to that URL, so the Support section and its nav and footer links are now in the build.
+  - `upiId` stays `null` until the owner tests a real ID with two UPI apps.
+  - Added `.github/FUNDING.yml` (`github: Venu005`), so the repo shows GitHub's Sponsor button, as the Sponsors dashboard suggests.
+  - Test `ships with Sponsors live and UPI off` went RED→GREEN.
+- **Verified:** `npm test` 34/34, build with no warnings, check OK on 30 files. The built page has `id="support"`, one Sponsors link and two `#support` links. A Playwright screenshot of `npm run preview` (no env overrides) shows the scene and the button.
+
 ## 2026-10-22 — Plan 13: Support Unison (feat/support)
 - **Merged** to `main` as `c6cb7bd` on the owner's choice (local merge, not pushed). On the merged tree every gate passed: website 34/34 with check OK, Android build successful, `swift test` 370/370, `xcodebuild` succeeded.
 - **Deferred minors from the final review:**
