@@ -1,7 +1,6 @@
 package dev.macdroid.app.ui
 
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -18,13 +17,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.barcode.common.Barcode
-import com.google.mlkit.vision.common.InputImage
+import dev.macdroid.app.ui.qr.QrDecode
 import java.util.concurrent.Executors
 
-@androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
 internal fun QrCameraPreview(enabled: Boolean, onResult: (String) -> Unit, onCameraError: () -> Unit, modifier: Modifier) {
     val context = LocalContext.current
@@ -33,9 +28,7 @@ internal fun QrCameraPreview(enabled: Boolean, onResult: (String) -> Unit, onCam
     val currentOnResult by rememberUpdatedState(onResult)
     val providerFuture = remember { ProcessCameraProvider.getInstance(context) }
     val executor = remember { Executors.newSingleThreadExecutor() }
-    val scanner = remember {
-        BarcodeScanning.getClient(BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build())
-    }
+    val mainExecutor = remember { ContextCompat.getMainExecutor(context) }
     var disposed by remember { mutableStateOf(false) }
     var analysisUseCase by remember { mutableStateOf<ImageAnalysis?>(null) }
     DisposableEffect(Unit) {
@@ -43,7 +36,6 @@ internal fun QrCameraPreview(enabled: Boolean, onResult: (String) -> Unit, onCam
             disposed = true
             analysisUseCase?.clearAnalyzer()
             runCatching { if (providerFuture.isDone) providerFuture.get().unbindAll() }
-            scanner.close()
             executor.shutdown()
         }
     }
@@ -56,17 +48,15 @@ internal fun QrCameraPreview(enabled: Boolean, onResult: (String) -> Unit, onCam
             val preview = Preview.Builder().build().also { it.setSurfaceProvider(previewView.surfaceProvider) }
             val analysis = ImageAnalysis.Builder().setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
             analysis.setAnalyzer(executor) { proxy ->
-                val media = proxy.image
-                if (media == null || !currentEnabled) {
-                    proxy.close()
-                    return@setAnalyzer
+                proxy.use {
+                    if (!currentEnabled) return@setAnalyzer
+                    // The Y plane is the luma; ZXing reads it directly. QR codes decode in any rotation.
+                    val y = proxy.planes[0]
+                    val bytes = ByteArray(y.buffer.remaining()).also { y.buffer.get(it) }
+                    QrDecode.decode(bytes, proxy.width, proxy.height, y.rowStride)
+                        ?.takeIf { it.startsWith("macdroid://") }
+                        ?.let { code -> mainExecutor.execute { currentOnResult(code) } }
                 }
-                scanner.process(InputImage.fromMediaImage(media, proxy.imageInfo.rotationDegrees))
-                    .addOnSuccessListener { codes ->
-                        codes.firstNotNullOfOrNull { code -> code.rawValue?.takeIf { it.startsWith("macdroid://") } }
-                            ?.let { currentOnResult(it) }
-                    }
-                    .addOnCompleteListener { proxy.close() }
             }
             provider.unbindAll()
             analysisUseCase = analysis

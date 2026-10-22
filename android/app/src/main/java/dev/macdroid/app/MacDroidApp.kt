@@ -109,6 +109,11 @@ class UiPrefs(context: Context) {
         get() = prefs.getBoolean("setupDone", false)
         set(value) { prefs.edit().putBoolean("setupDone", value).apply() }
 
+    /** "Post notifications" was asked after the first connection (Plan 14); Settings → Notifications covers later. */
+    var postNotificationsAsked: Boolean
+        get() = prefs.getBoolean("postNotificationsAsked", false)
+        set(value) { prefs.edit().putBoolean("postNotificationsAsked", value).apply() }
+
     /** Off after the user taps Disconnect or turns off "Keep connected"; the app then shows a Connect button. */
     private val _keepConnected = MutableStateFlow(prefs.getBoolean("keepConnected", true))
 
@@ -121,10 +126,6 @@ class UiPrefs(context: Context) {
             prefs.edit().putBoolean("keepConnected", value).apply()
             _keepConnected.value = value
         }
-
-    var notificationsSkipped: Boolean
-        get() = prefs.getBoolean("notificationsSkipped", false)
-        set(value) { prefs.edit().putBoolean("notificationsSkipped", value).apply() }
 
     var photosStepDone: Boolean
         get() = prefs.getBoolean("photosStepDone", false)

@@ -202,38 +202,3 @@ class SecretShadow {
     }
 }
 
-/** What [ConsentMatcher] needs from an accessibility node (a fake in tests). */
-interface UiNode {
-    val viewId: String?
-    val text: String?
-    val clickable: Boolean
-    val children: List<UiNode>
-}
-
-/**
- * Finds the "Share screen" button on Android's capture consent for MacDroid, and nothing else (spec §3.1 step 4, probe Q1b).
- */
-object ConsentMatcher {
-    private const val CONTAINER = "com.android.systemui:id/screen_share_permission_dialog"
-    private const val POSITIVE = "android:id/button1"
-    private const val APP = "Unison"
-    private val labels = setOf("share screen", "start", "start now")
-
-    fun startButton(root: UiNode): UiNode? {
-        val nodes = flatten(root)
-        val container = nodes.firstOrNull { it.viewId == CONTAINER }
-        if (container != null) {
-            // System UI reuses this dialog for its own recorder and Cast: only when it names MacDroid (final review I3).
-            val inside = flatten(container)
-            if (inside.none { it.text?.contains(APP) == true }) return null
-            return inside.firstOrNull { it.viewId == POSITIVE && it.clickable }
-        }
-        // Older dialogs without the container id: only when the question is for MacDroid ("… with MacDroid?"), so the
-        // shade with MacDroid's own notification and another app's "Start" doesn't match.
-        if (nodes.none { it.text?.contains("with $APP", ignoreCase = true) == true }) return null
-        return nodes.firstOrNull { it.clickable && it.text?.trim()?.lowercase() in labels }
-    }
-
-    private fun flatten(node: UiNode, depth: Int = 0): List<UiNode> =
-        if (depth > 30) emptyList() else listOf(node) + node.children.flatMap { flatten(it, depth + 1) }
-}

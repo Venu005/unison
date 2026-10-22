@@ -1,7 +1,11 @@
 package dev.macdroid.app.ui.navigation
 
+import android.Manifest
 import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -14,10 +18,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.macdroid.app.AppGraph
+import dev.macdroid.app.platform.Permissions
 import dev.macdroid.app.service.ConnectionService
+import dev.macdroid.app.ui.PromptRules
 import dev.macdroid.app.ui.main.MainScreen
 import dev.macdroid.app.ui.setup.SetupScreen
 import dev.macdroid.app.ui.setup.SetupViewModel
+import dev.macdroid.app.ui.tour.CoachMarkHost
+import dev.macdroid.app.ui.tour.LocalTour
+import dev.macdroid.app.ui.tour.TourController
+import dev.macdroid.core.connection.ConnectionState
 
 object Routes {
     const val SETUP = "setup"
@@ -51,13 +61,31 @@ fun AppNavHost(graph: AppGraph) {
         }
     }
 
-    NavHost(nav, startDestination = start) {
-        composable(Routes.SETUP) { SetupScreen(setupViewModel) }
-        composable(Routes.MAIN) {
-            MainScreen(onForget = {
-                forgetMac(context, graph)
-                setupViewModel.refresh()
-            })
+    // The guided tour (Plan 14) spans setup and the main screens; being connected to the Mac finishes its first step.
+    val tour = remember { TourController(context, setupDone = graph.uiPrefs.setupDone) }
+    val connection by graph.connectionManager.state.collectAsStateWithLifecycle()
+    val connected = connection is ConnectionState.Connected
+    LaunchedEffect(connected, tour.current?.group) { if (connected) tour.connected() }
+    // The connection notice and mirror requests need "post notifications" (Android 13+); ask once, after connecting.
+    val postNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    LaunchedEffect(connected) {
+        if (PromptRules.askToPostNotifications(connected, Permissions.needsNotifications, Permissions.hasNotifications(context), graph.uiPrefs.postNotificationsAsked)) {
+            graph.uiPrefs.postNotificationsAsked = true
+            postNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    CompositionLocalProvider(LocalTour provides tour) {
+        CoachMarkHost(tour) {
+            NavHost(nav, startDestination = start) {
+                composable(Routes.SETUP) { SetupScreen(setupViewModel) }
+                composable(Routes.MAIN) {
+                    MainScreen(onForget = {
+                        forgetMac(context, graph)
+                        setupViewModel.refresh()
+                    })
+                }
+            }
         }
     }
 }

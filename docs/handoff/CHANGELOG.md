@@ -8,6 +8,114 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
 - **What:** on the home page, Support ("Buy the robot a chai.") now comes before "Throw something at it.", which is the last section above the footer. Owner's request.
 - **README:** the intro, the feature table (everything shipped so far), the "Get it" line, a new "Support Unison" section (GitHub Sponsors, plus UPI through the site), pairing step 3 and the roadmap now match what's built.
 - **Verified:** website 34/34, build OK, check OK (30 files). The built page has `id="support"` before `id="game"`, and a Playwright screenshot shows Support followed by the game.
+## 2026-10-22 — Plan 14: Unison on Google Play (feat/play-store)
+- **Task 7, the owner's phone on the signed build:**
+  - With the owner's go-ahead, the debug install was uninstalled and the signed 0.5.0 installed through `bundletool build-apks --connected-device` plus `install-apks` (versionCode 6).
+  - The owner re-paired and ran the whole flow, reporting "everything works fine": the tour from a fresh install, both disclosure paths, mirroring with a manual Start, and remote control (tapping and typing).
+  - A Mac sidebar glitch on the empty Notifications page was found along the way. It already exists in the installed 0.4.1, isn't from this plan, and is recorded under STATUS Known limitations.
+- **Final review fixes** (fresh reviewer, whole branch; no Critical findings). Each fix was RED→GREEN:
+  - **Step 1 waits for a real connection.** Granting the camera no longer jumps to "You're connected!". `TourFlow.waitingForMac` shows "Point the camera at the QR code on your Mac." (`cameraGrantWaitsForTheConnection`).
+  - **No dead end after "Don't allow" twice.** A permission Android won't ask for again (local network, camera) now opens the app's settings from Connect (`PromptRules.openSettingsAfter`, `deniedForGoodOpensSettings`).
+  - **The microphone sheet survives rotation.** `MirrorConsentRules` and a saved `microphoneSheet` flag show it again instead of an invisible screen (`mirrorConsentShowsTheSheetAgainAfterRecreation`).
+  - **"Not now" no longer leaves a bubble behind.** On the notifications or Unison control sheet it skips that tour step (`TourFlow.declined`, `notNowOnASheetSkipsTheStep`).
+  - **"Post notifications" is asked once after the first connection**, so the connection notice and mirror requests can show even when tour step 3 is skipped (`askToPostNotifications`, `UiPrefs.postNotificationsAsked`).
+  - **Unison control subscribes to no events.** No `accessibilityEventTypes`, `flagRetrieveInteractiveWindows` or `flagReportViewIds`; it needs only gestures and `canRetrieveWindowContent` (`ControlServiceConfigTest`). Typing must be re-checked on the phone.
+  - **The microphone disclosure no longer says "records"** ("streams…, nothing is saved") (`microphoneDisclosureDoesNotSayRecord`).
+  - **Scan results go back to the main thread** (ML Kit did this; pairing state is checked then set).
+  - **Stale docs:** DEV-GUIDE and ARCHITECTURE no longer describe auto-Start, `ConsentMatcher` or the old setup order.
+  - **Verified:** TourFlowTest 17/17, PromptRulesTest 3/3, DisclosureRulesTest 6/6, ControlServiceConfigTest 3/3. The gate built successfully with no warnings.
+  - **On the device:** the signed 0.5.0 was installed as an update on the owner's phone (pairing kept). The owner confirmed typing from the Mac still works with no accessibility events ("works perfect").
+- **Task 8, part 2, handoff:** STATUS, ROADMAP and README updated; the repo README's "Built with" now says ZXing.
+- **Task 1, auto-Start removed and Unison control declared honestly:**
+  - Deleted: the auto-press in `MacDroidControlService.onAccessibilityEvent`, `ControlPrefs`, `NodeAdapter`, `ConsentMatcher`/`UiNode` (core), `MirrorPhoneSession.awaitingConsent`, the Settings row "Start mirroring without touching the phone", and `BuildConfig.STORE_BUILD`, with their tests.
+  - `control_service.xml` sets `isAccessibilityTool="false"`, drops the System UI `packageNames`, and narrows events to `typeViewFocused`. Gestures and window content stay.
+  - The service description no longer mentions pressing Start.
+  - On the Mac, `MirrorSession` shows "Tap Start on your phone…" at once (`consentHint` defaults to `.zero`).
+  - DECISIONS rows for auto-Start are marked removed.
+  - **Verified:** `ControlServiceConfigTest` (3) and `consentHintShowsAtOnceByDefault` went RED→GREEN. Android gate built successfully with no warnings; `swift test` 371/371; `xcodebuild` succeeded.
+- **Task 2, on-device QR decoding:**
+  - `ui/qr/QrDecode` (ZXing `core` 3.5.3: Y-plane `PlanarYUVLuminanceSource`, `QRCodeReader` with `TRY_HARDER`, retried inverted) replaces ML Kit in `QrScanner`. ML Kit reported diagnostics to Google through `datatransport`.
+  - `com.google.mlkit:barcode-scanning` was removed.
+  - **Verified:** `QrDecodeTest` (4: plain, row padding, inverted, no code) and `NoTelemetryTest` went RED→GREEN. `releaseRuntimeClasspath` has 0 mlkit/datatransport matches. The gate built successfully with no warnings. Scanning on the phone is checked in Task 7 (fresh install).
+- **Task 3, disclosures:**
+  - `ui/disclosure/Disclosures` (`Gated`: Notifications, Accessibility, Photos, Microphone, Calls; what, where and why copy; `canAgree`).
+  - `DisclosureSheet` (Material 3 bottom sheet, Agree and Not now, and a checkbox for Unison control) and `rememberDisclosed`.
+  - The sheet now comes before every launch point:
+    - Notifications: the setup step and the Notifications tab;
+    - Photos: the setup step and Settings;
+    - Unison control: Settings, only when it's off;
+    - Microphone: Settings, and `MirrorConsentActivity`, where Not now mirrors without sound;
+    - Calls: Settings.
+  - **Verified:** `DisclosureRulesTest` (5) went RED→GREEN. A grep audit of every permission or settings launch found each one inside `onAgree`; the two exceptions only open settings for something already granted. The gate built successfully with no warnings.
+- **Task 4, tour state machine:**
+  - `ui/tour/TourFlow` has 13 `TourTarget`s in 5 groups, with the spec's titles and the prototype's tips.
+  - `done` advances only on the highlighted action. `denied` keeps the step open with `retry`. `skipStep`/`end` are blocked during "Connect to your Mac". `restart` starts over.
+  - `TourPrefs` (SharedPreferences `tour`) saves the index and the finished flag.
+  - **Verified:** `TourFlowTest` (8) went RED→GREEN, and the gate built successfully.
+- **Task 5, guided tour UI:**
+  - `TourController` (app-wide; `LocalTour`) and `CoachMarkHost`:
+    - a dimmed overlay with a pulsing ring around the `Modifier.tourTarget` bounds, and a bubble with "Step N of 5", Skip and End;
+    - touches aren't blocked;
+    - targets in a popup, sheet or system prompt get the bubble only;
+    - a "You're all set" dialog when the tour ends.
+  - **Setup:** Welcome and the setup Notifications step are removed.
+    - First run is now Connect, Local network (only if still missing), Files, Photos, Battery.
+    - `PairStep` is the new "Connect to your Mac": three numbered cards with a Copy link, then **Scan the QR code**, which asks for local network and then the camera and reports done or denied to the tour, plus "Can't scan? Type the code instead".
+    - The unused `notificationsSkipped` preference is gone.
+  - **Tour hooks:**
+    - Send and its Photos item, and the Notifications, Clipboard and Settings tabs.
+    - The notification turn-on and Agree; Agree also asks "post notifications", which moved from setup.
+    - Send clipboard, and the Unison control row and Agree.
+    - Steps whose job is already done skip themselves (notification access or control already on).
+    - Settings → About has "Show the tour again", which starts after connecting on a paired phone.
+  - Someone who finished setup before this change doesn't get the tour automatically.
+  - **Verified:** `TourFlowTest` 11/11, including `pairingFinishesTheConnectStep`, `aGroupAlreadyDoneSkipsItself` and `restartOnAPairedPhoneSkipsConnecting`, all RED→GREEN. `SetupFlowTest` was rewritten (`welcomeIsGoneConnectComesFirst` RED→GREEN). The gate built successfully with no warnings.
+  - The debug build is installed on the owner's phone (`install -r`, pairing kept). The tour walk on the device is the owner's to do (no automated taps or screenshots on their phone).
+- **Tour fix (owner's on-device check):** "Show the tour again" on a paired but disconnected phone jumped to step 2. Changes:
+  - Step 1 now means *connected*: `AppNavHost` finishes it on `ConnectionState.Connected`, not on pairing.
+  - `restart()` always starts at step 1.
+  - `TourFlow.display(onConnectScreen)` decides the highlight. On the Connect screen it's Scan, or Scan with the retry tip after a declined prompt. Anywhere else, step 1 points at Home's connection card (`TourTarget.StatusCard`): "Open Unison on your Mac and keep it on the same Wi-Fi. This phone connects by itself."
+  - `tourTarget` forgets a control when it leaves the screen.
+  - **Verified:** `TourFlowTest` 15/15, with `restartAlwaysStartsAtConnect`, `pairedButOffTheConnectScreenPointsAtTheStatusCard`, `onTheConnectScreenItPointsAtScan`, `aDeclinedPromptPointsBackAtScan` and `laterStepsShowTheirOwnTarget` all RED→GREEN. The gate built successfully with no warnings.
+- **Task 6, release signing (part 1, before the key):**
+  - The `release` build reads the upload key from a gitignored `android/keystore.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`). Without that file, `bundle`/`package`/`assemble*Release` stop with "Release signing needs android/keystore.properties", and debug and the gates still build.
+  - `.gitignore` adds `android/keystore.properties` and `*.jks`.
+  - Version 0.5.0 (versionCode 6).
+  - `BuildConfig.PHOTOS_GALLERY` (true) gates the setup Photos step and Settings → Photos. `docs/play/photos-fallback.md` gives the exact edits if Play rejects the declaration.
+  - **Verified:** `PhotosGalleryFlagTest` RED→GREEN; the gate built successfully; `git check-ignore` matches both files; `bundleRelease` without the key fails with the message.
+- **Task 6, part 2 (owner's go-ahead):** created the upload key `~/Keystores/unison-upload.jks` (RSA 4096, PKCS12, alias `upload`, 10000 days, CN=Venusai, C=IN, SHA-256 `1A:78:2E:A4…`) with a generated password. The password is written only to the gitignored `android/keystore.properties` (mode 600). `bundleRelease` builds a signed `app-release.aab` (17 MB) and `jarsigner -verify` says "jar verified". DEV-GUIDE gains "Releasing on Google Play".
+- **Task 8, part 1, Play paperwork and privacy page:**
+  - `docs/play/` holds the following, ready to paste:
+    - `listing.md` (78-character short description, full description, category, contacts, what to keep out);
+    - `declarations.md` (Accessibility as not a tool with no data collected, both foreground service types, Photos and videos, the other App content answers);
+    - `data-safety.md` ("No data collected", relying on end-to-end encryption between the user's own devices, plus a pre-submit dependency check);
+    - `app-access.md` (reviewer steps with the Mac app and Gatekeeper);
+    - `video-scripts.md` (5 shot lists);
+    - `closed-test.md` (12+ testers for 14 days);
+    - `screenshots.md`;
+    - `photos-fallback.md`.
+  - The privacy page's Accessibility line now matches Plan 14: it reads the text box being typed into, which stays on the phone, and watches no other app. Dated 22 Oct.
+  - **Verified:** website 34/34, build OK, check OK (30 files).
+
+## 2026-10-22 — Unison on Google Play: design spec (docs/play-store-spec)
+- **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`, with the clickable guided-tour prototype saved as `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`.
+  - **Scope:** the Play build ships every feature, including Unison control with `isAccessibilityTool="false"` and a full disclosure. Auto-Start is off.
+  - **Tour:** a 5-step hands-on guided tour (connect, photo, notifications, clipboard, control).
+  - **Disclosures:** a screen for each sensitive permission.
+  - **Paperwork:** the declarations, Data safety ("no data collected", relying on end-to-end encryption between the user's own devices), the listing and the closed-test checklist.
+  - **Decided after the builder check:** App access instructions instead of a demo mode; replace ML Kit (it sends diagnostics to Google) with an on-device decoder; and a Photos fallback.
+  - **One build for everyone (owner):** auto-Start and `STORE_BUILD` are removed entirely, so there is no separate personal build and no `.dev` app id. The owner's phone moves to the signed build once (uninstall, install, re-pair).
+- **Plan:** `docs/superpowers/plans/2026-10-22-unison-play-store-14.md`, 8 tasks:
+  1. remove auto-Start and declare Unison control honestly;
+  2. ZXing in place of ML Kit;
+  3. disclosures;
+  4. tour state machine;
+  5. tour UI;
+  6. release signing, App Bundle and version 0.5.0;
+  7. the owner's phone on the signed build;
+  8. paperwork, privacy page and review.
+- **Why:** the owner wants Unison on Play without rejections. Policy findings, with sources, are in the spec's Constraints.
+- **Verified:** docs only. The prototype was clicked through end to end in headless Chromium.
 
 ## 2026-10-22 — Ignore local tool folders (chore/gitignore-local)
 - **What:** `.gitignore` now lists `.claude/` (Claude Code's project settings) and `brag-output/` (the /brag launch-video output). The owner asked for it, so the tree stays clean and `scripts/make-release.sh` can publish in one run.

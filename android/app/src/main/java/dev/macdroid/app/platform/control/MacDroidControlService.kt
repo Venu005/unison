@@ -11,7 +11,6 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import dev.macdroid.app.graph
 import dev.macdroid.app.platform.mirror.ScreenSize
-import dev.macdroid.core.control.ConsentMatcher
 import dev.macdroid.core.control.GestureTracker
 import dev.macdroid.core.control.SecretShadow
 import dev.macdroid.core.control.TextEdit
@@ -25,8 +24,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
- * "MacDroid control" (spec §3.5): plays the Mac's input as gestures, global actions and text edits, and presses
- * "Share screen" on Android's capture consent while a mirroring session waits for it. Reads nothing else on screen.
+ * "Unison control" (spec §3.5): plays the Mac's input as gestures, global actions and text edits while the phone is mirrored.
+ * It reads only the text field it types into. Auto-Start (pressing Android's capture consent) was removed in Plan 14.
  */
 class MacDroidControlService : AccessibilityService() {
     private val main = Handler(Looper.getMainLooper())
@@ -61,18 +60,8 @@ class MacDroidControlService : AccessibilityService() {
 
     override fun onInterrupt() {}
 
-    /** Auto-Start (spec §3.1 step 4): only System UI events, only while a session waits, only MacDroid's consent. */
-    override fun onAccessibilityEvent(event: AccessibilityEvent) {
-        if (event.packageName != SYSTEM_UI) return
-        if (!ControlPrefs.autoStart(this) || !graph.mirrorBridge.session.awaitingConsent) return
-        for (window in windows) {
-            val root = window.root ?: continue
-            if (root.packageName != SYSTEM_UI) continue
-            val button = ConsentMatcher.startButton(NodeAdapter(root)) as? NodeAdapter ?: continue
-            button.node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-            return
-        }
-    }
+    // No events are needed: input arrives from the Mac, not from the screen (Plan 14 removed auto-Start).
+    override fun onAccessibilityEvent(event: AccessibilityEvent) {}
 
     /** Input from the Mac; the bridge has checked the session is streaming. Main thread. */
     fun handle(message: Message) {
@@ -161,7 +150,6 @@ class MacDroidControlService : AccessibilityService() {
     }
 
     companion object {
-        private const val SYSTEM_UI = "com.android.systemui"
         private const val LONG_PRESS_MS = 510L
         private const val MAX_TEXT = 4096
         private val _running = MutableStateFlow(false)

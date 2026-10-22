@@ -13,48 +13,38 @@ import org.junit.Test
 class SetupFlowTest {
     private fun inputs(
         setupDone: Boolean = false,
-        welcomeDone: Boolean = false,
         needsLocalNetwork: Boolean = true,
         hasLocalNetwork: Boolean = false,
         paired: Boolean = false,
-        needsNotifications: Boolean = true,
-        hasNotifications: Boolean = false,
-        notificationsSkipped: Boolean = false,
         batteryDone: Boolean = false,
         filesStepDone: Boolean = false,
-        hasNotificationAccess: Boolean = false,
         photosStepDone: Boolean = false,
-    ) = SetupInputs(setupDone, welcomeDone, needsLocalNetwork, hasLocalNetwork, paired, needsNotifications, hasNotifications, notificationsSkipped, batteryDone, filesStepDone, hasNotificationAccess = hasNotificationAccess, photosStepDone = photosStepDone)
+    ) = SetupInputs(setupDone, needsLocalNetwork, hasLocalNetwork, paired, batteryDone, filesStepDone, photosStepDone)
 
-    @Test fun firstRunShowsEveryStepInOrder() {
-        assertEquals(
-            listOf(SetupStep.Welcome, SetupStep.LocalNetwork, SetupStep.PairMac, SetupStep.Notifications, SetupStep.Files, SetupStep.Photos, SetupStep.Battery),
-            SetupFlow.steps(inputs()),
-        )
-        assertEquals(SetupStep.Welcome, SetupFlow.current(inputs()))
+    // Plan 14: the guided tour starts with "Connect to your Mac" (local network and camera are asked from its Scan
+    // button); notifications moved into the tour.
+    @Test fun welcomeIsGoneConnectComesFirst() {
+        assertEquals(listOf(SetupStep.PairMac, SetupStep.LocalNetwork, SetupStep.Files, SetupStep.Photos, SetupStep.Battery), SetupFlow.steps(inputs()))
+        assertEquals(SetupStep.PairMac, SetupFlow.current(inputs()))
     }
 
     @Test fun firstRunSkipsPermissionsTheOsDoesNotHave() {
-        assertEquals(
-            listOf(SetupStep.Welcome, SetupStep.PairMac, SetupStep.Notifications, SetupStep.Files, SetupStep.Photos, SetupStep.Battery),
-            SetupFlow.steps(inputs(needsLocalNetwork = false, needsNotifications = false)),
-        )
+        assertEquals(listOf(SetupStep.PairMac, SetupStep.Files, SetupStep.Photos, SetupStep.Battery), SetupFlow.steps(inputs(needsLocalNetwork = false)))
     }
 
     @Test fun advancesAsEachStepCompletes() {
-        assertEquals(SetupStep.LocalNetwork, SetupFlow.current(inputs(welcomeDone = true)))
-        assertEquals(SetupStep.PairMac, SetupFlow.current(inputs(welcomeDone = true, hasLocalNetwork = true)))
-        assertEquals(SetupStep.Notifications, SetupFlow.current(inputs(welcomeDone = true, hasLocalNetwork = true, paired = true)))
-        assertEquals(SetupStep.Files, SetupFlow.current(inputs(welcomeDone = true, hasLocalNetwork = true, paired = true, notificationsSkipped = true)))
-        assertEquals(SetupStep.Photos, SetupFlow.current(inputs(welcomeDone = true, hasLocalNetwork = true, paired = true, notificationsSkipped = true, filesStepDone = true)))
-        assertNull(SetupFlow.current(inputs(welcomeDone = true, hasLocalNetwork = true, paired = true, hasNotifications = true, hasNotificationAccess = true, batteryDone = true, filesStepDone = true, photosStepDone = true)))
+        assertEquals(SetupStep.LocalNetwork, SetupFlow.current(inputs(paired = true)))
+        assertEquals(SetupStep.Files, SetupFlow.current(inputs(paired = true, hasLocalNetwork = true)))
+        assertEquals(SetupStep.Photos, SetupFlow.current(inputs(paired = true, hasLocalNetwork = true, filesStepDone = true)))
+        assertEquals(SetupStep.Battery, SetupFlow.current(inputs(paired = true, hasLocalNetwork = true, filesStepDone = true, photosStepDone = true)))
+        assertNull(SetupFlow.current(inputs(paired = true, hasLocalNetwork = true, filesStepDone = true, photosStepDone = true, batteryDone = true)))
     }
 
     @Test fun progressPosition() {
-        val state = SetupUiState.from(inputs(welcomeDone = true, hasLocalNetwork = true), keepConnected = true)
-        assertEquals(SetupStep.PairMac, state.step)
+        val state = SetupUiState.from(inputs(paired = true, hasLocalNetwork = true), keepConnected = true)
+        assertEquals(SetupStep.Files, state.step)
         assertEquals(3, state.position)
-        assertEquals(7, state.total)
+        assertEquals(5, state.total)
         assertTrue(state.firstRun)
     }
 
@@ -63,17 +53,10 @@ class SetupFlowTest {
         assertNull(SetupFlow.current(inputs(setupDone = true, hasLocalNetwork = true, paired = true)))
     }
 
-    // Review Focus #2
     @Test fun revokedLocalNetworkRoutesToThatStepOnly() {
         val revoked = inputs(setupDone = true, hasLocalNetwork = false, paired = true)
         assertEquals(listOf(SetupStep.LocalNetwork), SetupFlow.steps(revoked))
         assertEquals(SetupStep.LocalNetwork, SetupFlow.current(revoked))
-        assertFalse(SetupUiState.from(revoked, keepConnected = true).firstRun)
-    }
-
-    // Review Focus #2
-    @Test fun revokedNotificationsDoNotForceSetup() {
-        assertNull(SetupFlow.current(inputs(setupDone = true, hasLocalNetwork = true, paired = true, hasNotifications = false)))
     }
 
     @Test fun forgottenMacAfterSetupNeedsOnlyPairing() {
@@ -88,30 +71,7 @@ class SetupFlowTest {
         assertFalse(SetupUiState.from(ready.copy(paired = false), keepConnected = true).readyToConnect)
     }
 
-    @Test fun filesStepIsFirstRunOnly() {
-        assertNull(SetupFlow.current(inputs(setupDone = true, hasLocalNetwork = true, paired = true, filesStepDone = false)))
-    }
-
-    @Test fun notificationsStepNeedsBothThePermissionAndAccess() {
-        val base = inputs(welcomeDone = true, hasLocalNetwork = true, paired = true)
-        assertEquals(SetupStep.Notifications, SetupFlow.current(base.copy(hasNotifications = true)))
-        assertEquals(SetupStep.Notifications, SetupFlow.current(base.copy(hasNotificationAccess = true)))
-        assertEquals(SetupStep.Files, SetupFlow.current(base.copy(hasNotifications = true, hasNotificationAccess = true)))
-        assertEquals(SetupStep.Files, SetupFlow.current(base.copy(needsNotifications = false, hasNotificationAccess = true)))
-        assertEquals(SetupStep.Files, SetupFlow.current(base.copy(notificationsSkipped = true)))
-    }
-
-    @Test fun firstRunAsksForPhotosAfterFiles() {
-        val i = SetupInputs(setupDone = false, welcomeDone = true, needsLocalNetwork = false, hasLocalNetwork = true, paired = true,
-            needsNotifications = false, hasNotifications = true, notificationsSkipped = true, batteryDone = false, filesStepDone = true)
-        assertEquals(SetupStep.Photos, SetupFlow.current(i))
-        assertEquals(SetupStep.Battery, SetupFlow.current(i.copy(photosStepDone = true)))
-        assertEquals(listOf(SetupStep.Welcome, SetupStep.PairMac, SetupStep.Notifications, SetupStep.Files, SetupStep.Photos, SetupStep.Battery), SetupFlow.steps(i))
-    }
-
-    @Test fun existingUsersAreNotAskedAboutPhotos() {
-        val i = SetupInputs(setupDone = true, welcomeDone = false, needsLocalNetwork = false, hasLocalNetwork = true, paired = true,
-            needsNotifications = false, hasNotifications = true, notificationsSkipped = false, batteryDone = false)
-        assertEquals(null, SetupFlow.current(i))
+    @Test fun filesAndPhotosStepsAreFirstRunOnly() {
+        assertNull(SetupFlow.current(inputs(setupDone = true, hasLocalNetwork = true, paired = true, filesStepDone = false, photosStepDone = false)))
     }
 }

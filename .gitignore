@@ -21,3 +21,7 @@ mac/build/
 # Local tools (Claude Code settings, /brag video output)
 .claude/
 brag-output/
+
+# Google Play upload key (Plan 14): never committed
+android/keystore.properties
+*.jks

@@ -200,7 +200,7 @@ Unison is free, with no ads and no account. If it saves you time, you can leave 
 ## Built with
 
 - **Mac:** Swift, SwiftUI, [Hummingbird 2](https://github.com/hummingbird-project/hummingbird), SwiftNIO and NIOSSL, swift-certificates, swift-crypto
-- **Android:** Kotlin, Jetpack Compose (Material 3), OkHttp, kotlinx.serialization, kotlinx.coroutines, CameraX and ML Kit (QR scanning)
+- **Android:** Kotlin, Jetpack Compose (Material 3), OkHttp, kotlinx.serialization, kotlinx.coroutines, CameraX and ZXing (on-device QR scanning)
 
 ## License
 

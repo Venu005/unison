@@ -38,7 +38,7 @@ import dev.macdroid.app.ui.presentation.StatusTone
 private val ConnectedGreen = Color(0xFF2E7D32)
 
 @Composable
-fun StatusCard(status: StatusModel, onAction: (StatusAction) -> Unit) {
+fun StatusCard(status: StatusModel, modifier: Modifier = Modifier, onAction: (StatusAction) -> Unit) {
     val colors = MaterialTheme.colorScheme
     val (container, content) = when (status.tone) {
         StatusTone.Connected -> colors.primaryContainer to colors.onPrimaryContainer
@@ -48,7 +48,7 @@ fun StatusCard(status: StatusModel, onAction: (StatusAction) -> Unit) {
     Card(
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(containerColor = container, contentColor = content),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Icon(

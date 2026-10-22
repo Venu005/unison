@@ -23,10 +23,10 @@ import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Laptop
+import androidx.compose.material.icons.rounded.Lightbulb
 import androidx.compose.material.icons.rounded.LinkOff
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.PhotoLibrary
-import androidx.compose.material.icons.rounded.PlayCircle
 import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material.icons.rounded.SaveAs
 import androidx.compose.material.icons.rounded.Shield
@@ -40,6 +40,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,11 +55,16 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.macdroid.app.BuildConfig
+import dev.macdroid.app.ui.disclosure.Gated
+import dev.macdroid.app.ui.disclosure.rememberDisclosed
 import dev.macdroid.app.ui.presentation.PhotosAccessText
 import dev.macdroid.app.ui.setup.openAppSettings
+import dev.macdroid.app.ui.tour.LocalTour
+import dev.macdroid.app.ui.tour.TourTarget
+import dev.macdroid.app.ui.tour.tourTarget
 
 @Composable
-fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewModel(), filesViewModel: FilesSettingsViewModel = viewModel()) {
+fun SettingsScreen(onForget: () -> Unit, onShowTour: () -> Unit = {}, viewModel: SettingsViewModel = viewModel(), filesViewModel: FilesSettingsViewModel = viewModel()) {
     val context = LocalContext.current
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refresh() }
@@ -79,6 +85,14 @@ fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewMode
         if (!granted && !canAskAgain) context.openAppSettings()
         viewModel.refresh()
     }
+    // Google Play's prominent disclosure before each sensitive permission (Plan 14).
+    val askPhotos = rememberDisclosed(Gated.Photos) { photosAccess.launch(PhotosAccessText.permissions(Build.VERSION.SDK_INT)) }
+    val tour = LocalTour.current
+    val askControl = rememberDisclosed(Gated.Accessibility, onNotNow = { tour?.declined(TourTarget.ControlAgree) }) { tour?.done(TourTarget.ControlAgree); context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
+    // Unison control is already on: the tour's last step has nothing to do.
+    LaunchedEffect(ui.controlOn) { if (ui.controlOn) tour?.skipGroup(4) }
+    val askMicrophone = rememberDisclosed(Gated.Microphone) { context.openAppSettings() }
+    val askCalls = rememberDisclosed(Gated.Calls) { callsPermission.launch(android.Manifest.permission.CALL_PHONE) }
     var showMac by remember { mutableStateOf(false) }
     var confirmForget by remember { mutableStateOf(false) }
 
@@ -124,14 +138,16 @@ fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewMode
                 trailingContent = { Switch(checked = files.askEachTime, onCheckedChange = filesViewModel::setAskEachTime) },
             )
         }
-        item { SectionHeader("Photos") }
-        item {
-            ListItem(
-                headlineContent = { Text("Photos on your Mac") },
-                supportingContent = { Text(ui.photosSummary) },
-                leadingContent = { Icon(Icons.Rounded.PhotoLibrary, contentDescription = null) },
-                modifier = Modifier.clickable { photosAccess.launch(PhotosAccessText.permissions(Build.VERSION.SDK_INT)) },
-            )
+        if (BuildConfig.PHOTOS_GALLERY) {
+            item { SectionHeader("Photos") }
+            item {
+                ListItem(
+                    headlineContent = { Text("Photos on your Mac") },
+                    supportingContent = { Text(ui.photosSummary) },
+                    leadingContent = { Icon(Icons.Rounded.PhotoLibrary, contentDescription = null) },
+                    modifier = Modifier.clickable { askPhotos() },
+                )
+            }
         }
         item { SectionHeader("Remote control") }
         item {
@@ -139,25 +155,15 @@ fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewMode
                 headlineContent = { Text("Unison control") },
                 supportingContent = { Text(if (ui.controlOn) "On" else "Off: tap to turn on in Accessibility") },
                 leadingContent = { Icon(Icons.Rounded.TouchApp, contentDescription = null) },
-                modifier = Modifier.clickable { context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) },
+                modifier = Modifier.tourTarget(TourTarget.ControlSwitch).clickable { if (ui.controlOn) context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) else { tour?.done(TourTarget.ControlSwitch); askControl() } },
             )
-        }
-        if (!BuildConfig.STORE_BUILD) {
-            item {
-                ListItem(
-                    headlineContent = { Text("Start mirroring without touching the phone") },
-                    supportingContent = { Text("Unison control presses Start on the screen-sharing prompt for you (phone unlocked)") },
-                    leadingContent = { Icon(Icons.Rounded.PlayCircle, contentDescription = null) },
-                    trailingContent = { Switch(checked = ui.autoStart && ui.controlOn, enabled = ui.controlOn, onCheckedChange = viewModel::setAutoStart) },
-                )
-            }
         }
         item {
             ListItem(
                 headlineContent = { Text("Microphone for phone audio") },
                 supportingContent = { Text(if (ui.microphoneAllowed) "Allowed" else "Not allowed") },
                 leadingContent = { Icon(Icons.Rounded.Mic, contentDescription = null) },
-                modifier = Modifier.clickable { context.openAppSettings() },
+                modifier = Modifier.clickable { if (ui.microphoneAllowed) context.openAppSettings() else askMicrophone() },
             )
         }
         item { SectionHeader("Calls") }
@@ -166,7 +172,7 @@ fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewMode
                 headlineContent = { Text("Make calls from your Mac") },
                 supportingContent = { Text(if (ui.callsAllowed) "Allowed" else "Off: tap to allow") },
                 leadingContent = { Icon(Icons.Rounded.Call, contentDescription = null) },
-                modifier = Modifier.clickable { if (!ui.callsAllowed) callsPermission.launch(android.Manifest.permission.CALL_PHONE) },
+                modifier = Modifier.clickable { if (!ui.callsAllowed) askCalls() },
             )
         }
         item { SectionHeader("Setup") }
@@ -187,6 +193,14 @@ fun SettingsScreen(onForget: () -> Unit, viewModel: SettingsViewModel = viewMode
             )
         }
         item { SectionHeader("About") }
+        item {
+            ListItem(
+                headlineContent = { Text("Show the tour again") },
+                supportingContent = { Text("A quick hands-on walk through Unison") },
+                leadingContent = { Icon(Icons.Rounded.Lightbulb, contentDescription = null) },
+                modifier = Modifier.clickable { tour?.restart(); onShowTour() },
+            )
+        }
         item {
             ListItem(
                 headlineContent = { Text("Version") },

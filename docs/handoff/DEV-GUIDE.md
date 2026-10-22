@@ -36,13 +36,12 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 
 ## Gotchas
 - **Mirroring (Plan 7):**
-  - **Starting:** Mac → Phone page or the popover → Mirror. With Unison control on, auto-Start presses "Share screen"; without it, the phone posts "Mirror to <Mac>? Tap to start" (Android blocks background activity starts).
+  - **Starting:** Mac → Phone page or the popover → Mirror. The Mac says "Tap Start on your phone" at once. The user presses Start on Android's screen-sharing prompt, opened from the phone's "Mirror to <Mac>? Tap to start" notification when Unison is in the background (Android blocks background activity starts). Auto-Start was removed in Plan 14.
   - **Locking:** Android ends screen capture when the phone locks, and shows no consent over the lock screen. Mirroring keeps the phone awake; start it on an unlocked phone.
 - **Calls (Plan 10):** grant "Make calls from your Mac" on the phone (Settings → Calls) to dial from the Mac. To make Unison open phone links, choose it as the default calling app in the handler app's settings (Settings → Calls says which app that is). The sandboxed app can't set this itself; from a terminal, a small Swift script calling `NSWorkspace.shared.setDefaultApplication(at:toOpenURLsWithScheme: "tel")` with the app's path also works. Call audio stays on the phone. Incoming calls need notification access, as for notification mirroring.
 - **Remote control (Plan 8):**
   - **Turning it on:** phone → Unison → Settings → Remote control → Unison control → Accessibility → turn on "Unison control". Don't toggle it from adb on the owner's phone.
-  - **Auto-Start** (Settings → "Start mirroring without touching the phone", on by default in personal builds) presses "Share screen" by itself, but only on an unlocked phone and only while a session waits for consent.
-  - **Testing input:** `scripts/cross-platform-test.sh` covers the messages and the gate; gestures, typing and auto-Start are checked by hand (owner checklist in `docs/superpowers/plans/2026-10-14-macdroid-mirroring-followups.md`).
+  - **Testing input:** `scripts/cross-platform-test.sh` covers the messages and the gate; gestures and typing are checked by hand (owner checklist in `docs/superpowers/plans/2026-10-14-macdroid-mirroring-followups.md`).
   - **Probe results:** `docs/superpowers/plans/2026-10-14-macdroid-mirroring-followups.md` (the consent dialog is System UI's "Share your screen with Unison?", button `android:id/button1` "Share screen").
   - **The H.264 test fixture** is regenerated with `scripts/make-h264-fixture.sh` (needs ffmpeg with libx264).
 - **Photos access (Plan 6):** Android 14+ asks for `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO` and `READ_MEDIA_VISUAL_USER_SELECTED` together ("Allow all" or "Select photos"); Android 13 has images/video only; 10–12 use `READ_EXTERNAL_STORAGE`. To test limited access: phone Settings → Apps → Unison → Permissions → Photos and videos → "Allow limited access". Mac thumbnails live in `~/Library/Containers/dev.macdroid.mac/Data/Library/Application Support/PhotoThumbs/`; previews and drags in `…/Data/Library/Caches/PhotoCache/` (emptied at launch).
@@ -116,6 +115,21 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - Bump `CFBundleShortVersionString` (and `CFBundleVersion`) in `mac/project.yml` first; the tag is `v<version>`.
 - `scripts/make-release.sh --dry-run` builds Release, packages `mac/build/release/Unison.dmg` (`Unison.app` + an `Applications` shortcut) and prints the SHA-256. The DMG is deliberately **unsigned**: macOS refuses a disk image signed with a self-signed certificate ("Apple could not verify Unison.dmg") before the user sees the app. The app inside is signed (check: `codesign -dr - /Volumes/Unison/Unison.app`).
 - `scripts/make-release.sh` (no flag) does the same, then `gh release create` with the DMG and notes containing the SHA-256. It's public: run it only on the owner's word. The website's Download button always points at the latest release's `Unison.dmg`.
+
+## Releasing on Google Play (Plan 14)
+- **The upload key** is `~/Keystores/unison-upload.jks` (PKCS12, alias `upload`, created 2026-10-22). Its SHA-256 certificate fingerprint starts `1A:78:2E:A4:A2:36:80:04`.
+  - The password is only in the gitignored `android/keystore.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`).
+  - **The owner keeps a backup** of the `.jks` and the password in their password manager. Losing them means asking Google for an upload-key reset.
+- **Build:** run `cd android && ./gradlew :app:bundleRelease`. The output is `app/build/outputs/bundle/release/app-release.aab`. Check it with `jarsigner -verify …aab`, which should say "jar verified". Without `keystore.properties`, release tasks stop with a clear message; debug and the gates are unaffected.
+- **Play App Signing:** Google re-signs the bundle for users. So an APK built here can't update a copy installed from Play, and the reverse is also true.
+- **The owner's phone moves over once:**
+  1. uninstall the debug copy, which loses its pairing;
+  2. install the signed build (`bundletool build-apks --connected-device` plus `install-apks`, or join the closed test);
+  3. scan the Mac's QR code.
+
+  After that, test on that phone through Play's internal or closed track, or uninstall and reinstall.
+- Bump `versionCode` and `versionName` in `android/app/build.gradle.kts` for every upload.
+- The paperwork for Play Console is in `docs/play/`.
 
 ## Conventions
 - Swift Testing (`@Test`, `#expect`) on the Mac and JUnit4 on Android; TDD for logic.

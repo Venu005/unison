@@ -1,28 +1,25 @@
 package dev.macdroid.app.ui.setup
 
-enum class SetupStep { Welcome, LocalNetwork, PairMac, Notifications, Files, Photos, Battery }
+enum class SetupStep { PairMac, LocalNetwork, Files, Photos, Battery }
 
 data class SetupInputs(
     val setupDone: Boolean,
-    val welcomeDone: Boolean,
     val needsLocalNetwork: Boolean,
     val hasLocalNetwork: Boolean,
     val paired: Boolean,
-    val needsNotifications: Boolean,
-    val hasNotifications: Boolean,
-    val notificationsSkipped: Boolean,
     val batteryDone: Boolean,
     /** The optional first-run step "Where should files from your Mac go?" was answered. */
     val filesStepDone: Boolean = false,
-    /** MacDroid has notification access (spec §3.1). */
-    val hasNotificationAccess: Boolean = false,
     /** The optional first-run step "See your photos on your Mac" was answered (photos spec §2). */
     val photosStepDone: Boolean = false,
+    /** `BuildConfig.PHOTOS_GALLERY`: off only in the Play fallback (docs/play/photos-fallback.md). */
+    val photosGallery: Boolean = true,
 )
 
 /**
- * Which setup steps to show. First run walks every step; after setup only what's required to
- * work again (local network permission, pairing) is shown. Notifications never force setup.
+ * Which setup steps to show. First run starts at "Connect to your Mac", the first step of the guided tour (Plan 14),
+ * whose Scan button asks for local network and camera access; notifications are a tour step on the main screens.
+ * After setup only what's required to work again (local network permission, pairing) is shown.
  */
 object SetupFlow {
     fun steps(i: SetupInputs): List<SetupStep> =
@@ -33,12 +30,11 @@ object SetupFlow {
             }
         } else {
             buildList {
-                add(SetupStep.Welcome)
-                if (i.needsLocalNetwork) add(SetupStep.LocalNetwork)
                 add(SetupStep.PairMac)
-                add(SetupStep.Notifications)
+                // Normally granted from the Scan button already; shown only if pairing somehow got past without it.
+                if (i.needsLocalNetwork) add(SetupStep.LocalNetwork)
                 add(SetupStep.Files)
-                add(SetupStep.Photos)
+                if (i.photosGallery) add(SetupStep.Photos)
                 add(SetupStep.Battery)
             }
         }
@@ -46,10 +42,8 @@ object SetupFlow {
     fun current(i: SetupInputs): SetupStep? = steps(i).firstOrNull { !isDone(it, i) }
 
     private fun isDone(step: SetupStep, i: SetupInputs): Boolean = when (step) {
-        SetupStep.Welcome -> i.welcomeDone
-        SetupStep.LocalNetwork -> !i.needsLocalNetwork || i.hasLocalNetwork
         SetupStep.PairMac -> i.paired
-        SetupStep.Notifications -> i.notificationsSkipped || ((!i.needsNotifications || i.hasNotifications) && i.hasNotificationAccess)
+        SetupStep.LocalNetwork -> !i.needsLocalNetwork || i.hasLocalNetwork
         SetupStep.Files -> i.filesStepDone || i.setupDone
         // Existing users never see it (photos spec §9.8); Settings → Photos covers them.
         SetupStep.Photos -> i.photosStepDone || i.setupDone

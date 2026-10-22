@@ -35,6 +35,7 @@ A clone of **LinkMyMac** (Android ↔ Mac integration). The phone and Mac pair o
 | Plan 10 | Calls on the Mac: incoming call panel (Answer, Decline, Hang up), number pad and `tel:` links (audio stays on the phone) | **Done, merged to `main`** (2026-10-15, `c9ae68f`); dialing and links owner-tried; Answer/Decline/Hang up still to confirm |
 | Plan 12 | Website (landing page with three 3D scenes, install steps, privacy page, SEO + `llms.txt`) and the first `Unison.dmg` release | **Live** (2026-10-21, `d232e89`): https://venu005.github.io/unison/, release `v0.4.0` |
 | Plan 13 | Support Unison: one-time tips through GitHub Sponsors (plus UPI) with a 3D "chai on a bean bag" section on the website, a Mac About button, and a plain website link on Android | **Merged to `main`** (2026-10-22, `c6cb7bd`); owner check pending. The section stays hidden until GitHub Sponsors approves |
+| Plan 14 | Google Play release: one release-signed build (auto-Start removed), guided tour and disclosures, on-device QR decoder, Play paperwork | **Built** on `feat/play-store` (2026-10-22), verified on the owner's phone; merge and Play Console next |
 | Plan 11 | Backlog clean-up: every open deferred minor plus cheap hardening (backup exclusions, update restart, Gradle checksum, keychain, Bonjour) | **Done, merged to `main`** (2026-10-16, `d11b73f`); owner check pending |
 | Later | SMS, screen mirroring, webcam/mic, USB transport | Out of scope so far |
 
