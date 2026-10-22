@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Ignore local tool folders (chore/gitignore-local)
+- **What:** `.gitignore` now lists `.claude/` (Claude Code's project settings) and `brag-output/` (the /brag launch-video output). The owner asked for it, so the tree stays clean and `scripts/make-release.sh` can publish in one run.
+- **Verified:** `git status --porcelain` is empty.
+
 ## 2026-10-22 — Release 0.4.1: Mac and Android builds with the Support links (chore/release-0.4.1)
 - **What:** bumped the versions to 0.4.1 so the new app builds carry Plan 13's links (Mac About "Support Unison", Android "Unison website").
   - Mac: `CFBundleShortVersionString` 0.4.1 and `CFBundleVersion` 5 in `mac/project.yml`.
