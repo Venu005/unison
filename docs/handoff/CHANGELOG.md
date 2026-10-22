@@ -12,6 +12,7 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - **Android:** only a plain "Unison website" link, with no money wording, for Google Play's Payments policy.
   - The section stays hidden until `sponsorUrl` is set in `site.config.js`.
   - The owner-approved 3D spike is saved as `website/reference/support-beanbag-spike.html`.
+- **Plan:** `docs/superpowers/plans/2026-10-22-unison-support-13.md` has 7 tasks: support config and build-time filter, markup and checks, the story timeline, the full robot and the bean bag scene, the still picture, the Mac and Android links, and the handoff. The Mac button is labelled "Support Unison" with no "…", per the owner's existing button rule.
 - **Why:** the owner wants a way to receive tips from India and abroad while Unison stays free.
 - **Verified:** docs only. The spike was checked in headless Chromium renders and approved by the owner.
 
