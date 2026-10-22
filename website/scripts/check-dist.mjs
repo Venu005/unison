@@ -23,7 +23,7 @@ const isVerification = f => /^google[0-9a-f]+\.html$/.test(f);
 for (const f of files.filter(f => f.endsWith('.html')).map(f => relative(dist, f)).filter(f => !isVerification(f))) {
   const html = read(f);
   for (const [, url] of html.matchAll(/\s(?:href|src)="([^"]*)"/g)) {
-    if (/^(https?:|mailto:|#|data:)/.test(url)) continue;
+    if (/^(https?:|mailto:|upi:|#|data:)/.test(url)) continue;
     if (!url.startsWith(SITE.base)) fail(`${f}: "${url}" is not under ${SITE.base}`);
     const file = url.slice(SITE.base.length).split(/[?#]/)[0];
     if (/\.\w+$/.test(file) && !existsSync(join(dist, file))) fail(`${f}: "${url}" points at a file that isn't in dist`);
@@ -31,6 +31,7 @@ for (const f of files.filter(f => f.endsWith('.html')).map(f => relative(dist, f
   if ((html.match(/<h1[\s>]/g) || []).length !== 1) fail(`${f}: needs exactly one <h1>`);
   if ((html.match(/rel="canonical"/g) || []).length !== 1) fail(`${f}: needs exactly one canonical link`);
   if (!html.includes('property="og:image"')) fail(`${f}: no og:image`);
+  if (!html.includes('Creative Commons 3.0 Attribution License')) fail(`${f}: no Android robot credit in the footer`);
   if (!SITE.playUrl && html.includes('play.google.com')) fail(`${f}: links to Google Play before the listing is live`);
 }
 
@@ -43,6 +44,10 @@ const os = SITE.playUrl ? 'macOS, Android' : 'macOS';
 if (data.operatingSystem !== os) fail(`index.html: JSON-LD operatingSystem is "${data.operatingSystem}", expected "${os}"`);
 const h1 = index.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 if (h1 !== SITE.tagline) fail(`index.html: <h1> is "${h1}", expected "${SITE.tagline}"`);
+
+// The Support section exists only once GitHub Sponsors is live (Plan 13).
+if (!SITE.sponsorUrl && /id="support"|github\.com\/sponsors/.test(index)) fail('index.html: has the Support section or a Sponsors link while sponsorUrl is null');
+if (SITE.sponsorUrl && !(index.includes('id="support"') && index.includes(`href="${SITE.sponsorUrl}"`))) fail('index.html: sponsorUrl is set but the Support section or its Sponsors link is missing');
 
 // The demo video and its poster, when set, are files the site ships (under the base path).
 for (const [, attr, url] of index.matchAll(/data-video-(src|poster)="([^"]+)"/g)) {

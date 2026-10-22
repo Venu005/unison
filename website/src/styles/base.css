@@ -37,6 +37,8 @@ footer a { color: #b5bcc3; text-decoration: none; margin-left: 18px; } footer a:
 footer a:first-child { margin-left: 0; }
 footer a.by { margin-left: 0; color: inherit; text-underline-offset: 3px; }
 footer a.by:hover, footer a.by:focus-visible { color: #fff; text-decoration: underline; }
+footer .credit { flex-basis: 100%; font-size: 11px; color: #8b939b; line-height: 1.5; }
+footer .credit a { margin-left: 0; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Plain document pages: privacy and 404. */
 .doc { max-width: 720px; margin: 0 auto; padding: 130px 24px 90px; line-height: 1.65; color: #d5dae0; }

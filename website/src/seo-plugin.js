@@ -1,3 +1,4 @@
+import { applySupport } from './support.js';
 import { headTags, jsonLd, llmsTxt, robotsTxt, sitemapXml, webManifest } from './seo.js';
 
 const notFound = { path: '', title: 'Page not found · Unison', description: 'This page wandered off. Unison connects your Android phone and your Mac over Wi-Fi.' };
@@ -9,8 +10,8 @@ export default function seoPlugin(site) {
     name: 'unison-seo',
     transformIndexHtml: {
       order: 'pre',
-      handler(html, ctx) {
-        return html
+      async handler(html, ctx) {
+        return (await applySupport(html, site))
           .replace('%SEO_HEAD%', headTags(site, pageFor(ctx.filename)))
           .replace('%JSON_LD%', `<script type="application/ld+json">${JSON.stringify(jsonLd(site))}</script>`)
           .replaceAll('%DMG_URL%', site.dmgUrl)

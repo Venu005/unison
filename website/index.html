@@ -12,7 +12,7 @@
   <body>
     <nav class="top" aria-label="Main">
       <b>Unison</b>
-      <a class="opt" href="#video">Demo</a><a href="#features">Features</a><a href="#install">Install</a>
+      <a class="opt" href="#video">Demo</a><a href="#features">Features</a><a href="#install">Install</a><!-- support:start --><a class="opt" href="#support">Support</a><!-- support:end -->
       <a class="dl" href="%DMG_URL%" data-download>Download</a>
     </nav>
 
@@ -94,11 +94,28 @@
         <div class="score mono" aria-hidden="true">sent to phone · <b id="sent">0</b></div>
         <div class="toast" id="toast" role="status"></div>
       </section>
+
+      <!-- support:start -->
+      <section id="support" aria-labelledby="support-title">
+        <canvas aria-hidden="true"></canvas>
+        <img class="still" src="%BASE_URL%support-still.png" alt="" width="900" height="700" loading="lazy" decoding="async">
+        <div class="copy">
+          <span class="eyebrow">Support Unison</span>
+          <h2 class="big" id="support-title">Buy the robot<br>a chai.</h2>
+          <p>Unison is free, with no ads and no account. It's made by one person in India. If it saves you time, a one-time tip keeps it going.</p>
+          <a class="btn p" id="sponsor" href="%SPONSOR_URL%" target="_blank" rel="noopener">♥ Sponsor on GitHub</a>
+          <!-- upi:start -->
+          <a class="upi" href="%UPI_LINK%">%UPI_QR%<span>In India? Scan to pay with UPI<br><b class="mono">%UPI_ID%</b></span></a>
+          <!-- upi:end -->
+        </div>
+      </section>
+      <!-- support:end -->
     </main>
 
     <footer>
       <span>© 2026 Unison · made by <a class="by" href="%DEV_URL%" rel="author">Venusai</a> · MIT licence</span>
-      <span><a href="%BASE_URL%privacy/">Privacy</a><a href="%REPO_URL%">GitHub</a><a href="%BASE_URL%llms.txt">llms.txt</a></span>
+      <span><a href="%BASE_URL%privacy/">Privacy</a><!-- support:start --><a href="#support">Support</a><!-- support:end --><a href="%REPO_URL%">GitHub</a><a href="%BASE_URL%llms.txt">llms.txt</a></span>
+      <span class="credit">The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons 3.0 Attribution License</a>.</span>
     </footer>
   </body>
 </html>

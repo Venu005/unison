@@ -10,6 +10,18 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - A malformed UPI ID stops the build.
   - `site.config.js` gains `sponsorUrl: null` and `upiId: null`.
   - Tests: `test/support.test.js` (7). `npm test` passes 28/28.
+- **Task 2, Support section markup:**
+  - `#support` added to `index.html` after the game section. It is wrapped in support markers, as are the nav (`.opt`) and footer "Support" links.
+  - The page's styles are in `sections.css`, which also stacks the scene above the copy below 900 px.
+  - The Android robot credit (CC BY 3.0) is in the footer of the home, privacy and 404 pages. The 404 page gains a footer to hold it.
+  - `seo-plugin.js` runs `applySupport`. `vite.config.js` accepts `UNISON_SPONSOR_URL` and `UNISON_UPI_ID` for a local preview.
+  - `check-dist` changes:
+    - skips `upi:` links;
+    - requires the credit on every page;
+    - fails if the section or a Sponsors link ships while `sponsorUrl` is null, or if either is missing once it is set.
+  - **Verified:**
+    - Default build: check passes on 28 files, and the page has 0 `id="support"`.
+    - Preview build with the env overrides: Playwright screenshots at 1400 px and 390 px show the copy, button, QR code and credit, with no sideways scroll.
 
 ## 2026-10-22 — Support Unison (tips): design spec (docs/support-spec)
 - **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-support-design.md`.
