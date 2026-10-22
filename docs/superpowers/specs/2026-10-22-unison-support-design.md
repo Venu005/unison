@@ -16,7 +16,7 @@ Success means three things:
 - **One payment route: GitHub Sponsors** (`https://github.com/sponsors/Venu005`), with one-time amounts. There are no fees on tips from individuals, payouts go to an Indian bank account, and the repo already lives on GitHub.
 - **UPI as an extra, on the website only.** Show a QR code and the UPI ID, labelled "In India? Scan to pay with UPI".
 - **A "Support Unison" section on the website** with a 3D scene. The robot walks in with a glass of cutting chai, flops into a bean bag, raises the chai to the visitor and sips it.
-- **Mac app:** a "Support Unison…" button that opens the website's Support section.
+- **Mac app:** a "Support Unison" button that opens the website's Support section.
 - **Android app:** a plain "Unison website" link that opens the home page and never mentions money.
 
 ## Non-goals
@@ -82,7 +82,7 @@ Success means three things:
   - There's no horizontal scroll at phone width, and the page keeps a 16 px side gutter.
 
 ### Mac app
-- Add a "Support Unison…" button to `mac/MacDroid/Views/Settings/AboutView.swift`, under the description line. It opens `https://venu005.github.io/unison/#support` in the default browser.
+- Add a "Support Unison" button to `mac/MacDroid/Views/Settings/AboutView.swift`. The label has no "…", because the owner's rule in DECISIONS.md is that buttons don't carry trailing dots (changed while planning), under the description line. It opens `https://venu005.github.io/unison/#support` in the default browser.
 - There is nothing in the menu-bar popover, and no prompts anywhere.
 
 ### Android app

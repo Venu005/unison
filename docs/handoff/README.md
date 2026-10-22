@@ -34,7 +34,7 @@ A clone of **LinkMyMac** (Android ↔ Mac integration). The phone and Mac pair o
 | Plans 7–8 | Screen mirroring with phone audio (own window, 50–80 ms target) and remote control via an accessibility service | **Done, merged to `main`** (2026-10-15, `75ac85b`); owner tried it; checklist and minors in the follow-ups file |
 | Plan 10 | Calls on the Mac: incoming call panel (Answer, Decline, Hang up), number pad and `tel:` links (audio stays on the phone) | **Done, merged to `main`** (2026-10-15, `c9ae68f`); dialing and links owner-tried; Answer/Decline/Hang up still to confirm |
 | Plan 12 | Website (landing page with three 3D scenes, install steps, privacy page, SEO + `llms.txt`) and the first `Unison.dmg` release | **Live** (2026-10-21, `d232e89`): https://venu005.github.io/unison/, release `v0.4.0` |
-| Plan 13 | Support Unison: one-time tips through GitHub Sponsors (plus UPI) with a 3D "chai on a bean bag" section on the website, a Mac About button, and a plain website link on Android | **Specced and planned** (2026-10-22); execution next |
+| Plan 13 | Support Unison: one-time tips through GitHub Sponsors (plus UPI) with a 3D "chai on a bean bag" section on the website, a Mac About button, and a plain website link on Android | **Built** on `feat/support` (2026-10-22); owner check and merge next. The section stays hidden until GitHub Sponsors approves |
 | Plan 11 | Backlog clean-up: every open deferred minor plus cheap hardening (backup exclusions, update restart, Gradle checksum, keychain, Bonjour) | **Done, merged to `main`** (2026-10-16, `d11b73f`); owner check pending |
 | Later | SMS, screen mirroring, webcam/mic, USB transport | Out of scope so far |
 

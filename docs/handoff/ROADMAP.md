@@ -86,7 +86,7 @@ Also noted earlier: SMS (personal build only, Play-restricted), USB transport vi
 - Landing page, install steps, privacy page and the first `Unison.dmg` release on GitHub Pages / GitHub Releases. Design: `docs/superpowers/specs/2026-10-21-unison-website-design.md`.
 
 ## Support Unison: tips (Plan 13, specced 2026-10-22)
-- Spec: `docs/superpowers/specs/2026-10-22-unison-support-design.md`. Plan: `docs/superpowers/plans/2026-10-22-unison-support-13.md` (7 tasks). Next: execution on `feat/support`.
+- Spec: `docs/superpowers/specs/2026-10-22-unison-support-design.md`. Plan: `docs/superpowers/plans/2026-10-22-unison-support-13.md` (7 tasks). **Built** on `feat/support`; next: the owner's check and merge.
 - **Scope:**
   - Website: a "Support Unison" section with the bean bag and chai 3D scene, a GitHub Sponsors button and a UPI QR code.
   - Mac: a "Support Unison…" button in About.

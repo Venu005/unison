@@ -10,6 +10,9 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - A malformed UPI ID stops the build.
   - `site.config.js` gains `sponsorUrl: null` and `upiId: null`.
   - Tests: `test/support.test.js` (7). `npm test` passes 28/28.
+- **Task 7, handoff:**
+  - ARCHITECTURE (Support row and the app links), STATUS, ROADMAP and the README round table updated. The spec's Mac label is changed to "Support Unison".
+  - All gates passed: website 32/32 with build and check OK; Android build successful; `swift test` 370/370; `xcodebuild` succeeded (Task 6).
 - **Task 6, app links:**
   - **Mac:** About gains a "Support Unison" button that opens `…/unison/#support`. It has no "…", per the owner's button rule.
   - **Android:** Settings → About gains a "Unison website" row that opens the home page (`ACTION_VIEW`, with a toast if no browser is installed).
