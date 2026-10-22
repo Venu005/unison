@@ -4,6 +4,16 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Unison on Google Play: design spec (docs/play-store-spec)
+- **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`, with the clickable guided-tour prototype saved as `docs/superpowers/specs/assets/2026-10-22-guided-tour-prototype.html`.
+  - **Scope:** the Play build ships every feature, including Unison control with `isAccessibilityTool="false"` and a full disclosure. Auto-Start is off.
+  - **Tour:** a 5-step hands-on guided tour (connect, photo, notifications, clipboard, control).
+  - **Disclosures:** a screen for each sensitive permission.
+  - **Paperwork:** the declarations, Data safety ("no data collected", relying on end-to-end encryption between the user's own devices), the listing and the closed-test checklist.
+  - **Decided after the builder check:** App access instructions instead of a demo mode; replace ML Kit (it sends diagnostics to Google) with an on-device decoder; the personal build gets the `.dev` app id suffix; and a Photos fallback switch.
+- **Why:** the owner wants Unison on Play without rejections. Policy findings, with sources, are in the spec's Constraints.
+- **Verified:** docs only. The prototype was clicked through end to end in headless Chromium.
+
 ## 2026-10-22 — Ignore local tool folders (chore/gitignore-local)
 - **What:** `.gitignore` now lists `.claude/` (Claude Code's project settings) and `brag-output/` (the /brag launch-video output). The owner asked for it, so the tree stays clean and `scripts/make-release.sh` can publish in one run.
 - **Also:** committed `mac/MacDroid/Info.plist` at 0.4.1 (5). XcodeGen regenerates it from `mac/project.yml` on build, and it was left out of the release commit. The released app was already built as 0.4.1.

@@ -93,6 +93,16 @@ Also noted earlier: SMS (personal build only, Play-restricted), USB transport vi
   - Android: a plain "Unison website" link.
 - **Waiting on the owner:** GitHub Sponsors approval (`sponsorUrl`) and the UPI ID (`upiId`). The section stays hidden until `sponsorUrl` is set.
 
+## Google Play release (Plan 14, specced 2026-10-22)
+- Spec: `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`. Next: the implementation plan.
+- Scope:
+  - a Play build (release-signed AAB, honest accessibility declaration, auto-Start off);
+  - the hands-on guided tour and disclosure screens;
+  - ML Kit replaced by an on-device QR decoder;
+  - the personal build moved to `dev.macdroid.app.dev`;
+  - the Play paperwork in `docs/play/`.
+- Then: the owner's closed test (12 testers, 14 days) and submission.
+
 ## Before publishing
 - **Stance (2026-10-16):** free and unsigned for now; no Apple Developer account. If it is ever sold: Android free, a one-time Pro unlock on the Mac only, offline signed license keys (see DECISIONS.md). Renamed from MacDroid to Unison on 2026-10-21 (name clash); still worth a formal trademark search before selling.
 - Play declaration for photo/video access (`READ_MEDIA_IMAGES`/`READ_MEDIA_VIDEO`) as core functionality (Plan 6).

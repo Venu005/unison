@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guided tour prototype</title>
+<style>
+  /* Unison's Android theme (Theme.kt fallback palette; on Android 12+ the real app follows the wallpaper colours) */
+  :root { --primary:#8B5000; --onPrimary:#fff; --pc:#FFDCBD; --onPc:#2C1600; --surface:#FFF8F4; --sv:#F3E4D7; --onSv:#51443A; --on:#201A15; --ok:#2f7a4c; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#2b2622; font-family:Roboto,"Google Sans",-apple-system,sans-serif; color:#eee; display:flex; gap:40px; padding:28px; flex-wrap:wrap; justify-content:center; }
+  .side { max-width:360px; font-size:14px; line-height:1.5; color:#d8cfc7; }
+  .side h2 { color:#fff; margin:0 0 8px; font-size:22px; }
+  .side ol { padding-left:18px; } .side li.cur { color:#FFB86E; font-weight:600; } .side li.done { color:#8fd0a5; text-decoration:line-through; }
+  .side button { margin-top:10px; background:none; border:1px solid #FFB86E; color:#FFB86E; border-radius:999px; padding:6px 14px; cursor:pointer; }
+  .phone { position:relative; width:360px; height:760px; border-radius:42px; background:var(--surface); color:var(--on); overflow:hidden; box-shadow:0 0 0 10px #111, 0 30px 80px rgba(0,0,0,.6); }
+  .statusbar { height:32px; display:flex; justify-content:space-between; align-items:center; padding:0 22px; font-size:12px; color:var(--on); }
+  .screen { position:absolute; top:32px; left:0; right:0; bottom:80px; overflow:hidden; padding:0 16px; display:none; }
+  .screen.on { display:block; }
+  h1 { font-size:28px; font-weight:400; margin:14px 8px 10px; }
+  .card { background:var(--pc); color:var(--onPc); border-radius:24px; padding:20px; }
+  .card .t { font-size:22px; margin-top:8px; } .card .s { font-size:14px; opacity:.85; margin-top:4px; }
+  .chips { display:flex; gap:8px; margin-top:12px; } .chip { border:1px solid rgba(44,22,0,.3); border-radius:8px; padding:5px 10px; font-size:12px; }
+  .sec { font-size:16px; font-weight:500; margin:20px 6px 6px; }
+  .row { display:flex; gap:14px; align-items:center; padding:12px 6px; font-size:14px; } .row .ic { width:40px; height:40px; border-radius:50%; background:var(--sv); display:flex; align-items:center; justify-content:center; font-size:18px; flex:none; }
+  .row small { display:block; color:var(--onSv); font-size:12.5px; }
+  .fab { position:absolute; right:16px; bottom:16px; background:var(--pc); color:var(--onPc); border-radius:16px; padding:16px 20px; font-size:14px; font-weight:500; box-shadow:0 3px 8px rgba(0,0,0,.2); cursor:pointer; display:flex; gap:10px; align-items:center; }
+  .menu { position:absolute; right:16px; bottom:80px; background:#fff; border-radius:8px; box-shadow:0 4px 14px rgba(0,0,0,.2); width:150px; display:none; }
+  .menu div { padding:14px 16px; font-size:14px; cursor:pointer; } .menu.on { display:block; }
+  .nav { position:absolute; bottom:0; left:0; right:0; height:80px; background:#F7ECE3; display:flex; justify-content:space-around; align-items:center; }
+  .tab { display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; color:var(--onSv); cursor:pointer; width:64px; }
+  .tab .pill { width:56px; height:30px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:17px; }
+  .tab.on { color:var(--on); font-weight:600; } .tab.on .pill { background:var(--pc); }
+  .btn { background:var(--primary); color:var(--onPrimary); border-radius:20px; padding:11px 20px; font-size:14px; font-weight:500; text-align:center; cursor:pointer; display:inline-block; }
+  .tonal { background:var(--pc); color:var(--onPc); }
+  .empty { text-align:center; color:var(--onSv); font-size:14px; padding:40px 20px 10px; }
+  .switch { margin-left:auto; width:52px; height:32px; border-radius:16px; background:var(--sv); border:2px solid #85736a; position:relative; flex:none; cursor:pointer; }
+  .switch::after { content:""; position:absolute; width:16px; height:16px; border-radius:50%; background:#85736a; top:6px; left:7px; transition:.2s; }
+  .switch.on { background:var(--primary); border-color:var(--primary); } .switch.on::after { background:#fff; width:24px; height:24px; top:2px; left:22px; }
+  .toast { position:absolute; left:50%; bottom:96px; transform:translateX(-50%); background:#322f2c; color:#f5efe9; padding:12px 18px; border-radius:8px; font-size:13px; opacity:0; transition:.3s; white-space:nowrap; z-index:30; pointer-events:none; }
+  .toast.on { opacity:1; }
+  /* coach mark: a dimmed overlay with a hole around the target, a pulsing ring and a tip bubble */
+  .coach { position:absolute; inset:0; z-index:20; pointer-events:none; display:none; }
+  .coach.on { display:block; }
+  .hole { position:absolute; border-radius:20px; box-shadow:0 0 0 2000px rgba(20,12,6,.62); transition:all .35s cubic-bezier(.2,.8,.2,1); }
+  .hole::after { content:""; position:absolute; inset:-6px; border-radius:24px; border:2px solid #FFB86E; animation:pulse 1.4s infinite; }
+  @keyframes pulse { 0% { transform:scale(.96); opacity:1; } 100% { transform:scale(1.12); opacity:0; } }
+  .tip { position:absolute; left:16px; right:16px; background:#fff; color:var(--on); border-radius:20px; padding:16px 16px 12px; box-shadow:0 10px 30px rgba(0,0,0,.35); pointer-events:auto; transition:top .35s; }
+  .tip .k { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--primary); font-weight:700; }
+  .tip .h { font-size:17px; font-weight:500; margin:4px 0 4px; } .tip .p { font-size:13.5px; color:var(--onSv); line-height:1.45; }
+  .tip .acts { display:flex; justify-content:space-between; margin-top:10px; font-size:13px; } .tip .acts span { color:var(--primary); font-weight:600; cursor:pointer; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; background:var(--surface); border-radius:28px 28px 0 0; padding:20px 22px 24px; z-index:25; transform:translateY(110%); transition:.35s cubic-bezier(.2,.8,.2,1); box-shadow:0 -6px 30px rgba(0,0,0,.25); }
+  .sheet.on { transform:none; }
+  .sheet .grab { width:32px; height:4px; border-radius:2px; background:#85736a; margin:0 auto 14px; }
+  .sheet h3 { margin:0 0 10px; font-size:20px; font-weight:400; } .sheet ul { margin:0; padding:12px 12px 12px 30px; background:var(--sv); border-radius:16px; font-size:13px; line-height:1.5; color:var(--onSv); }
+  .sheet ul b { color:var(--on); } .sheet .acts { display:flex; flex-direction:column; gap:6px; margin-top:16px; }
+  .sheet .tb { text-align:center; color:var(--primary); font-size:14px; font-weight:500; padding:8px; cursor:pointer; }
+  .check { display:flex; gap:10px; align-items:center; font-size:13px; margin-top:12px; cursor:pointer; } .check i { width:20px; height:20px; border:2px solid var(--primary); border-radius:4px; flex:none; display:flex; align-items:center; justify-content:center; color:#fff; font-style:normal; font-size:13px; }
+  .check.on i { background:var(--primary); }
+  .connect h1 { margin-top:26px; } .stepcard { background:var(--sv); border-radius:20px; padding:14px 16px; margin:10px 0; font-size:13.5px; line-height:1.45; }
+  .stepcard b.n { display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--primary); color:#fff; align-items:center; justify-content:center; font-size:12px; margin-right:8px; }
+  .url { font:12.5px ui-monospace,Menlo,monospace; background:#fff; border-radius:10px; padding:8px 10px; margin-top:8px; display:flex; justify-content:space-between; align-items:center; }
+  .url span { color:var(--primary); font:600 12px Roboto,sans-serif; cursor:pointer; }
+  .scrim { position:absolute; inset:0; background:rgba(0,0,0,.45); z-index:24; display:none; align-items:center; justify-content:center; } .scrim.on { display:flex; }
+  .dialog { background:#fff; border-radius:28px; width:300px; padding:22px 22px 14px; } .dialog .di { text-align:center; font-size:24px; } .dialog h4 { font-size:18px; font-weight:400; text-align:center; margin:10px 0 18px; line-height:1.3; }
+  .dialog .b2 { display:flex; flex-direction:column; gap:6px; } .dialog .b2 div { text-align:center; padding:12px; border-radius:20px; background:var(--pc); font-size:14px; cursor:pointer; } .dialog .b2 div.no { background:none; color:var(--primary); }
+  .scanner { position:absolute; inset:0; background:#111; z-index:23; display:none; flex-direction:column; align-items:center; justify-content:center; color:#eee; font-size:13px; gap:18px; } .scanner.on { display:flex; }
+  .frame { width:220px; height:220px; border-radius:24px; border:3px solid #FFB86E; position:relative; overflow:hidden; background:repeating-conic-gradient(#222 0 25%, #3a3a3a 0 50%) 0 0/22px 22px; }
+  .frame::after { content:""; position:absolute; left:0; right:0; height:3px; background:#FFB86E; top:0; animation:scan 1.6s infinite; } @keyframes scan { to { top:100%; } }
+  .nav.hidden { display:none; }
+  .finish { position:absolute; inset:0; background:var(--surface); z-index:40; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; }
+  .finish.on { display:flex; } .finish .big { font-size:54px; } .finish h3 { font-size:24px; font-weight:400; margin:12px 0 6px; } .finish p { color:var(--onSv); font-size:14px; }
+</style>
+</head>
+<body>
+<div class="side">
+  <h2>Guided tour, hands-on</h2>
+  <p>Runs on first launch, on the real screens, starting with connecting to your Mac. Each step highlights one thing and waits until you <b>do it</b>. Then it moves on. Click inside the phone like you would tap it.</p>
+  <ol id="steps"></ol>
+  <p style="font-size:12.5px">Each step can be skipped, and the whole tour can be skipped from the bubble. Settings → About → "Show the tour again" restarts it.</p>
+  <button id="restart">↺ Restart the tour</button>
+</div>
+
+<div class="phone" id="phone">
+  <div class="statusbar"><span>9:41</span><span>Wi-Fi ▾ 82%</span></div>
+
+  <div class="screen on connect" data-s="connect">
+    <h1>Connect to your Mac</h1>
+    <div class="stepcard"><b class="n">1</b>Install Unison on your Mac (free, macOS 14 or later). On the Mac, open:
+      <div class="url">venu005.github.io/unison <span id="copyLink">Copy</span></div></div>
+    <div class="stepcard"><b class="n">2</b>Open Unison on the Mac. It shows a QR code.</div>
+    <div class="stepcard"><b class="n">3</b>Scan it with this phone. You only do this once.</div>
+    <div style="padding:8px 0"><div class="btn" id="scanBtn" style="width:100%">Scan the QR code</div></div>
+    <div style="text-align:center;font-size:13px;color:var(--primary);font-weight:500">Can't scan? Type the code instead</div>
+  </div>
+
+  <div class="screen" data-s="home">
+    <h1>Unison</h1>
+    <div class="card"><div>💻</div><div class="t">Connected to Venu's MacBook</div><div class="s">Over your Wi-Fi</div>
+      <div class="chips"><span class="chip">📶 Wi-Fi</span><span class="chip">🔋 Battery shared</span></div></div>
+    <div class="sec">Recent activity</div>
+    <div class="row" id="activity"><div class="ic">🕓</div><div>Nothing yet<small>Files and clipboard items show up here</small></div></div>
+    <div class="fab" id="fab">➤ Send</div>
+    <div class="menu" id="menu"><div id="mPhotos">Photos</div><div>Files</div></div>
+  </div>
+
+  <div class="screen" data-s="notifications">
+    <h1>Notifications</h1>
+    <div class="empty">🔔<br><br>Show this phone's notifications on your Mac, and reply from there.</div>
+    <div style="text-align:center"><div class="btn" id="turnOnNotif">Turn on notification access</div></div>
+  </div>
+
+  <div class="screen" data-s="clipboard">
+    <h1>Clipboard</h1>
+    <div class="row"><div class="ic">📋</div><div>Copied on your Mac<small>Lands here automatically</small></div></div>
+    <div style="padding:6px"><div class="btn tonal" id="sendClip" style="width:100%">Send this phone's clipboard to Mac</div></div>
+    <div class="row"><div class="ic">⚡</div><div>Quick Settings tile<small>Add "Send clipboard" for one-tap sending</small></div></div>
+  </div>
+
+  <div class="screen" data-s="files"><h1>Files</h1><div class="empty">No transfers yet</div></div>
+
+  <div class="screen" data-s="settings">
+    <h1>Settings</h1>
+    <div class="sec" style="font-size:13px;color:var(--primary)">Remote control</div>
+    <div class="row" id="ctlRow"><div class="ic">🖱️</div><div>Unison control<small>Tap, scroll and type on this phone from your Mac</small></div><div class="switch" id="ctlSwitch"></div></div>
+    <div class="row"><div class="ic">🎙️</div><div>Microphone for phone audio<small>Hear your phone on your Mac while mirroring</small></div></div>
+    <div class="sec" style="font-size:13px;color:var(--primary)">About</div>
+    <div class="row"><div class="ic">❔</div><div>Show the tour again</div></div>
+    <div class="row"><div class="ic">🌐</div><div>Unison website<small>venu005.github.io/unison</small></div></div>
+  </div>
+
+  <div class="nav hidden" id="nav">
+    <div class="tab on" data-t="home"><div class="pill">🏠</div>Home</div>
+    <div class="tab" data-t="notifications" id="tabNotif"><div class="pill">🔔</div>Notifications</div>
+    <div class="tab" data-t="clipboard" id="tabClip"><div class="pill">📋</div>Clipboard</div>
+    <div class="tab" data-t="files"><div class="pill">📁</div>Files</div>
+    <div class="tab" data-t="settings" id="tabSet"><div class="pill">⚙️</div>Settings</div>
+  </div>
+
+  <div class="sheet" id="notifSheet"><div class="grab"></div>
+    <h3>See phone notifications on your Mac</h3>
+    <ul><li><b>What Unison reads:</b> each notification's app, title, text and buttons.</li>
+      <li><b>Where it goes:</b> only to your paired Mac, encrypted, over your Wi-Fi. Never to the internet, and never to us.</li>
+      <li><b>What for:</b> reading, replying and clearing them from your Mac.</li></ul>
+    <div class="acts"><div class="btn" id="notifAgree">Agree and open settings</div><div class="tb" id="notifNo">Not now</div></div>
+  </div>
+
+  <div class="sheet" id="ctlSheet"><div class="grab"></div>
+    <h3>Control this phone from your Mac</h3>
+    <ul><li>Uses Android's <b>Accessibility</b> service to tap, scroll and type <b>only while you mirror</b> and only when your Mac asks.</li>
+      <li>To type, it finds the text box you're typing into. It reads the system screen-sharing prompt only to know when mirroring starts.</li>
+      <li>Nothing is collected or sent anywhere except your Mac's mirror window.</li></ul>
+    <div class="check" id="ctlCheck"><i></i>I understand and allow Unison control</div>
+    <div class="acts"><div class="btn" id="ctlAgree" style="opacity:.4">Agree and open Accessibility</div><div class="tb" id="ctlNo">Not now</div></div>
+  </div>
+
+  <div class="coach" id="coach"><div class="hole" id="hole"></div>
+    <div class="tip" id="tip"><div class="k" id="tk"></div><div class="h" id="th"></div><div class="p" id="tp"></div>
+      <div class="acts"><span id="skipStep">Skip this step</span><span id="skipAll">End tour</span></div></div></div>
+
+  <div class="scrim" id="lnDialog"><div class="dialog"><div class="di">📶</div>
+    <h4>Allow <b>Unison</b> to find and connect to devices on your local network?</h4>
+    <div class="b2"><div id="lnAllow">Allow</div><div class="no">Don't allow</div></div></div></div>
+  <div class="scrim" id="camDialog"><div class="dialog"><div class="di">📷</div>
+    <h4>Allow <b>Unison</b> to take pictures and record video?</h4>
+    <div class="b2"><div id="camAllow">While using the app</div><div>Only this time</div><div class="no">Don't allow</div></div></div></div>
+  <div class="scanner" id="scanner"><div class="frame"></div><div>Point at the QR code on your Mac</div></div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="finish" id="finish"><div class="big">🎉</div><h3>You're all set</h3>
+    <p>Unison runs quietly in the background. Your Mac shows a phone icon in its menu bar. Click it any time.</p>
+    <div class="btn" id="finishBtn" style="margin-top:18px">Start using Unison</div></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id), phone = $('phone');
+const show = s => { document.querySelectorAll('.screen').forEach(e => e.classList.toggle('on', e.dataset.s === s));
+  document.querySelectorAll('.tab').forEach(e => e.classList.toggle('on', e.dataset.t === s)); };
+const toast = m => { $('toast').textContent = m; $('toast').classList.add('on'); setTimeout(() => $('toast').classList.remove('on'), 1800); };
+const sheet = (id, on) => $(id).classList.toggle('on', on);
+
+// Each step: which element to highlight, what to say, and the action that completes it.
+const STEPS = [
+  { title: 'Connect to your Mac', tip: 'Get Unison on your Mac first, then tap <b>Scan the QR code</b>.', target: 'scanBtn', group: 0, below: true },
+  { title: 'Connect to your Mac', tip: 'Android asks before Unison can reach your Mac on Wi-Fi. Tap <b>Allow</b>.', target: 'lnAllow', group: 0, dialog: true },
+  { title: 'Connect to your Mac', tip: 'The camera is only used to read the QR code. Tap <b>While using the app</b>.', target: 'camAllow', group: 0, dialog: true },
+  { title: 'Send something to your Mac', tip: 'You\'re connected! Now tap <b>Send</b>.', target: 'fab', group: 1 },
+  { title: 'Send something to your Mac', tip: 'Pick <b>Photos</b>, then choose any photo.', target: 'mPhotos', group: 1 },
+  { title: 'Notifications on your Mac', tip: 'Open the <b>Notifications</b> tab.', target: 'tabNotif', group: 2 },
+  { title: 'Notifications on your Mac', tip: 'Tap <b>Turn on notification access</b>.', target: 'turnOnNotif', group: 2 },
+  { title: 'Notifications on your Mac', tip: 'Read what Unison does with them, then tap <b>Agree</b>.', target: 'notifAgree', group: 2, sheet: true },
+  { title: 'Copy here, paste there', tip: 'Open <b>Clipboard</b>.', target: 'tabClip', group: 3 },
+  { title: 'Copy here, paste there', tip: 'Tap <b>Send this phone\'s clipboard</b>. Then paste on your Mac with ⌘V.', target: 'sendClip', group: 3 },
+  { title: 'Control it from your Mac (optional)', tip: 'Open <b>Settings</b>.', target: 'tabSet', group: 4 },
+  { title: 'Control it from your Mac (optional)', tip: 'Turn on <b>Unison control</b>.', target: 'ctlSwitch', group: 4 },
+  { title: 'Control it from your Mac (optional)', tip: 'Tick the box, then tap <b>Agree</b>.', target: 'ctlCheck', group: 4, sheet: true },
+];
+const GROUPS = ['Connect to your Mac', 'Send a photo to your Mac', 'Turn on notifications', 'Send your clipboard', 'Unison control (optional)'];
+let i = 0, active = true, paused = false;
+
+function render() {
+  $('steps').innerHTML = GROUPS.map((g, n) => {
+    const cur = active && STEPS[i] && STEPS[i].group === n, done = !active ? false : STEPS.findIndex(s => s.group === n) < i && !cur;
+    return `<li class="${cur ? 'cur' : done ? 'done' : ''}">${g}</li>`; }).join('');
+  const s = STEPS[i];
+  $('coach').classList.toggle('on', active && !!s && !paused);
+  if (!active || !s) return;
+  // Steps inside a bottom sheet: the sheet itself is the focus, so no dimming; the tip floats above it.
+  $('coach').style.zIndex = s.sheet || s.dialog ? 26 : ''; $('hole').style.display = s.sheet || s.dialog ? 'none' : '';
+  const t = $(s.target), pr = phone.getBoundingClientRect(), r = t.getBoundingClientRect(), pad = 6;
+  Object.assign($('hole').style, { left: r.left - pr.left - pad + 'px', top: r.top - pr.top - pad + 'px', width: r.width + pad * 2 + 'px', height: r.height + pad * 2 + 'px' });
+  $('tk').textContent = `Step ${s.group + 1} of ${GROUPS.length}`; $('th').textContent = s.title; $('tp').innerHTML = s.tip;
+  const below = s.below || r.top - pr.top < 380;
+  $('tip').style.top = below ? (r.bottom - pr.top + 22) + 'px' : Math.max(40, r.top - pr.top - 170) + 'px';
+  if (getComputedStyle(t).position === 'static') t.style.position = 'relative';
+  t.style.zIndex = 21;
+  if (s.sheet || s.dialog) $('tip').style.top = '48px';
+}
+// The highlighted element sits above the overlay; only it is tappable while a step runs.
+function advance(id) { if (!active || STEPS[i]?.target !== id) return false; $(id).style.zIndex = ''; i++; setTimeout(() => { if (!paused) render(); }, 380); return true; }
+function skipStep() { const g = STEPS[i].group; while (STEPS[i] && STEPS[i].group === g) { $(STEPS[i].target).style.zIndex = ''; i++; } sheet('notifSheet', false); sheet('ctlSheet', false); render(); if (!STEPS[i]) end(); }
+function end() { active = false; render(); $('finish').classList.add('on'); }
+
+$('copyLink').onclick = () => toast('Link copied');
+$('scanBtn').onclick = () => { $('lnDialog').classList.add('on'); advance('scanBtn'); };
+$('lnAllow').onclick = () => { $('lnDialog').classList.remove('on'); $('camDialog').classList.add('on'); advance('lnAllow'); };
+$('camAllow').onclick = () => { $('camDialog').classList.remove('on'); $('scanner').classList.add('on'); advance('camAllow'); paused = true;
+  setTimeout(() => { $('scanner').classList.remove('on'); $('nav').classList.remove('hidden'); show('home'); toast('Paired with Venu\'s MacBook ✓'); paused = false; render(); }, 1800); };
+$('fab').onclick = () => { $('menu').classList.toggle('on'); advance('fab'); };
+$('mPhotos').onclick = () => { $('menu').classList.remove('on'); toast('Sent IMG_2041.jpg to Venu\'s MacBook ✓');
+  $('activity').innerHTML = '<div class="ic">🖼️</div><div>IMG_2041.jpg<small>Sent to Venu\'s MacBook · just now</small></div>'; advance('mPhotos'); };
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => { show(t.dataset.t); advance(t.id); });
+$('turnOnNotif').onclick = () => { sheet('notifSheet', true); advance('turnOnNotif'); };
+$('notifAgree').onclick = () => { sheet('notifSheet', false); toast('Opening Android settings… (allowed) ✓'); $('turnOnNotif').textContent = 'Notification access is on ✓'; advance('notifAgree'); };
+$('notifNo').onclick = () => { sheet('notifSheet', false); skipStep(); };
+$('sendClip').onclick = () => { toast('Clipboard sent to your Mac ✓'); advance('sendClip'); };
+$('ctlSwitch').onclick = () => { sheet('ctlSheet', true); advance('ctlSwitch'); };
+$('ctlCheck').onclick = () => { $('ctlCheck').classList.toggle('on'); $('ctlCheck').querySelector('i').textContent = $('ctlCheck').classList.contains('on') ? '✓' : '';
+  $('ctlAgree').style.opacity = $('ctlCheck').classList.contains('on') ? 1 : .4; if (STEPS[i]?.target === 'ctlCheck') { STEPS[i].target = 'ctlAgree'; render(); } };
+$('ctlAgree').onclick = () => { if (!$('ctlCheck').classList.contains('on')) return; sheet('ctlSheet', false); $('ctlSwitch').classList.add('on'); toast('Opening Accessibility settings… ✓'); if (advance('ctlAgree')) setTimeout(end, 700); };
+$('ctlNo').onclick = () => { sheet('ctlSheet', false); skipStep(); };
+$('skipStep').onclick = skipStep;
+$('skipAll').onclick = end;
+$('finishBtn').onclick = () => $('finish').classList.remove('on');
+$('restart').onclick = () => location.reload();
+render();
+</script>
+</body>
+</html>
