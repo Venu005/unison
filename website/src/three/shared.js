@@ -88,6 +88,27 @@ export function makeRobot() {
   return { robot, eyes, hands, bulb };
 }
 
+/**
+ * The whole robot (Plan 13, the Support scene): `makeRobot`'s head on a rounded torso, with capsule arms and legs on
+ * pivots so they can swing. Robot units: head radius 1, feet on `root`'s y = 0.
+ */
+export function makeFullRobot() {
+  const root = new THREE.Group();
+  const body = new THREE.Group(); body.position.y = 0.74; root.add(body);
+  const edge = Array.from({ length: 7 }, (_, i) => { const a = -Math.PI / 2 + (i + 1) / 7 * Math.PI / 2; return [0.85 + Math.cos(a) * 0.15, 0.15 + Math.sin(a) * 0.15]; });
+  const profile = [[0, 0], [0.85, 0], ...edge, [1, 1.1], [0, 1.1]].map(([x, y]) => new THREE.Vector2(x, y));
+  const torso = new THREE.Mesh(new THREE.LatheGeometry(profile, 64), clay(GREEN, 0.4)); torso.castShadow = true; body.add(torso);
+  const { robot: head, eyes, hands, bulb } = makeRobot();
+  hands.forEach(h => head.remove(h));
+  head.position.y = 1.18; body.add(head);
+  const limb = (x, y) => {
+    const pivot = new THREE.Group(); pivot.position.set(x, y, 0); body.add(pivot);
+    const m = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.6, 8, 24), clay(GREEN, 0.4)); m.position.y = -0.32; m.castShadow = true; pivot.add(m);
+    return pivot;
+  };
+  return { root, body, head, eyes, bulb, arms: { left: limb(-1.25, 0.9), right: limb(1.25, 0.9) }, legs: { left: limb(-0.42, 0.08), right: limb(0.42, 0.08) } };
+}
+
 export function screenTexture(w, h) {
   const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;

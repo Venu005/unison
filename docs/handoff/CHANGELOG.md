@@ -10,6 +10,12 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - A malformed UPI ID stops the build.
   - `site.config.js` gains `sponsorUrl: null` and `upiId: null`.
   - Tests: `test/support.test.js` (7). `npm test` passes 28/28.
+- **Task 4, bean bag scene:**
+  - `makeFullRobot()` in `shared.js` builds the whole robot from `makeRobot`'s head, a lathe torso, and capsule arms and legs on pivots. `makeRobot` itself is unchanged.
+  - `src/scenes/support.js` is ported from the spike and driven by `storyAt`/`createIdle`. The robot walks in, hops into the bag and cheers; hovering Sponsor makes it cheer, and clicking makes it sip while the link still opens.
+  - On `lite` the robot starts seated and the bag has fewer segments.
+  - The canvas sits in a `.stage` block passed to `setup()`, so phones get a correctly sized band above the copy. The pointer is still tracked over the whole section.
+  - **Verified:** Playwright screenshots with the env overrides show the walk-in, the seated cheers, the hover cheer, and phone width 390 px (no sideways scroll, no console errors). `npm test` passes 32/32, and the build and check pass.
 - **Task 3, story timeline:**
   - `website/src/support/story.js` holds `STORY` (the timings), `storyAt(t)` and `createIdle(random)`.
   - The first seated action is a cheers; after that it alternates with sips every 4.5–6.5 s.

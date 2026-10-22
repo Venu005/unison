@@ -67,3 +67,5 @@ export function mountWhenNear(section, loader, q) {
 mountWhenNear(document.getElementById('hero'), () => import('./scenes/hero.js'), quality);
 mountWhenNear(document.getElementById('features'), () => import('./scenes/features.js'), quality);
 mountWhenNear(document.getElementById('game'), () => import('./scenes/game.js'), quality);
+// Absent while sponsorUrl is null (src/support.js); mountWhenNear skips a missing section.
+mountWhenNear(document.getElementById('support'), () => import('./scenes/support.js'), quality);
