@@ -24,6 +24,7 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - **Scan results go back to the main thread** (ML Kit did this; pairing state is checked then set).
   - **Stale docs:** DEV-GUIDE and ARCHITECTURE no longer describe auto-Start, `ConsentMatcher` or the old setup order.
   - **Verified:** TourFlowTest 17/17, PromptRulesTest 3/3, DisclosureRulesTest 6/6, ControlServiceConfigTest 3/3. The gate built successfully with no warnings.
+  - **On the device:** the signed 0.5.0 was installed as an update on the owner's phone (pairing kept). The owner confirmed typing from the Mac still works with no accessibility events ("works perfect").
 - **Task 8, part 2, handoff:** STATUS, ROADMAP and README updated; the repo README's "Built with" now says ZXing.
 - **Task 1, auto-Start removed and Unison control declared honestly:**
   - Deleted: the auto-press in `MacDroidControlService.onAccessibilityEvent`, `ControlPrefs`, `NodeAdapter`, `ConsentMatcher`/`UiNode` (core), `MirrorPhoneSession.awaitingConsent`, the Settings row "Start mirroring without touching the phone", and `BuildConfig.STORE_BUILD`, with their tests.
