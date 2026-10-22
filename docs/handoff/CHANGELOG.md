@@ -10,6 +10,11 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - A malformed UPI ID stops the build.
   - `site.config.js` gains `sponsorUrl: null` and `upiId: null`.
   - Tests: `test/support.test.js` (7). `npm test` passes 28/28.
+- **Final review fixes** (fresh reviewer, whole branch):
+  - **Android guard.** `NoPaymentLinksTest` now scans visible strings (string literals and `<string>` bodies, skipping dotted identifiers) for support or supporters, tip or tips, donate, sponsor, chai and buy me. Before, it missed "Support" and "tip". New tests: `catchesMoneyWordingInVisibleText` (RED→GREEN) and `ignoresIdentifiersThatOnlyLookLikeIt`.
+  - **UPI on desktop.** The UPI block is a plain `<div data-upi-href>`, and `main.js` turns it into a `upi:` link only on touch screens, because desktop browsers can't open `upi:`.
+  - **QR size.** The QR code has the standard 4-module quiet zone and is 120 px wide, so it is easier to scan from a laptop screen.
+  - Tests: website 34/34 (RED→GREEN for both new website tests). Playwright: desktop shows a `DIV` with a 120 px QR; touch shows an `A` with `href=upi://pay?…`.
 - **Task 7, handoff:**
   - ARCHITECTURE (Support row and the app links), STATUS, ROADMAP and the README round table updated. The spec's Mac label is changed to "Support Unison".
   - All gates passed: website 32/32 with build and check OK; Android build successful; `swift test` 370/370; `xcodebuild` succeeded (Task 6).

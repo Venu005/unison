@@ -19,7 +19,7 @@ export async function applySupport(html, site) {
   if (!sponsor) return out;
   out = out.replaceAll('%SPONSOR_URL%', site.sponsorUrl);
   if (!upi) return out;
-  const svg = (await QRCode.toString(upiLink(site.upiId), { type: 'svg', margin: 1, color: { dark: '#08090b', light: '#eef0f2' } }))
+  const svg = (await QRCode.toString(upiLink(site.upiId), { type: 'svg', margin: 4, color: { dark: '#08090b', light: '#eef0f2' } }))
     .replace(/<\?xml[^>]*\?>\s*/, '')
     .replace('<svg', `<svg role="img" aria-label="UPI QR code for ${site.upiId}"`);
   return out

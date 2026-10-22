@@ -29,6 +29,14 @@ for (const player of document.querySelectorAll('.player[data-video-src]')) {
   player.replaceChildren(video, play);
 }
 
+// UPI: on a phone the block opens the UPI apps; desktop browsers can't open upi: links, so there it's only a QR code.
+for (const el of document.querySelectorAll('[data-upi-href]')) {
+  if (!matchMedia('(pointer: coarse)').matches) continue;
+  const a = document.createElement('a');
+  a.className = el.className; a.href = el.dataset.upiHref; a.replaceChildren(...el.childNodes);
+  el.replaceWith(a);
+}
+
 // 3D scenes: chosen once per visit, each loaded only when its section comes near the screen.
 
 const quality = chooseQuality({

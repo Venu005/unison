@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from 'vitest';
 import SITE from '../site.config.js';
 import { applySupport, upiLink } from '../src/support.js';
@@ -49,4 +50,15 @@ test('rejects a malformed UPI ID', async () => {
 test('ships with Sponsors and UPI off', () => {
   expect(SITE.sponsorUrl).toBe(null);
   expect(SITE.upiId).toBe(null);
+});
+
+test('the QR code has the standard 4-module quiet zone', async () => {
+  const size = +(await applySupport(page, on)).match(/viewBox="0 0 (\d+) \1"/)[1];
+  expect((size - 8 - 21) % 4).toBe(0);   // QR versions are 21 + 4k modules wide; 4 modules of margin each side
+});
+
+test('the UPI block is a link only on touch screens (desktop browsers can\'t open upi:)', () => {
+  const index = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  expect(index).toContain('data-upi-href="%UPI_LINK%"');
+  expect(index).not.toMatch(/\shref="%UPI_LINK%"/);
 });
