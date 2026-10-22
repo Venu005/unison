@@ -6,6 +6,7 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
 
 ## 2026-10-22 — Ignore local tool folders (chore/gitignore-local)
 - **What:** `.gitignore` now lists `.claude/` (Claude Code's project settings) and `brag-output/` (the /brag launch-video output). The owner asked for it, so the tree stays clean and `scripts/make-release.sh` can publish in one run.
+- **Also:** committed `mac/MacDroid/Info.plist` at 0.4.1 (5). XcodeGen regenerates it from `mac/project.yml` on build, and it was left out of the release commit. The released app was already built as 0.4.1.
 - **Verified:** `git status --porcelain` is empty.
 
 ## 2026-10-22 — Release 0.4.1: Mac and Android builds with the Support links (chore/release-0.4.1)
