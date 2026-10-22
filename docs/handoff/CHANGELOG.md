@@ -9,6 +9,11 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
 - **README:** the intro, the feature table (everything shipped so far), the "Get it" line, a new "Support Unison" section (GitHub Sponsors, plus UPI through the site), pairing step 3 and the roadmap now match what's built.
 - **Verified:** website 34/34, build OK, check OK (30 files). The built page has `id="support"` before `id="game"`, and a Playwright screenshot shows Support followed by the game.
 ## 2026-10-22 — Plan 14: Unison on Google Play (feat/play-store)
+- **Task 7, the owner's phone on the signed build:**
+  - With the owner's go-ahead, the debug install was uninstalled and the signed 0.5.0 installed through `bundletool build-apks --connected-device` plus `install-apks` (versionCode 6).
+  - The owner re-paired and ran the whole flow, reporting "everything works fine": the tour from a fresh install, both disclosure paths, mirroring with a manual Start, and remote control (tapping and typing).
+  - A Mac sidebar glitch on the empty Notifications page was found along the way. It already exists in the installed 0.4.1, isn't from this plan, and is recorded under STATUS Known limitations.
+- **Task 8, part 2, handoff:** STATUS, ROADMAP and README updated; the repo README's "Built with" now says ZXing.
 - **Task 1, auto-Start removed and Unison control declared honestly:**
   - Deleted: the auto-press in `MacDroidControlService.onAccessibilityEvent`, `ControlPrefs`, `NodeAdapter`, `ConsentMatcher`/`UiNode` (core), `MirrorPhoneSession.awaitingConsent`, the Settings row "Start mirroring without touching the phone", and `BuildConfig.STORE_BUILD`, with their tests.
   - `control_service.xml` sets `isAccessibilityTool="false"`, drops the System UI `packageNames`, and narrows events to `typeViewFocused`. Gestures and window content stay.

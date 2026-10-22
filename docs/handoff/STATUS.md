@@ -12,6 +12,11 @@
 - `main` also has the memory pass (images decoded at drawn size, photo thumbnails capped), merged 2026-10-21 as `bf9adf8`; `swift test` 370.
 - `main` also has photos (Plan 6: browse the phone's photos and videos, Quick Look, Save to Mac, drag out), merged 2026-10-14 as `37b425c`; its 9 follow-up minors merged as `2807ce9`; `swift test` 274.
 ## In flight
+- **Google Play release (Plan 14): built and verified on the owner's phone**, on `feat/play-store` (2026-10-22), not merged yet.
+  - The signed 0.5.0 (versionCode 6) is installed from the release bundle.
+  - The owner confirmed "everything works fine": the tour from a fresh install (connect, photo, notifications, clipboard, control), the disclosures, mirroring with a manual Start, and remote control.
+  - The upload key is `~/Keystores/unison-upload.jks`; the owner backs it up.
+  - Next: the whole-branch review, merge, then the owner's Play Console setup and closed test (`docs/play/`).
 - **Support Unison (Plan 13): merged to `main`** (2026-10-22, `c6cb7bd`; it includes `docs/support-spec`). GitHub Sponsors was approved on 2026-10-22, and the Support section (Sponsors and UPI) was merged to `main` as `9bdf207` and pushed, so the site deploy publishes it.
   - Website section and scene, Mac About button and Android website row are done, and all gates pass.
   - The section stays hidden until `sponsorUrl` is set.
@@ -50,6 +55,7 @@
 - Real login items need a properly signed build. Builds are self-signed ("MacDroid Self-Signed"), so keychain access survives rebuilds.
 
 ## Known limitations (by design for now)
+- **Mac sidebar glitch (cosmetic, 2026-10-22):** with the Notifications page empty, the window's sidebar shows only General, Security and About, sitting under the traffic lights; clicking another section fixes it. A bare SwiftUI copy of the window reproduces it, so it's in the layout, not the data. Top-aligning the detail didn't fix it. The owner chose to leave it for now.
 - One paired phone per Mac.
 - IPv4 only for NSD rediscovery. After Mac sleep/wake the phone reconnects as soon as NSD sees the Mac again (Plan 11; was up to about 30 s).
 - The Mac has no "reconnecting" state; it shows "Not connected — waiting for your phone".
