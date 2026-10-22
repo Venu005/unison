@@ -12,7 +12,7 @@
 - `main` also has the memory pass (images decoded at drawn size, photo thumbnails capped), merged 2026-10-21 as `bf9adf8`; `swift test` 370.
 - `main` also has photos (Plan 6: browse the phone's photos and videos, Quick Look, Save to Mac, drag out), merged 2026-10-14 as `37b425c`; its 9 follow-up minors merged as `2807ce9`; `swift test` 274.
 ## In flight
-- **Support Unison (Plan 13): merged to `main`** (2026-10-22, `c6cb7bd`; it includes `docs/support-spec`). GitHub Sponsors was approved on 2026-10-22, and `sponsorUrl` is set on `chore/sponsors-live`, so the section is in the build. UPI is still off.
+- **Support Unison (Plan 13): merged to `main`** (2026-10-22, `c6cb7bd`; it includes `docs/support-spec`). GitHub Sponsors was approved on 2026-10-22, and the Support section (Sponsors and UPI) was merged to `main` as `9bdf207` and pushed, so the site deploy publishes it.
   - Website section and scene, Mac About button and Android website row are done, and all gates pass.
   - The section stays hidden until `sponsorUrl` is set.
   - Waiting on the owner: the hands-on check, GitHub Sponsors approval and the UPI ID.
