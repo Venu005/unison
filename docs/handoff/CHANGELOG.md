@@ -12,6 +12,15 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - **Paperwork:** the declarations, Data safety ("no data collected", relying on end-to-end encryption between the user's own devices), the listing and the closed-test checklist.
   - **Decided after the builder check:** App access instructions instead of a demo mode; replace ML Kit (it sends diagnostics to Google) with an on-device decoder; and a Photos fallback.
   - **One build for everyone (owner):** auto-Start and `STORE_BUILD` are removed entirely, so there is no separate personal build and no `.dev` app id. The owner's phone moves to the signed build once (uninstall, install, re-pair).
+- **Plan:** `docs/superpowers/plans/2026-10-22-unison-play-store-14.md`, 8 tasks:
+  1. remove auto-Start and declare Unison control honestly;
+  2. ZXing in place of ML Kit;
+  3. disclosures;
+  4. tour state machine;
+  5. tour UI;
+  6. release signing, App Bundle and version 0.5.0;
+  7. the owner's phone on the signed build;
+  8. paperwork, privacy page and review.
 - **Why:** the owner wants Unison on Play without rejections. Policy findings, with sources, are in the spec's Constraints.
 - **Verified:** docs only. The prototype was clicked through end to end in headless Chromium.
 

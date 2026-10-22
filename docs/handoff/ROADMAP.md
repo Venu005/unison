@@ -94,7 +94,7 @@ Also noted earlier: SMS (personal build only, Play-restricted), USB transport vi
 - **Waiting on the owner:** GitHub Sponsors approval (`sponsorUrl`) and the UPI ID (`upiId`). The section stays hidden until `sponsorUrl` is set.
 
 ## Google Play release (Plan 14, specced 2026-10-22)
-- Spec: `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`. Next: the implementation plan.
+- Spec: `docs/superpowers/specs/2026-10-22-unison-play-store-design.md`. Plan: `docs/superpowers/plans/2026-10-22-unison-play-store-14.md` (8 tasks). Next: execution on `feat/play-store`.
 - Scope:
   - a release-signed AAB with an honest accessibility declaration;
   - the hands-on guided tour and disclosure screens;
