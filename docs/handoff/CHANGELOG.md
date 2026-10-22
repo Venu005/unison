@@ -4,6 +4,17 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-22 — Support Unison (tips): design spec (docs/support-spec)
+- **What:** brainstormed and wrote `docs/superpowers/specs/2026-10-22-unison-support-design.md`.
+  - **Payment route:** one-time tips through GitHub Sponsors, with a UPI QR code on the website as an extra.
+  - **Website:** a new "Support Unison" section with a 3D scene. The full robot walks in with cutting chai, flops into a bean bag, cheers the visitor and sips.
+  - **Mac:** a "Support Unison…" button in About.
+  - **Android:** only a plain "Unison website" link, with no money wording, for Google Play's Payments policy.
+  - The section stays hidden until `sponsorUrl` is set in `site.config.js`.
+  - The owner-approved 3D spike is saved as `website/reference/support-beanbag-spike.html`.
+- **Why:** the owner wants a way to receive tips from India and abroad while Unison stays free.
+- **Verified:** docs only. The spike was checked in headless Chromium renders and approved by the owner.
+
 ## 2026-10-22 — README: drop the "Formerly MacDroid" line (docs/readme-tagline)
 - **What:** removed the sub-heading "Formerly MacDroid. Code and internal ids still use that name." from the top of `README.md` at the owner's request. The naming note for contributors stays in `CLAUDE.md` and `docs/handoff/README.md`.
 - **Verified:** docs only; the footer change before it is live (merge `fe551bf`, deploy passed).

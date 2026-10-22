@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support spike: couch</title>
+<style>
+  :root { --peach:#F9C9A6; --bg:#08090b; --text:#eef0f2; --muted:#a3abb3; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,sans-serif; -webkit-font-smoothing:antialiased; }
+  .note { font:12px ui-monospace,Menlo,monospace; color:var(--muted); padding:14px 24px; border-bottom:1px solid rgba(255,255,255,.08); display:flex; justify-content:space-between; gap:12px; }
+  .note button { font:inherit; color:var(--peach); background:none; border:1px solid rgba(249,201,166,.4); border-radius:999px; padding:4px 12px; cursor:pointer; }
+  #support { position:relative; min-height:660px; height:88vh; overflow:hidden;
+    background:radial-gradient(70% 80% at 70% 50%, #23201c 0%, #110f0d 55%, #08090b 100%); }
+  #support canvas { position:absolute; inset:0; width:100%; height:100%; }
+  .copy { position:absolute; left:max(32px,6vw); top:50%; transform:translateY(-50%); max-width:440px; z-index:1; }
+  .eyebrow { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--peach); }
+  h2 { font-size:clamp(44px,6vw,84px); font-weight:800; letter-spacing:-.05em; line-height:.92; margin:16px 0 0; }
+  p { font-size:17px; line-height:1.5; color:var(--muted); margin:20px 0 0; max-width:380px; }
+  .btn { display:inline-flex; gap:8px; align-items:center; margin-top:28px; padding:14px 22px; border-radius:999px; background:var(--peach); color:#1d130d;
+    font-weight:700; font-size:15px; cursor:pointer; border:0; transition:transform .2s; }
+  .btn:hover { transform:translateY(-2px); }
+  .upi { display:flex; gap:14px; align-items:center; margin-top:26px; font-size:13px; color:var(--muted); }
+  .qr { width:64px; height:64px; border-radius:10px; background:conic-gradient(#eef0f2 25%,#08090b 0 50%,#eef0f2 0 75%,#08090b 0) 0 0/16px 16px; border:4px solid #eef0f2; }
+  .upi b { color:var(--text); font-family:ui-monospace,Menlo,monospace; font-weight:500; }
+  @media (max-width:900px) { .copy { top:auto; bottom:36px; transform:none; left:24px; right:24px; } }
+</style>
+<script type="importmap">{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
+</head>
+<body>
+<div class="note"><span>Throwaway spike · empty bean bag → robot walks in with chai → flops in → cheers you · hover the button = cheers, click = sip</span><button id="replay">↺ Replay</button></div>
+<section id="support">
+  <canvas></canvas>
+  <div class="copy">
+    <span class="eyebrow">Support Unison</span>
+    <h2>Buy the robot<br>a chai.</h2>
+    <p>Unison is free, with no ads and no account. It's made by one person in India. If it saves you time, a one-time tip keeps it going.</p>
+    <button class="btn" id="sponsor">♥ Sponsor on GitHub</button>
+    <div class="upi"><span class="qr"></span><span>In India? Scan to pay with UPI<br><b>yourname@upi</b></span></div>
+  </div>
+</section>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const GREEN = 0x4CB873, INK = 0x1F2933;
+const section = document.getElementById('support');
+const renderer = new THREE.WebGLRenderer({ canvas: section.querySelector('canvas'), antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+
+const clay = (color, rough = 0.45) => new THREE.MeshPhysicalMaterial({ color, roughness: rough, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.4 });
+const box = (w, h, d, r, mat) => { const m = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 5, r), mat); m.castShadow = m.receiveShadow = true; return m; };
+
+const world = new THREE.Group(); scene.add(world);
+const key = new THREE.DirectionalLight(0xfff1e6, 2.6); key.position.set(-4, 7, 6); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 7;
+Object.assign(key.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6 });
+const lamp = new THREE.PointLight(0xffb27a, 6, 8, 1.6); lamp.position.set(-2.4, 2.4, 0.6);
+scene.add(key, lamp, new THREE.HemisphereLight(0xfff0e0, 0x2a1a10, 0.55));
+
+// ---------- room: rug + couch ----------
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.4 }));
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; world.add(floor);
+const rug = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 2.6, 0.02, 64), clay(0x2b2f36, 0.9));
+rug.scale.z = 0.55; rug.position.set(0, 0.01, 0.7); rug.receiveShadow = true; world.add(rug);
+
+// Bean bag: a squashed sphere with a flat bottom, a raised back, a seat dent and a few soft wrinkles.
+const BAG = 1.3, SEAT_Z = 0.22, FLOOR = -0.38;     // bag size (world), seat spot and flat bottom in bag units
+const ss = THREE.MathUtils.smoothstep;
+const bagGeo = new THREE.SphereGeometry(1, 160, 120), bp = bagGeo.attributes.position, v = new THREE.Vector3();
+let seatY = -1;
+for (let i = 0; i < bp.count; i++) {
+  v.fromBufferAttribute(bp, i);
+  const { x, y, z } = v, up = Math.max(0, y), a = Math.atan2(x, z);
+  let X = x * 1.16 * (1 + 0.07 * Math.max(0, -y)), Y = y * 0.5, Z = z;
+  const back = ss(-z, -0.2, 0.7), front = ss(z, 0.35, 1);
+  Y += 0.72 * back * up * (1 - 0.2 * x * x);          // wide, rounded backrest
+  Z -= 0.1 * back * up;                               // that slouches back
+  X *= 1 + 0.28 * back * up;                          // keeps the top of the back wide, not a cone
+  Y += Math.sin(x * 6.5) * 0.035 * back * up;         // lumps along the top of the back
+  Y -= 0.22 * Math.exp(-(x * x * 1.3 + (z - 0.2) ** 2) / 0.3) * up;   // seat dent
+  Y -= 0.2 * front * up;                              // low front lip, so legs hang over it
+  if (Y < FLOOR) Y = FLOOR + (Y - FLOOR) * 0.12;      // flat on the floor
+  const crease = Math.cos(a * 7 + y * 3) * 0.016 * (0.3 + up) + Math.sin(a * 13 - y * 9) * 0.006;
+  X *= 1 + crease; Z *= 1 + crease;                   // fabric folds running up to the top
+  bp.setXYZ(i, X, Y, Z);
+  if (Math.abs(X) < 0.06 && Math.abs(Z - SEAT_Z) < 0.06 && y > 0 && Y > seatY) seatY = Y;
+}
+bagGeo.computeVertexNormals();
+const bagMat = new THREE.MeshPhysicalMaterial({ color: 0xA9502E, roughness: 0.95, sheen: 0.6, sheenColor: 0xd98a5f, sheenRoughness: 0.7 });
+const bag = new THREE.Mesh(bagGeo, bagMat); bag.castShadow = bag.receiveShadow = true;
+bag.scale.setScalar(BAG); bag.position.set(0, -FLOOR * BAG, 0); world.add(bag);
+const SEAT_TOP = (seatY - FLOOR) * BAG;
+
+// ---------- the robot: full Android body, same green clay as the site ----------
+const S = 0.55;                                   // robot units → world
+const root = new THREE.Group(); root.scale.setScalar(S); world.add(root);
+const bodyG = new THREE.Group(); bodyG.position.y = 0.74; root.add(bodyG);   // feet on root's y=0
+const torsoProfile = [[0, 0], [0.85, 0], ...Array.from({ length: 7 }, (_, i) => { const a = -Math.PI / 2 + (i + 1) / 7 * Math.PI / 2; return [0.85 + Math.cos(a) * 0.15, 0.15 + Math.sin(a) * 0.15]; }), [1, 1.1], [0, 1.1]]
+  .map(([x, y]) => new THREE.Vector2(x, y));
+const torso = new THREE.Mesh(new THREE.LatheGeometry(torsoProfile, 64), clay(GREEN)); torso.castShadow = true; bodyG.add(torso);
+
+const headG = new THREE.Group(); headG.position.y = 1.18; bodyG.add(headG);
+const dome = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2), clay(GREEN)); dome.castShadow = true; headG.add(dome);
+const cap = new THREE.Mesh(new THREE.CircleGeometry(1, 64), clay(GREEN)); cap.rotation.x = Math.PI / 2; headG.add(cap);
+const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.32, 16), clay(GREEN)); stalk.position.y = 1.12; headG.add(stalk);
+const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.12, 32, 16), new THREE.MeshPhysicalMaterial({ color: GREEN, emissive: GREEN, emissiveIntensity: 0.6, roughness: 0.3 }));
+bulb.position.y = 1.32; headG.add(bulb);
+const eyes = [-0.34, 0.34].map(x => { const e = new THREE.Mesh(new THREE.SphereGeometry(0.14, 32, 16), new THREE.MeshPhysicalMaterial({ color: INK, roughness: 0.15, clearcoat: 1 })); e.position.set(x, 0.42, 0.86); headG.add(e); return e; });
+
+const limb = (len, at, side) => {
+  const pivot = new THREE.Group(); pivot.position.copy(at); bodyG.add(pivot);
+  const m = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, len, 8, 24), clay(GREEN)); m.position.y = -len / 2 - 0.02; m.castShadow = true; pivot.add(m);
+  pivot.userData.side = side; return pivot;
+};
+const armR = limb(0.6, new THREE.Vector3(1.25, 0.9, 0), 1), armL = limb(0.6, new THREE.Vector3(-1.25, 0.9, 0), -1);
+const legR = limb(0.6, new THREE.Vector3(0.42, 0.08, 0), 1), legL = limb(0.6, new THREE.Vector3(-0.42, 0.08, 0), -1);
+
+// ---------- cutting-chai glass in the right hand ----------
+const glass = new THREE.Group(); glass.scale.setScalar(0.95); armR.add(glass);
+const prof = [[0.001, 0], [0.15, 0], [0.155, 0.02], [0.2, 0.5], [0.205, 0.52]].map(([x, y]) => new THREE.Vector2(x, y));
+const shell = new THREE.Mesh(new THREE.LatheGeometry(prof, 12), new THREE.MeshPhysicalMaterial({
+  color: 0xffffff, transmission: 1, thickness: 0.08, roughness: 0.04, ior: 1.45, transparent: true, side: THREE.DoubleSide, flatShading: true }));
+glass.add(shell);
+glass.add(new THREE.Mesh(new THREE.LatheGeometry([[0.001, 0.03], [0.14, 0.03], [0.178, 0.4]].map(([x, y]) => new THREE.Vector2(x, y)), 12),
+  new THREE.MeshPhysicalMaterial({ color: 0xB06A2C, roughness: 0.35, clearcoat: 0.6 })));
+const froth = new THREE.Mesh(new THREE.CircleGeometry(0.178, 12), clay(0xD9A877, 0.6)); froth.rotation.x = -Math.PI / 2; froth.position.y = 0.4; glass.add(froth);
+const steamTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d');
+  const g = x.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, 'rgba(255,255,255,.5)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+const puffs = Array.from({ length: 7 }, (_, i) => { const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: steamTex, transparent: true, depthWrite: false, opacity: 0 }));
+  m.userData.o = i / 7; scene.add(m); return m; });
+const rim = new THREE.Vector3();
+
+// ---------- choreography ----------
+const START = new THREE.Vector3(5.4, 0, 2.0), FRONT = new THREE.Vector3(0, 0, 2.0), SEAT = new THREE.Vector3(0, SEAT_TOP - 0.74 * S - 0.03, SEAT_Z * BAG);
+const T_WALK = 3.0, T_TURN = 0.7, T_HOP = 0.9;
+const lerp = THREE.MathUtils.lerp, clamp = THREE.MathUtils.clamp;
+const ease = k => k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
+const clock = new THREE.Clock();
+let t0 = 1e9, started = false;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const begin = () => { t0 = clock.getElapsedTime() + 0.6; started = true; };
+new IntersectionObserver(([e]) => { if (e.intersectionRatio > 0.4 && !started) begin(); }, { threshold: [0.4] }).observe(section);
+document.getElementById('replay').onclick = begin;
+
+let raise = 0, raiseTarget = 0, sipAt = -10, cheersAt = -10, nextIdle = 0, idleIsCheers = true;
+const btn = document.getElementById('sponsor');
+btn.addEventListener('pointerenter', () => raiseTarget = 1);
+btn.addEventListener('pointerleave', () => raiseTarget = 0);
+btn.addEventListener('click', () => sipAt = clock.getElapsedTime());
+
+const pointer = new THREE.Vector2(), smooth = new THREE.Vector2();
+section.addEventListener('pointermove', e => { const r = section.getBoundingClientRect();
+  pointer.set(((e.clientX - r.left) / r.width) * 2 - 1, -(((e.clientY - r.top) / r.height) * 2 - 1)); });
+section.addEventListener('pointerleave', () => pointer.set(0, 0));
+
+const look = new THREE.Vector3(0, 0.85, 0.3);
+function resize() {
+  const w = section.clientWidth, h = section.clientHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  const wide = w >= 900;
+  world.position.set(wide ? 2.0 : 0, wide ? 0 : 1.1, 0);
+  camera.position.set(0, 1.55, wide ? 9.2 : 12.5);
+  camera.lookAt(look.x, look.y + (wide ? 0 : 0.6), look.z);
+}
+new ResizeObserver(resize).observe(section); resize();
+
+renderer.setAnimationLoop(() => {
+  const now = clock.getElapsedTime(), t = reduce ? 99 : now - t0;
+  smooth.lerp(pointer, 0.05);
+  world.rotation.y = -0.6 + smooth.x * 0.12;
+
+  const walk = clamp(t / T_WALK, 0, 1), turn = clamp((t - T_WALK) / T_TURN, 0, 1), hop = clamp((t - T_WALK - T_TURN) / T_HOP, 0, 1);
+  const seated = hop >= 1, step = now * 9;
+  root.visible = t > 0;
+
+  // position
+  if (hop > 0) {
+    const k = ease(hop);
+    root.position.set(lerp(FRONT.x, SEAT.x, k), lerp(0, SEAT.y, k) + Math.sin(hop * Math.PI) * 0.45, lerp(FRONT.z, SEAT.z, k));
+  } else {
+    root.position.lerpVectors(START, FRONT, ease(walk) * 0.15 + walk * 0.85);
+    root.position.y = walk < 1 ? Math.abs(Math.sin(step)) * 0.06 : 0;
+  }
+  root.rotation.y = lerp(-Math.PI / 2, 0, ease(turn));
+
+  // bean bag squash on landing; the robot sinks in and leans back
+  const land = seated ? Math.exp(-(t - T_WALK - T_TURN - T_HOP) * 5) : 0;
+  bag.scale.set(BAG * (1 + land * 0.06), BAG * (1 - land * 0.14), BAG * (1 + land * 0.06));
+  bodyG.scale.y = 1 - land * 0.1;
+  const lean = -0.38 * ease(hop);
+  bodyG.rotation.x = lean;
+
+  // legs: swing while walking, then rest forward over the front of the bag, a little splayed
+  const swinging = walk < 1 ? 1 : 0;
+  legR.rotation.x = lerp(Math.sin(step) * 0.55 * swinging, -0.95, ease(hop));
+  legL.rotation.x = lerp(-Math.sin(step) * 0.55 * swinging, -0.95, ease(hop));
+  legR.position.z = legL.position.z = 0.55 * ease(hop);
+  legR.rotation.z = 0.3 * ease(hop) + (seated ? Math.sin(now * 1.1) * 0.05 : 0);
+  legL.rotation.z = -0.3 * ease(hop) - (seated ? Math.sin(now * 1.1 + 1) * 0.05 : 0);
+
+  // arms: left swings or flops on the bag; right carries the chai
+  armL.rotation.x = seated ? -0.25 + Math.sin(now * 1.3) * 0.04 : Math.sin(step) * 0.5 * swinging;
+  armL.rotation.z = seated ? -0.55 : 0;
+  // Seated idle: alternate a cheers (glass raised to you, waved) and a sip; the first thing it does is cheers.
+  if (seated && !reduce && now > nextIdle) {
+    if (idleIsCheers) cheersAt = now; else sipAt = now;
+    idleIsCheers = !idleIsCheers; nextIdle = now + 4.5 + Math.random() * 2;
+  }
+  const sp = seated ? clamp((now - sipAt) / 1.8, 0, 1) : 0, sip = Math.sin(sp * Math.PI);
+  const cp = seated ? clamp((now - cheersAt) / 2.4, 0, 1) : 0;
+  raise += ((seated ? raiseTarget : 0) - raise) * 0.08;
+  const cheers = Math.max(Math.sin(cp * Math.PI) ** 0.6 * (cp < 1 ? 1 : 0), raise) * (1 - sip);
+  armR.rotation.x = -1.0 - cheers * 0.95 - sip * 1.05;
+  armR.rotation.z = sip * 0.55 + Math.sin(now * 7) * 0.32 * cheers;
+  glass.position.set(0, -0.78, 0.12);
+  glass.rotation.set(-armR.rotation.x - lean - sip * 0.7 + cheers * 0.3, 0, -armR.rotation.z);
+
+  // head follows the pointer once seated (tilts toward you on a cheers); eyes squint on a sip or cheers
+  headG.rotation.y = seated ? smooth.x * 0.45 : 0;
+  headG.rotation.x = seated ? -smooth.y * 0.15 - lean * 0.6 : 0;
+  headG.rotation.z = Math.sin(now * 3.5) * 0.06 * cheers;
+  const happy = (sp > 0.35 && sp < 1) || cheers > 0.5;
+  eyes.forEach((e, i) => {
+    const blink = (now % 4.4) < 0.12 ? 0.15 : 1;
+    e.scale.y = lerp(e.scale.y, happy ? 0.3 : blink, 0.3);
+  });
+  bulb.material.emissiveIntensity = happy ? 2.6 : 0.55 + Math.sin(now * 3) * 0.3 + raise * 0.8;
+
+  // steam rises straight up in world space from the rim
+  glass.updateWorldMatrix(true, false); rim.set(0, 0.55, 0).applyMatrix4(glass.matrixWorld);
+  puffs.forEach(p => {
+    const k = (now * 0.35 + p.userData.o) % 1;
+    p.position.set(rim.x + Math.sin(k * 6 + p.userData.o * 9) * 0.05, rim.y + k * 0.7, rim.z);
+    p.scale.setScalar(0.12 + k * 0.3);
+    p.material.opacity = root.visible ? Math.sin(k * Math.PI) * (0.5 - sip * 0.45) : 0;
+  });
+
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>
