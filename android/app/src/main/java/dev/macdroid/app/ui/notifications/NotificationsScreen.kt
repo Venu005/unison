@@ -58,7 +58,7 @@ fun NotificationsScreen(viewModel: NotificationsViewModel = viewModel()) {
     val openAccess = { context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }
     // Unison's own status notification needs "post notifications" too (it used to be asked in setup).
     val postNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { openAccess() }
-    val askAccess = rememberDisclosed(Gated.Notifications) {
+    val askAccess = rememberDisclosed(Gated.Notifications, onNotNow = { tour?.declined(TourTarget.NotificationsAgree) }) {
         tour?.done(TourTarget.NotificationsAgree)
         if (Permissions.needsNotifications && !Permissions.hasNotifications(context)) postNotifications.launch(Manifest.permission.POST_NOTIFICATIONS) else openAccess()
     }

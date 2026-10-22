@@ -20,6 +20,7 @@ import dev.macdroid.core.protocol.MirrorStartBody
 /** Wakes the screen, asks for the microphone if audio is wanted, then shows Android's capture consent (spec §3.1). */
 class MirrorConsentActivity : ComponentActivity() {
     private val sessionId by lazy { intent.getStringExtra(EXTRA_SESSION).orEmpty() }
+    private var sheetShowing = false
     private val microphone = registerForActivityResult(ActivityResultContracts.RequestPermission()) { askCapture() }
     private val capture = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         graph.mirrorBridge.consentResult(sessionId, result.resultCode, result.data)
@@ -30,17 +31,35 @@ class MirrorConsentActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setShowWhenLocked(true)
         setTurnScreenOn(true)
-        if (savedInstanceState != null) return
-        val wantsAudio = intent.getBooleanExtra(EXTRA_AUDIO, false)
-        if (wantsAudio && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            // Google Play's prominent disclosure first (Plan 14); "Not now" mirrors without the phone's sound.
-            setContent {
-                MacDroidTheme {
-                    DisclosureSheet(Gated.Microphone, onAgree = { setContent {}; microphone.launch(Manifest.permission.RECORD_AUDIO) }, onNotNow = { setContent {}; askCapture() })
-                }
+        val start = MirrorConsentRules.onCreate(
+            restored = savedInstanceState != null,
+            sheetShowing = savedInstanceState?.getBoolean(STATE_SHEET) == true,
+            wantsAudio = intent.getBooleanExtra(EXTRA_AUDIO, false),
+            hasMicrophone = checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED,
+        )
+        when (start) {
+            MirrorConsentRules.Start.Sheet -> showMicrophoneSheet()
+            MirrorConsentRules.Start.Capture -> askCapture()
+            MirrorConsentRules.Start.Nothing -> Unit
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(STATE_SHEET, sheetShowing)
+    }
+
+    /** Google Play's prominent disclosure first (Plan 14); "Not now" mirrors without the phone's sound. */
+    private fun showMicrophoneSheet() {
+        sheetShowing = true
+        setContent {
+            MacDroidTheme {
+                DisclosureSheet(
+                    Gated.Microphone,
+                    onAgree = { sheetShowing = false; setContent {}; microphone.launch(Manifest.permission.RECORD_AUDIO) },
+                    onNotNow = { sheetShowing = false; setContent {}; askCapture() },
+                )
             }
-        } else {
-            askCapture()
         }
     }
 
@@ -53,6 +72,7 @@ class MirrorConsentActivity : ComponentActivity() {
     companion object {
         private const val EXTRA_SESSION = "session"
         private const val EXTRA_AUDIO = "audio"
+        private const val STATE_SHEET = "microphoneSheet"
 
         fun intent(context: Context, body: MirrorStartBody): Intent =
             Intent(context, MirrorConsentActivity::class.java)

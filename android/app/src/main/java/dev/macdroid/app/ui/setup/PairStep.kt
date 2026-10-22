@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -48,11 +49,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.macdroid.app.platform.Permissions
 import dev.macdroid.app.ui.PairingViewModel
+import dev.macdroid.app.ui.PromptRules
 import dev.macdroid.app.ui.QrCameraPreview
 import dev.macdroid.app.ui.tour.LocalTour
 import dev.macdroid.app.ui.tour.TourTarget
@@ -77,16 +80,22 @@ fun PairStep(viewModel: PairingViewModel, macName: String?) {
     var scanning by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val tour = LocalTour.current
+    val activity = LocalActivity.current
+    // After a second "Don't allow" Android stops asking: then the app's settings are the only way on (final review I2).
+    val afterDenial = { permission: String ->
+        val canAskAgain = activity != null && ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
+        if (PromptRules.openSettingsAfter(granted = false, canAskAgain = canAskAgain)) context.openAppSettings()
+    }
     val camera = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         cameraAsked = true
-        if (granted) { tour?.done(TourTarget.AllowCamera); scanning = true } else tour?.denied(TourTarget.AllowCamera)
+        if (granted) { tour?.done(TourTarget.AllowCamera); scanning = true } else { tour?.denied(TourTarget.AllowCamera); afterDenial(Manifest.permission.CAMERA) }
     }
     val askCamera = {
         if (Permissions.granted(context, Manifest.permission.CAMERA)) { tour?.done(TourTarget.AllowCamera); scanning = true }
         else camera.launch(Manifest.permission.CAMERA)
     }
     val localNetwork = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) { tour?.done(TourTarget.AllowLocalNetwork); askCamera() } else tour?.denied(TourTarget.AllowLocalNetwork)
+        if (granted) { tour?.done(TourTarget.AllowLocalNetwork); askCamera() } else { tour?.denied(TourTarget.AllowLocalNetwork); afterDenial(Permissions.ACCESS_LOCAL_NETWORK) }
     }
     val scan = {
         tour?.done(TourTarget.ScanQr)

@@ -28,13 +28,27 @@ class TourFlow(saved: TourPrefs.State) {
     val groups: List<String> get() = GROUPS
     val current: TourStep? get() = if (finished) null else STEPS.getOrNull(index)
 
-    /** The user did [target]. Advances only when it's the highlighted one. */
+    /** The prompts of step 1 are answered and the camera is scanning: only a real connection leaves step 1. */
+    var waitingForMac = false
+        private set
+
+    /** The user did [target]. Advances only when it's the highlighted one, and never out of step 1 (see [connected]). */
     fun done(target: TourTarget): Boolean {
-        if (current?.target != target) return false
+        val step = current ?: return false
+        if (step.target != target) return false
+        if (step.group == 0 && STEPS.getOrNull(index + 1)?.group != 0) {
+            waitingForMac = true
+            return true
+        }
         index++
         retry = false
         if (index >= STEPS.size) finished = true
         return true
+    }
+
+    /** "Not now" on the disclosure sheet a step points at: skip that step rather than leave its bubble behind. */
+    fun declined(target: TourTarget) {
+        if (current?.target == target) skipStep()
     }
 
     fun denied(target: TourTarget) {
@@ -80,6 +94,7 @@ class TourFlow(saved: TourPrefs.State) {
             step.group != 0 -> TourDisplay(step.target, step.tip)
             !onConnectScreen -> TourDisplay(TourTarget.StatusCard, "Open Unison on your Mac and keep it on the same Wi-Fi. This phone connects by itself.")
             retry -> TourDisplay(TourTarget.ScanQr, "Unison needs this to reach your Mac. Tap Scan the QR code to try again.")
+            waitingForMac -> TourDisplay(TourTarget.AllowCamera, "Point the camera at the QR code on your Mac.")
             else -> TourDisplay(step.target, step.tip)
         }
     }
@@ -89,6 +104,7 @@ class TourFlow(saved: TourPrefs.State) {
     private fun jumpTo(i: Int) {
         index = i
         retry = false
+        waitingForMac = false
         if (index >= STEPS.size) finished = true
     }
 

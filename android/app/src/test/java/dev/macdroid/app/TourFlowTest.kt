@@ -12,7 +12,7 @@ import org.junit.Test
 /** The hands-on guided tour (Plan 14): one highlighted action at a time, advancing only when the user does it. */
 class TourFlowTest {
     private fun fresh() = TourFlow(TourPrefs.State(index = 0, finished = false))
-    private fun TourFlow.finishConnect() { done(TourTarget.ScanQr); done(TourTarget.AllowLocalNetwork); done(TourTarget.AllowCamera) }
+    private fun TourFlow.finishConnect() { done(TourTarget.ScanQr); done(TourTarget.AllowLocalNetwork); done(TourTarget.AllowCamera); connected() }
 
     @Test fun startsAtConnectAndCannotSkipIt() {
         val t = fresh()
@@ -67,7 +67,7 @@ class TourFlowTest {
 
     @Test fun walkingEveryStepFinishes() {
         val t = fresh()
-        TourFlow.STEPS.forEach { assertTrue(it.target.name, t.done(it.target)) }
+        TourFlow.STEPS.forEach { assertTrue(it.target.name, t.done(it.target)); if (it.target == TourTarget.AllowCamera) t.connected() }
         assertTrue(t.finished)
         assertNull(t.current)
     }
@@ -117,6 +117,26 @@ class TourFlowTest {
         val t = fresh().apply { finishConnect() }
         assertEquals(TourTarget.Send, t.display(onConnectScreen = false)!!.target)
         assertNull(fresh().apply { finishConnect(); end() }.display(onConnectScreen = false))
+    }
+
+    // Final review I1: allowing the camera isn't being connected; only a real connection leaves step 1.
+    @Test fun cameraGrantWaitsForTheConnection() {
+        val t = fresh().apply { done(TourTarget.ScanQr); done(TourTarget.AllowLocalNetwork); done(TourTarget.AllowCamera) }
+        assertEquals(0, t.current?.group)
+        assertEquals("Point the camera at the QR code on your Mac.", t.display(onConnectScreen = true)!!.tip)
+        t.connected()
+        assertEquals(TourTarget.Send, t.current?.target)
+    }
+
+    // Final review I4: "Not now" on a disclosure sheet skips that step instead of leaving its bubble behind.
+    @Test fun notNowOnASheetSkipsTheStep() {
+        val t = fresh().apply { finishConnect(); skipStep() }
+        t.done(TourTarget.NotificationsTab); t.done(TourTarget.TurnOnNotifications)
+        assertEquals(TourTarget.NotificationsAgree, t.current?.target)
+        t.declined(TourTarget.NotificationsAgree)
+        assertEquals(TourTarget.ClipboardTab, t.current?.target)
+        t.declined(TourTarget.ControlAgree)
+        assertEquals(TourTarget.ClipboardTab, t.current?.target)
     }
 
     @Test fun copyMatchesTheSpec() {

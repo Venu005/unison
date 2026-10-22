@@ -28,6 +28,7 @@ internal fun QrCameraPreview(enabled: Boolean, onResult: (String) -> Unit, onCam
     val currentOnResult by rememberUpdatedState(onResult)
     val providerFuture = remember { ProcessCameraProvider.getInstance(context) }
     val executor = remember { Executors.newSingleThreadExecutor() }
+    val mainExecutor = remember { ContextCompat.getMainExecutor(context) }
     var disposed by remember { mutableStateOf(false) }
     var analysisUseCase by remember { mutableStateOf<ImageAnalysis?>(null) }
     DisposableEffect(Unit) {
@@ -54,7 +55,7 @@ internal fun QrCameraPreview(enabled: Boolean, onResult: (String) -> Unit, onCam
                     val bytes = ByteArray(y.buffer.remaining()).also { y.buffer.get(it) }
                     QrDecode.decode(bytes, proxy.width, proxy.height, y.rowStride)
                         ?.takeIf { it.startsWith("macdroid://") }
-                        ?.let { currentOnResult(it) }
+                        ?.let { code -> mainExecutor.execute { currentOnResult(code) } }
                 }
             }
             provider.unbindAll()

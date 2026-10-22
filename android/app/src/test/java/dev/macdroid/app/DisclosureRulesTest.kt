@@ -41,6 +41,12 @@ class DisclosureRulesTest {
         assertFalse(Regex("Start|screen-sharing").containsMatchIn(t))
     }
 
+    // Final review: "records … nothing is recorded" contradicted itself; it captures and streams, it doesn't record.
+    @Test fun microphoneDisclosureDoesNotSayRecord() {
+        assertFalse(text(Gated.Microphone).contains("record", ignoreCase = true))
+        assertTrue(text(Gated.Microphone).contains("only while you mirror"))
+    }
+
     @Test fun agreeLabelsAreAffirmative() {
         assertEquals("Agree and open settings", Disclosures.of(Gated.Notifications).agreeLabel)
         assertEquals("Agree and open Accessibility", Disclosures.of(Gated.Accessibility).agreeLabel)

@@ -16,6 +16,10 @@ class ControlServiceConfigTest {
     @Test fun declaresNotAnAccessibilityToolAndWatchesNoApp() {
         assertTrue(config.contains("""android:isAccessibilityTool="false""""))
         assertFalse(config.contains("android:packageNames"))
+        // Final review I6: it needs no events at all (input comes from the Mac), and no flags left over from auto-Start.
+        assertFalse(config.contains("android:accessibilityEventTypes"))
+        assertFalse(config.contains("flagRetrieveInteractiveWindows"))
+        assertFalse(config.contains("flagReportViewIds"))
         assertTrue(config.contains("""android:canPerformGestures="true""""))
         assertTrue(config.contains("""android:canRetrieveWindowContent="true""""))
     }

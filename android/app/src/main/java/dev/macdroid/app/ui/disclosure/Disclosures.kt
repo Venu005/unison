@@ -40,8 +40,8 @@ object Disclosures {
         Gated.Microphone -> Disclosure(
             title = "Hear your phone on your Mac",
             bullets = listOf(
-                "Unison records only the sound your phone is playing, and only while you mirror it.",
-                "It goes only to your paired Mac, encrypted, over your Wi-Fi. Nothing is recorded or kept.",
+                "Unison streams only the sound your phone is playing, and only while you mirror it.",
+                "It goes only to your paired Mac, encrypted, over your Wi-Fi. Nothing is saved on either device.",
             ),
             agreeLabel = "Agree and allow",
         )

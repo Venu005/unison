@@ -32,6 +32,7 @@ class TourController(private val context: Context, setupDone: Boolean) {
 
     fun done(target: TourTarget) = update { flow.done(target) }
     fun denied(target: TourTarget) = update { flow.denied(target); true }
+    fun declined(target: TourTarget) = update { flow.declined(target); true }
     fun connected() = update { flow.connected(); true }
     fun skipGroup(group: Int) = update { flow.skipGroup(group); true }
     fun skipStep() = update { flow.skipStep(); true }

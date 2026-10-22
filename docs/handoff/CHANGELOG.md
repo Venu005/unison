@@ -13,6 +13,17 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
   - With the owner's go-ahead, the debug install was uninstalled and the signed 0.5.0 installed through `bundletool build-apks --connected-device` plus `install-apks` (versionCode 6).
   - The owner re-paired and ran the whole flow, reporting "everything works fine": the tour from a fresh install, both disclosure paths, mirroring with a manual Start, and remote control (tapping and typing).
   - A Mac sidebar glitch on the empty Notifications page was found along the way. It already exists in the installed 0.4.1, isn't from this plan, and is recorded under STATUS Known limitations.
+- **Final review fixes** (fresh reviewer, whole branch; no Critical findings). Each fix was RED→GREEN:
+  - **Step 1 waits for a real connection.** Granting the camera no longer jumps to "You're connected!". `TourFlow.waitingForMac` shows "Point the camera at the QR code on your Mac." (`cameraGrantWaitsForTheConnection`).
+  - **No dead end after "Don't allow" twice.** A permission Android won't ask for again (local network, camera) now opens the app's settings from Connect (`PromptRules.openSettingsAfter`, `deniedForGoodOpensSettings`).
+  - **The microphone sheet survives rotation.** `MirrorConsentRules` and a saved `microphoneSheet` flag show it again instead of an invisible screen (`mirrorConsentShowsTheSheetAgainAfterRecreation`).
+  - **"Not now" no longer leaves a bubble behind.** On the notifications or Unison control sheet it skips that tour step (`TourFlow.declined`, `notNowOnASheetSkipsTheStep`).
+  - **"Post notifications" is asked once after the first connection**, so the connection notice and mirror requests can show even when tour step 3 is skipped (`askToPostNotifications`, `UiPrefs.postNotificationsAsked`).
+  - **Unison control subscribes to no events.** No `accessibilityEventTypes`, `flagRetrieveInteractiveWindows` or `flagReportViewIds`; it needs only gestures and `canRetrieveWindowContent` (`ControlServiceConfigTest`). Typing must be re-checked on the phone.
+  - **The microphone disclosure no longer says "records"** ("streams…, nothing is saved") (`microphoneDisclosureDoesNotSayRecord`).
+  - **Scan results go back to the main thread** (ML Kit did this; pairing state is checked then set).
+  - **Stale docs:** DEV-GUIDE and ARCHITECTURE no longer describe auto-Start, `ConsentMatcher` or the old setup order.
+  - **Verified:** TourFlowTest 17/17, PromptRulesTest 3/3, DisclosureRulesTest 6/6, ControlServiceConfigTest 3/3. The gate built successfully with no warnings.
 - **Task 8, part 2, handoff:** STATUS, ROADMAP and README updated; the repo README's "Built with" now says ZXing.
 - **Task 1, auto-Start removed and Unison control declared honestly:**
   - Deleted: the auto-press in `MacDroidControlService.onAccessibilityEvent`, `ControlPrefs`, `NodeAdapter`, `ConsentMatcher`/`UiNode` (core), `MirrorPhoneSession.awaitingConsent`, the Settings row "Start mirroring without touching the phone", and `BuildConfig.STORE_BUILD`, with their tests.

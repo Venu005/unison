@@ -88,7 +88,7 @@ fun SettingsScreen(onForget: () -> Unit, onShowTour: () -> Unit = {}, viewModel:
     // Google Play's prominent disclosure before each sensitive permission (Plan 14).
     val askPhotos = rememberDisclosed(Gated.Photos) { photosAccess.launch(PhotosAccessText.permissions(Build.VERSION.SDK_INT)) }
     val tour = LocalTour.current
-    val askControl = rememberDisclosed(Gated.Accessibility) { tour?.done(TourTarget.ControlAgree); context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
+    val askControl = rememberDisclosed(Gated.Accessibility, onNotNow = { tour?.declined(TourTarget.ControlAgree) }) { tour?.done(TourTarget.ControlAgree); context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
     // Unison control is already on: the tour's last step has nothing to do.
     LaunchedEffect(ui.controlOn) { if (ui.controlOn) tour?.skipGroup(4) }
     val askMicrophone = rememberDisclosed(Gated.Microphone) { context.openAppSettings() }
