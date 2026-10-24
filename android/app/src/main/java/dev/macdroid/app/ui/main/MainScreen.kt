@@ -1,6 +1,7 @@
 package dev.macdroid.app.ui.main
 
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentPaste
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -66,7 +69,16 @@ fun MainScreen(onForget: () -> Unit) {
                             }
                         },
                         icon = { Icon(tab.icon, contentDescription = null) },
-                        label = { Text(tab.label) },
+                        // Five tabs share the width: on narrow phones or large font sizes "Notifications" wrapped its
+                        // last letter, so labels stay on one line and shrink to fit instead.
+                        label = {
+                            Text(
+                                tab.label,
+                                maxLines = 1,
+                                softWrap = false,
+                                autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = LocalTextStyle.current.fontSize),
+                            )
+                        },
                     )
                 }
             }

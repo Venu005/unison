@@ -90,7 +90,7 @@ struct MenuBarPopover: View {
 
     private var tiles: some View {
         HStack(spacing: 8) {
-            PopoverTile(symbol: "arrow.up.doc", title: "Send Files", hint: model.canSendFiles ? "or drop here" : "Phone not connected",
+            PopoverTile(symbol: "arrow.up.doc", title: "Send Files", hint: model.canSendFiles ? "or drop on the icon" : "Phone not connected",
                         enabled: model.canSendFiles) { model.pickFilesToSend() }
             PopoverTile(symbol: "macwindow", title: "Open Unison", hint: "⌘O") { model.showWindow(.phone) }
                 .keyboardShortcut("o")

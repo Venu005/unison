@@ -19,8 +19,8 @@ android {
         applicationId = "dev.macdroid.app"
         minSdk = 29
         targetSdk = 37
-        versionCode = 6
-        versionName = "0.5.0"
+        versionCode = 7
+        versionName = "0.5.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // "Photos on your Mac" (broad photo access). docs/play/photos-fallback.md turns it off if Play rejects the declaration.
         buildConfigField("boolean", "PHOTOS_GALLERY", "true")
