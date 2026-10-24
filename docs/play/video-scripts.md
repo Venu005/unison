@@ -6,6 +6,7 @@ Record on the phone with Android's screen recorder. Where the Mac is involved, r
 - Before each recording, uninstall and reinstall the Play build so the first-run screens appear (that clears the pairing), or use "Show the tour again".
 
 ## 1. Accessibility (required: the disclosure, consent, non-consent and the feature)
+Recorded 2026-10-23: `videos/unison-accessibility.mp4`.
 1. Open Unison from the launcher, already paired. Go to Settings → Remote control.
 2. Tap **Unison control**. The sheet "Control this phone from your Mac" opens. Hold for 3 seconds so every line can be read, scrolling slowly if needed.
 3. **Non-consent:** tap **Not now**. The sheet closes and Unison control stays off. Tap the row again to show that the sheet comes back.
@@ -14,6 +15,7 @@ Record on the phone with Android's screen recorder. Where the Mac is involved, r
 6. End by stopping mirroring.
 
 ## 2. Connected device (FGS `connectedDevice`)
+Recorded 2026-10-23: `videos/unison-connected-device.mp4`.
 1. Open Unison, paired. The status card says "Connected to ‹Mac›".
 2. Press Home. Pull down the shade: Unison's ongoing notification "Connected to ‹Mac›" is there.
 3. On the Mac, drop a file onto Unison in the menu bar. It arrives on the phone while Unison is in the background (show the notification).
@@ -21,6 +23,7 @@ Record on the phone with Android's screen recorder. Where the Mac is involved, r
 5. Optional: in Unison Settings, turn off "Keep connected in background". The notification goes away.
 
 ## 3. Media projection (FGS `mediaProjection`)
+Recorded 2026-10-23: `videos/unison-media-projection.mp4` (part 2 of the Accessibility video).
 1. On the Mac: Unison → Phone → Mirror. The Mac says "Tap Start on your phone…".
 2. On the phone, Android's screen-sharing prompt appears. The user presses **Start**.
 3. The phone screen appears in the Mac window, with sound. The phone shows the system's screen-sharing indicator.

@@ -4,6 +4,15 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-23 — Play declaration videos recorded: accessibility, media projection, connected device (main)
+- **What:** `docs/play/videos/unison-accessibility.mp4` (1:56, 1080p, no audio, 7 MB) for Play Console → App content → Accessibility API. Part 1 is the phone: the "Control this phone from your Mac" sheet, Not now, the sheet again, consent, Android's Allow dialog, Unison control On. Part 2 shows the Mac's Unison and mirror windows next to the phone: Mirror → Share screen, clicks, scrolling and typing from the Mac.
+- **Media projection:** `docs/play/videos/unison-media-projection.mp4` (1:12) is part 2 on its own, for the `FOREGROUND_SERVICE_MEDIA_PROJECTION` declaration (task: "Media and content projection, streaming"). For `FOREGROUND_SERVICE_CONNECTED_DEVICE` choose "Continuous data transfer to an external device".
+- **Connected device:** `docs/play/videos/unison-connected-device.mp4` (1:04) shows the Mac and phone side by side: Unison "Connected", Home, the ongoing "Connected to ‹Mac›" notification, a file sent from the Mac arriving while Unison is in the background ("Received … from Mac"), and Mac text arriving in the phone's clipboard. The Mac file picker and Unison's Recent list (15.5–35 s) are blurred because they showed personal document names.
+- **Photos form text:** `docs/play/declarations.md` now has answers under 250 characters each for Play's "Read media images" and "Read media video" fields (242 and 247 characters).
+- **How:** the phone was recorded with `adb screenrecord` over wireless debugging, and the Mac with `screencapture -v`. The clips were trimmed and composed with ffmpeg. The owner did the taps, because auto mode doesn't allow toggling accessibility services through adb.
+- **Not yet done:** upload each as an unlisted YouTube video and paste the link into the declaration. The take shows carrier promo SMS (Messages widget, about 1:15) and a home-screen photo widget, so blur them if needed before uploading.
+- **Verified:** frames checked at the start, the 0:44 join and the end.
+
 ## 2026-10-22 — Support section moved above the game; README refreshed (feat/support-before-game)
 - **What:** on the home page, Support ("Buy the robot a chai.") now comes before "Throw something at it.", which is the last section above the footer. Owner's request.
 - **README:** the intro, the feature table (everything shipped so far), the "Get it" line, a new "Support Unison" section (GitHub Sponsors, plus UPI through the site), pairing step 3 and the roadmap now match what's built.

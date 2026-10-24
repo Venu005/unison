@@ -28,6 +28,11 @@ These are answers ready to paste. Each video's shot list is in `video-scripts.md
 - **Permissions:** `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_VISUAL_USER_SELECTED` (partial access is supported).
 - **Core use:**
   > Unison's "Photos on your Mac" lets the user browse their phone's entire photo and video library from their Mac: albums, a day-by-day grid, previews, saving to the Mac, and dragging items out. This is a gallery-type feature on another screen, and it needs to list and read the library to show it on the Mac. The Android photo picker returns individual items chosen on the phone, so it can't present the library on the Mac for browsing. Users can grant full or partial access; with partial access, the Mac shows only what they picked.
+- **Play's form (250 characters per field):**
+  - **Read media images:**
+    > Unison lets the user browse their phone's whole photo library from their own paired Mac: albums, a day-by-day grid, previews, saving to the Mac. The photo picker only returns items picked on the phone, so it can't show the library on the Mac.
+  - **Read media video:**
+    > Unison lets the user browse their phone's videos from their own paired Mac, alongside photos: albums, a day-by-day grid, previews, saving to the Mac. The photo picker only returns items picked on the phone, so it can't show the library on the Mac.
 - **Disclosure:** a sheet explains what, where and why before Android's prompt (setup step and Settings → Photos).
 - **If rejected:** apply `photos-fallback.md`, remove this declaration and resubmit.
 
