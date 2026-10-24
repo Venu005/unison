@@ -12,7 +12,7 @@
 - `main` also has the memory pass (images decoded at drawn size, photo thumbnails capped), merged 2026-10-21 as `bf9adf8`; `swift test` 370.
 - `main` also has photos (Plan 6: browse the phone's photos and videos, Quick Look, Save to Mac, drag out), merged 2026-10-14 as `37b425c`; its 9 follow-up minors merged as `2807ce9`; `swift test` 274.
 ## In flight
-- **Closed-test fixes (2026-10-24, on `main`):** Android 0.5.1 (versionCode 7): bottom-tab labels stay on one line (the "Notifications" wrap on a Xiaomi 14). Mac 0.4.2: files can be dropped on the menu-bar icon, because the popover closes when a drag starts in Finder. All gates pass. Pending: the owner's hands-on check, then the closed-track upload and a Mac release.
+- **Closed-test fixes (2026-10-24, on `main`):** Android 0.5.1 (versionCode 7): bottom-tab labels stay on one line (the "Notifications" wrap on a Xiaomi 14). Mac 0.4.2: files can be dropped on the menu-bar icon, because the popover closes when a drag starts in Finder. All gates pass. Mac `v0.4.2` is published on GitHub (the website serves it); the 0.5.1 `.aab` is built. Pending: the owner's hands-on check and the closed-track upload.
 - **Google Play release (Plan 14): merged to `main`** (2026-10-22, `554cdcb`; not pushed yet). It was verified on the owner's phone.
   - The signed 0.5.0 (versionCode 6) is installed from the release bundle.
   - The owner confirmed "everything works fine": the tour from a fresh install (connect, photo, notifications, clipboard, control), the disclosures, mirroring with a manual Start, and remote control.

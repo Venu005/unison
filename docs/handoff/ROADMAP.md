@@ -82,7 +82,7 @@ The owner's planned features, with status:
 Also noted earlier: SMS (personal build only, Play-restricted), USB transport via `adb reverse`, Wi-Fi Direct, and the parked Finder Share extension.
 
 ## Website (Plan 12, live 2026-10-21)
-- Live at https://venu005.github.io/unison/; Mac releases `v0.4.0`, `v0.4.1` (2026-10-22). Next: the Play link once the listing is live (`playUrl` in `website/site.config.js`).
+- Live at https://venu005.github.io/unison/; Mac releases `v0.4.0`, `v0.4.1` (2026-10-22), `v0.4.2` (2026-10-24). Next: the Play link once the listing is live (`playUrl` in `website/site.config.js`).
 - Landing page, install steps, privacy page and the first `Unison.dmg` release on GitHub Pages / GitHub Releases. Design: `docs/superpowers/specs/2026-10-21-unison-website-design.md`.
 
 ## Support Unison: tips (Plan 13, specced 2026-10-22)

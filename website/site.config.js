@@ -18,7 +18,7 @@ export default {
   sponsorUrl: 'https://github.com/sponsors/Venu005',
   // The UPI block in the Support section (QR code, and a pay link on phones); null leaves it out.
   upiId: 'venusaiyalamanchili@oksbi',
-  version: '0.4.1',
+  version: '0.4.2',
   developer: { name: 'Venusai', email: 'venusaiyalamanchili@gmail.com', url: 'https://github.com/Venu005' },
   license: 'MIT',
   // Search-engine ownership proofs. Google's is the file public/google<token>.html; Bing reads public/BingSiteAuth.xml
