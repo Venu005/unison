@@ -2,6 +2,11 @@
 
 Each round follows the same process: brainstorm, then a spec in `docs/superpowers/specs/`, then a plan in `docs/superpowers/plans/`, then subagent-driven execution with per-task review, then a final review, then the owner's hands-on check, then merge.
 
+## In progress: Intel Mac support (2026-10-26)
+- Branch: `codex/intel-mac-support`. Spec: `docs/superpowers/specs/2026-10-26-unison-intel-mac-design.md`; plan: `docs/superpowers/plans/2026-10-26-unison-intel-mac.md`.
+- Release tooling requests both Mac architectures and validates them before packaging. Build gates pass (371 native Swift tests, Mac Debug, Android), and the local dry-run DMG contains a signed universal app. Task and final reviews passed. Intel core compilation passed; Intel execution through Rosetta is blocked by Xcode's arm64-only test helper. Next: physical Intel core tests and the DEV-GUIDE hands-on checklist, then owner-directed merge/version bump/publication.
+- Keep macOS 14+, signing and pairing unchanged. This round does not bump the version, publish, install or merge.
+
 ## Done: Plan 2 — File transfer (merged 2026-10-13)
 - **Spec:** `docs/superpowers/specs/2026-10-13-macdroid-file-transfer-design.md`. It was approved in brainstorming on 2026-10-13.
 - **Review:** the 8 review points were resolved on 2026-10-13 (spec §8; rulings in DECISIONS.md).

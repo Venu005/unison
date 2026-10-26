@@ -4,6 +4,7 @@ The full per-plan rulings are in the `docs/superpowers/plans/*-followups.md` fil
 
 | Decision | Why | Rejected alternatives |
 |---|---|---|
+| One universal Mac Release (`arm64` + `x86_64`), macOS 14+; validate both slices before DMG staging (2026-10-26, `codex/intel-mac-support`) | One download serves Intel and Apple silicon; explicit architectures and generic macOS prevent a host-only release. Debug stays native for speed | Separate architecture downloads; relying on host defaults; lowering the deployment floor |
 | Native apps on each side (Swift/SwiftUI + Kotlin/Compose) with our own protocol | Native feel, sandbox fit, no licence issues | Kotlin Multiplatform or Rust shared core (build complexity); the KDE Connect protocol (GPL, legacy quirks) |
 | HTTPS + WebSocket over TLS 1.3 with mutual auth and fingerprint pinning | Standard protocols and mature libraries (Hummingbird/SwiftNIO, OkHttp); same throughput as raw TCP; easy to debug | Custom TCP framing; HTTP/3/QUIC (no LAN benefit, immature Mac server support) |
 | The Mac is the server and the phone is always the client | Android background and battery rules; the phone never listens | Peer-to-peer listeners |

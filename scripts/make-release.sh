@@ -28,14 +28,24 @@ mkdir -p "$OUT"
 echo "Building Unison ${VERSION}…"
 cd "$ROOT/mac"
 xcodegen generate >/dev/null
-xcodebuild -project MacDroid.xcodeproj -scheme MacDroid -configuration Release -derivedDataPath build build >"$ROOT/mac/build/release-build.log" 2>&1 \
+xcodebuild -project MacDroid.xcodeproj -scheme MacDroid -configuration Release -destination 'generic/platform=macOS' -derivedDataPath build build >"$ROOT/mac/build/release-build.log" 2>&1 \
   || { echo "Release build failed; see mac/build/release-build.log" >&2; exit 1; }
+
+APP="$ROOT/mac/build/Build/Products/Release/Unison.app"
+EXECUTABLE="$APP/Contents/MacOS/Unison"
+# Check each slice separately: some lipo versions reject multiple -verify_arch arguments.
+for ARCH in arm64 x86_64; do
+  if ! lipo "$EXECUTABLE" -verify_arch "$ARCH"; then
+    echo "Release validation failed: Unison must contain arm64 and x86_64 (missing $ARCH or unreadable executable: $EXECUTABLE)." >&2
+    exit 1
+  fi
+done
 
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 STAGE="$WORK/Unison"
 mkdir -p "$STAGE"
-ditto "$ROOT/mac/build/Build/Products/Release/Unison.app" "$STAGE/Unison.app"
+ditto "$APP" "$STAGE/Unison.app"
 ln -s /Applications "$STAGE/Applications"
 rm -f "$DMG"
 hdiutil create -volname Unison -srcfolder "$STAGE" -fs HFS+ -format UDZO -quiet "$DMG"
