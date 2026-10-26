@@ -17,8 +17,8 @@ targets:
       path: MacDroid/Info.plist
       properties:
         CFBundleDisplayName: Unison
-        CFBundleShortVersionString: "0.4.2"
-        CFBundleVersion: "6"
+        CFBundleShortVersionString: "0.4.3"
+        CFBundleVersion: "7"
         LSUIElement: true
         NSLocalNetworkUsageDescription: Unison connects to your Android phone over your local network.
         NSBonjourServices: [_macdroid._tcp]

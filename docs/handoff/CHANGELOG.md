@@ -4,6 +4,11 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-26 — Prepare universal Mac 0.4.3 for publication (codex/intel-mac-support)
+- **Owner authorization:** merge to `main`, push, and publish the universal DMG so website downloads serve it.
+- **What:** Mac version 0.4.3 (build 7), website version metadata 0.4.3. The existing website download URL follows GitHub's latest release; no link change is needed. Release and deployment verification pending below; physical Intel runtime testing remains pending.
+- **Verification:** universal build tooling was reviewed and verified in the preceding entry. Rechecking the versioned DMG, repository gates and website checks before publication.
+
 ## 2026-10-26 — Universal Mac release candidate (codex/intel-mac-support)
 - **Why:** Intel closed testers need the same Unison download as Apple silicon users on macOS 14+. Release settings now explicitly build `arm64 x86_64` with `ONLY_ACTIVE_ARCH=NO`; Debug keeps the existing native development settings.
 - **What:** `scripts/make-release.sh` targets generic macOS and validates each required executable slice with `lipo -verify_arch` before staging or creating a DMG. The signed app is copied unchanged into the package. Version, signing identity, bundle ID, pairing and protocol stay unchanged; nothing has been published or installed.
