@@ -23,7 +23,7 @@ A clone of **LinkMyMac** (Android ↔ Mac integration). The phone and Mac pair o
 
 | Round | Scope | State |
 |---|---|---|
-| Intel Mac support | Universal Mac Release (`arm64` + `x86_64`), macOS 14+ | **Local candidate verified** (2026-10-26, `codex/intel-mac-support`); build gates and signed DMG checks pass; physical Intel testing pending; not merged or published |
+| Intel Mac support | Universal Mac Release (`arm64` + `x86_64`), macOS 14+ | **Merged and published as v0.4.3** (2026-10-26, `8df0f52`); website download verified; physical Intel testing pending |
 | Plan 1 | Protocol + connection core: pairing, encrypted link, auto-reconnect, battery on Mac | **Done, merged to `main`** |
 | UI/UX redesign | Native Mac (menu-bar popover + sidebar window) and Material 3 Android (setup wizard + 5 tabs) | **Done, merged to `main`** (verified by the owner) |
 | App icons | Peeking-droid icon for both apps | **Done, merged to `main`** |

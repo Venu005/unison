@@ -4,6 +4,14 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-26 — Universal Mac 0.4.3 published; website serves it (main)
+- **Merged/pushed:** `db84c61` (universal release tooling) and `8df0f52` (Mac 0.4.3 build 7, website metadata 0.4.3) fast-forwarded into `main` and pushed on the owner's instruction.
+- **Release handoff:** recorded publication checks and saved XcodeGen's regenerated tracked `mac/MacDroid/Info.plist` at 0.4.3/build 7 to match `project.yml` and the verified artifact.
+- **Published:** https://github.com/Venu005/unison/releases/tag/v0.4.3, latest non-prerelease, `Unison.dmg` (23,785,748 bytes), SHA-256 `22edd53f643cbc5df139b0ba24a6843feeaed0674db9ec8df0e40086cf47563f`. Built with `scripts/make-release.sh --dry-run`, checked before upload, then uploaded as a draft and published with `gh release edit --draft=false --latest`. The owner's untracked `AGENTS.md` was preserved; publishing the verified artifact directly avoided changing or hiding it to satisfy the script's clean-tree guard.
+- **Artifact verified:** both built and packaged app contain `x86_64 arm64`, `codesign --verify --deep --strict` passes, the packaged executable matches the build, and Info.plist says version 0.4.3, build 7, minimum macOS 14.0. The DMG was inspected read-only and detached.
+- **Gates on merged main:** 371 Swift tests, Mac Debug build, universal Release build, Android core/app tests and debug assembly pass. Website 34 tests, build and check (30 files) pass. Existing Gradle deprecations and documented Xcode environment logs remain; no Swift code warnings.
+- **Live verification:** Website workflow https://github.com/Venu005/unison/actions/runs/40276256357 succeeded for `8df0f52`. Live HTML has `softwareVersion: 0.4.3` and the latest-release download URL. Downloading that exact public URL produced a byte-for-byte match with the verified DMG and the SHA-256 above. Physical Intel runtime/core-test verification remains pending as documented in DEV-GUIDE; no installed app or Android release was changed.
+
 ## 2026-10-26 — Prepare universal Mac 0.4.3 for publication (codex/intel-mac-support)
 - **Owner authorization:** merge to `main`, push, and publish the universal DMG so website downloads serve it.
 - **What:** Mac version 0.4.3 (build 7), website version metadata 0.4.3. The existing website download URL follows GitHub's latest release; no link change is needed. Release and deployment verification pending below; physical Intel runtime testing remains pending.
