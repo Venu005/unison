@@ -4,6 +4,11 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-10-28 — Desktop parked; local Mac app back on main (main)
+- **Why:** the owner wanted Desktop windows without Wireless debugging. An on-phone probe showed Android 17 refuses any activity launch onto an app-owned virtual display (`SecurityException`, even for the probe's own activity), so it isn't possible for a normal app. The owner chose to go back to Unison without Desktop.
+- **Change:** no code change on `main`. The Desktop work (ADB/scrcpy native windows, the no-debugging design and its failed gate result) stays parked and unmerged on `codex/experimental-desktop-mode`; the probe branch was deleted after its result was recorded there. The local `/Applications/Unison.app` was replaced by a clean universal `main` Release (0.4.3); the Desktop candidate is backed up at `/private/tmp/Unison-desktop-candidate-20261028.app`.
+- **Verification:** clean `scripts/make-release.sh --dry-run` on `main` (nothing published); the app has `x86_64 arm64`, passes `codesign --verify --deep --strict`, contains no Desktop/scrcpy resources, launches from /Applications, and no `adb`/`scrcpy` process runs.
+
 ## 2026-10-26 — Universal Mac 0.4.3 published; website serves it (main)
 - **Merged/pushed:** `db84c61` (universal release tooling) and `8df0f52` (Mac 0.4.3 build 7, website metadata 0.4.3) fast-forwarded into `main` and pushed on the owner's instruction.
 - **Release handoff:** recorded publication checks and saved XcodeGen's regenerated tracked `mac/MacDroid/Info.plist` at 0.4.3/build 7 to match `project.yml` and the verified artifact.

@@ -1,6 +1,7 @@
 # Status (updated 2026-10-26, universal Mac 0.4.3 published)
 
 ## Branches
+- `codex/experimental-desktop-mode` (parked 2026-10-28, not merged): Desktop app windows over Wireless debugging (ADB/scrcpy). The no-debugging route failed its on-phone gate (Android refuses activity launches onto app-owned virtual displays); details in that branch's handoff and spec. The installed Mac app is a `main` build again.
 - `codex/intel-mac-support` (created 2026-10-26): merged into `main` and pushed as `8df0f52`; universal Mac 0.4.3 is published. Physical Intel testing remains pending.
 - `main` also has universal Mac Release tooling (`db84c61`) and Mac 0.4.3 build 7 / website 0.4.3 (`8df0f52`). Release `v0.4.3` is latest; website download verified against the local signed universal artifact.
 - `main`: Plan 1 (connection core), the UI/UX redesign, the app icons and file transfer (Plan 2, merged 2026-10-13). All gates pass on `main`. The file-transfer hands-on checklist passed except the 2 GB+ file.
