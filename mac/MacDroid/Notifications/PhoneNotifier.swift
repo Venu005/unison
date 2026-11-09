@@ -10,6 +10,8 @@ struct PhoneNotificationResponse: Sendable, Equatable {
         case reply(String)
         /// The Android action index.
         case button(Int)
+        /// "Mute <app>": stop mirroring this package's notifications.
+        case mute(packageName: String)
     }
 
     let key: String
@@ -21,6 +23,7 @@ struct PhoneNotificationResponse: Sendable, Equatable {
 final class PhoneNotifier {
     nonisolated static let keyInfo = "phoneKey"
     nonisolated static let indicesInfo = "actionIndices"
+    nonisolated static let packageInfo = "packageName"
     private let router: NotificationRouter
     private let icons: IconCache
 
@@ -45,7 +48,11 @@ final class PhoneNotifier {
         content.categoryIdentifier = spec.identifier
         content.sound = quietUpdate ? nil : .default
         if quietUpdate { content.interruptionLevel = .passive }
-        content.userInfo = [Self.keyInfo: posted.key, Self.indicesInfo: NotificationCategories.actionIndices(for: posted)]
+        content.userInfo = [
+            Self.keyInfo: posted.key,
+            Self.indicesInfo: NotificationCategories.actionIndices(for: posted),
+            Self.packageInfo: posted.packageName,
+        ]
         if let attachment = iconAttachment(posted.iconHash) { content.attachments = [attachment] }
         // Same identifier as before: an update replaces the delivered notification.
         try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: posted.key, content: content, trigger: nil))
@@ -53,6 +60,15 @@ final class PhoneNotifier {
 
     func remove(_ keys: [String]) {
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: keys)
+    }
+
+    /// Clears every delivered banner from one app (after it's muted). Banners are threaded by package.
+    func removeAll(fromPackage packageName: String) async {
+        let center = UNUserNotificationCenter.current()
+        let keys = await center.deliveredNotifications()
+            .filter { $0.request.content.categoryIdentifier.hasPrefix(NotificationCategories.prefix) && $0.request.content.threadIdentifier == packageName }
+            .map(\.request.identifier)
+        center.removeDeliveredNotifications(withIdentifiers: keys)
     }
 
     /// macOS moves attachment files into its own store (spec §8.8), so attach a copy of the cached icon.
@@ -78,6 +94,7 @@ final class PhoneNotifier {
         for (position, title) in spec.buttons.enumerated() {
             actions.append(UNNotificationAction(identifier: NotificationCategories.actionIdentifier(position: position), title: title))
         }
+        actions.append(UNNotificationAction(identifier: NotificationCategories.muteAction, title: spec.muteTitle))
         // .customDismissAction: closing the banner reports UNNotificationDismissActionIdentifier (dismiss sync).
         return UNNotificationCategory(identifier: spec.identifier, actions: actions, intentIdentifiers: [], options: [.customDismissAction])
     }
@@ -94,6 +111,9 @@ final class PhoneNotifier {
         case NotificationCategories.replyAction:
             let text = (response as? UNTextInputNotificationResponse)?.userText ?? ""
             return PhoneNotificationResponse(key: key, kind: .reply(text))
+        case NotificationCategories.muteAction:
+            guard let packageName = content.userInfo[packageInfo] as? String, !packageName.isEmpty else { return nil }
+            return PhoneNotificationResponse(key: key, kind: .mute(packageName: packageName))
         default:
             let indices = content.userInfo[indicesInfo] as? [Int] ?? []
             guard let position = NotificationCategories.position(ofAction: response.actionIdentifier),

@@ -68,7 +68,25 @@ struct PairingView: View {
                         .buttonStyle(.link)
                 }
             }
-            DisclosureGroup("Can't scan?", isExpanded: $showManual) {
+            // A plain button rather than a DisclosureGroup: on macOS only a DisclosureGroup's small arrow takes
+            // clicks, and a closed tester couldn't hit it (Mac 0.4.4). The whole row toggles here.
+            Button {
+                withAnimation(.easeInOut(duration: 0.15)) { showManual.toggle() }
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.bold))
+                        .rotationEffect(.degrees(showManual ? 90 : 0))
+                    Text("Can't scan? Enter the code on your phone")
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(Color.accentColor)
+            .accessibilityHint(showManual ? "Hides the pairing code" : "Shows the address and code to type on your phone")
+            if showManual {
                 Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 6) {
                     GridRow {
                         Text("Address").foregroundStyle(.secondary)
@@ -84,9 +102,10 @@ struct PairingView: View {
                     }
                 }
                 .font(.system(.body, design: .monospaced))
-                .padding(.top, 6)
+                .padding(.top, 2)
+                .frame(width: 360, alignment: .leading)
+                .transition(.opacity)
             }
-            .frame(width: 360)
         }
     }
 

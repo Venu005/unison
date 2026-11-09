@@ -4,6 +4,16 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-11-09 — Mac 0.4.4: closed-tester feedback; production-application draft (fix/mac-0.4.4-tester-feedback)
+- **Why:** after the 14-day closed test, a tester (MacBook Pro M5, current macOS) reported four things. They couldn't easily click "Can't scan?". They wanted to mute some apps (Outlook arrived on both Mac and phone). They asked why notifications show the Unison logo. And a dark bar covered the QR code and every screen until they restarted.
+- **Can't scan?:** it was a `DisclosureGroup`, where only the small arrow takes clicks on macOS. It's now a plain button: a whole-row "Can't scan? Enter the code on your phone" that shows the address, code and fingerprint (`PairingView`).
+- **Mute from the notification:** every mirrored banner has a "Mute <app>" action ("Mute This App" when there's no name). The category signature now includes the mute title, and banners carry `packageName` in `userInfo`. `AppModel.muteApp` sends `notification.mute` (no protocol change) and removes that app's delivered banners. The Notifications page has the same mute on right-click of a card or group header, and as a hover "Mute" button on the group header.
+- **Logo:** no change is possible without a paid Apple entitlement (see DECISIONS). The phone app's icon is still attached to each banner.
+- **Dark bar:** not reproduced, and no cause found in the code. Restarting cleared it. Asked the tester for their macOS version; tracked in STATUS.
+- **Play:** `docs/play/production-application.md` drafts every answer for the "Apply for production" form.
+- **Version:** Mac 0.4.4 (build 8). Not released yet.
+- **Verification:** `swift test` 372 tests pass (new `categoryCarriesAMuteButtonNamedForTheApp`). The Mac Debug build succeeds with no Swift warnings. Android `:core:test :app:testDebugUnitTest :app:assembleDebug` pass. Not yet checked by hand in the running app: the banner's Mute action, the right-click menus and the new Can't scan row.
+
 ## 2026-10-28 — Delete the Desktop branch (main)
 - **Why:** the owner asked to delete the parked Desktop work.
 - **Change:** deleted the local-only `codex/experimental-desktop-mode` (14 commits, tip `085b299`, never pushed). Its outcome, including the failed no-debugging gate, is now recorded in DECISIONS.md; STATUS no longer lists the branch.

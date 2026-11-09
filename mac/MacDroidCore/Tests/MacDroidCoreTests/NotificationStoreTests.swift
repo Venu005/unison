@@ -66,7 +66,7 @@ func posted(_ key: String, app: String = "com.whatsapp", name: String = "WhatsAp
         #expect(afterTheWindow)
     }
 
-    @Test func categoryDependsOnReplyAndButtonTitlesOnly() {
+    @Test func categoryDependsOnReplyButtonTitlesAndAppName() {
         let a = NotificationCategories.spec(for: posted("1", buttons: ["Mark as read"], canReply: true))
         let b = NotificationCategories.spec(for: posted("2", title: "Other", buttons: ["Mark as read"], canReply: true))
         let c = NotificationCategories.spec(for: posted("3", buttons: ["Mark as read"], canReply: false))
@@ -76,6 +76,18 @@ func posted(_ key: String, app: String = "com.whatsapp", name: String = "WhatsAp
         #expect(a.identifier != d.identifier)
         #expect(a.identifier.hasPrefix(NotificationCategories.prefix))
         #expect(a.buttons == ["Mark as read"])
+    }
+
+    @Test func categoryCarriesAMuteButtonNamedForTheApp() {
+        let gmail = NotificationCategories.spec(for: posted("1", app: "com.google.android.gm", name: "Gmail"))
+        let outlook = NotificationCategories.spec(for: posted("2", app: "com.microsoft.office.outlook", name: "Outlook"))
+        let unnamed = NotificationCategories.spec(for: posted("3", app: "com.example", name: "  "))
+        #expect(gmail.muteTitle == "Mute Gmail")
+        #expect(outlook.muteTitle == "Mute Outlook")
+        #expect(unnamed.muteTitle == "Mute This App")
+        #expect(gmail.identifier != outlook.identifier)
+        #expect(NotificationCategories.muteAction != NotificationCategories.replyAction)
+        #expect(NotificationCategories.position(ofAction: NotificationCategories.muteAction) == nil)
     }
 
     @Test func categoriesKeepAtMostThreeButtonsAndMapPositionsToIndices() {

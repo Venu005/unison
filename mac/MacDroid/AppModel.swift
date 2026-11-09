@@ -477,6 +477,12 @@ final class AppModel {
         Task { await phoneNotifications.setMuted(packageName: packageName, muted: muted) }
     }
 
+    /// "Mute <app>" from a banner or a card: mute on the phone and clear that app's banners from Notification Center.
+    func muteApp(_ packageName: String) {
+        setAppMuted(packageName, muted: true)
+        Task { await phoneNotifier.removeAll(fromPackage: packageName) }
+    }
+
     func setShowPhoneNotifications(_ on: Bool) {
         showPhoneNotifications = on
         UserDefaults.standard.set(on, forKey: Self.showPhoneNotificationsKey)
@@ -508,6 +514,7 @@ final class AppModel {
         case .dismiss: dismissNotification(response.key)
         case .reply(let text): replyToNotification(response.key, text: text)
         case .button(let index): performNotificationAction(response.key, index: index)
+        case .mute(let packageName): muteApp(packageName)
         }
     }
 

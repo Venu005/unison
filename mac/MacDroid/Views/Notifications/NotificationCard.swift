@@ -65,6 +65,12 @@ struct NotificationCard: View {
             .opacity(hovering ? 1 : 0)
         }
         .onHover { hovering = $0 }
+        .contextMenu {
+            Button(NotificationCategories.muteTitle(appName: posted.appName), systemImage: "bell.slash") {
+                model.muteApp(posted.packageName)
+            }
+            Button("Dismiss", systemImage: "xmark") { model.dismissNotification(posted.key) }
+        }
         .animation(.easeInOut(duration: 0.15), value: replying)
         .animation(.easeInOut(duration: 0.15), value: sentReply)
     }

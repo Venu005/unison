@@ -37,7 +37,8 @@ struct NotificationsView: View {
                                     iconURL: model.iconURL(group.iconHash),
                                     collapsed: collapsed.contains(group.packageName),
                                     toggle: { toggle(group.packageName) },
-                                    clear: { model.dismissNotifications(group.entries.map(\.posted.key)) }
+                                    clear: { model.dismissNotifications(group.entries.map(\.posted.key)) },
+                                    mute: { model.muteApp(group.packageName) }
                                 )
                                 if !collapsed.contains(group.packageName) {
                                     ForEach(group.entries) { entry in
@@ -73,13 +74,14 @@ struct NotificationsView: View {
     }
 }
 
-/// App name, count and a hover "Clear" for one app's group.
+/// App name, count, and hover "Mute" and "Clear" buttons for one app's group.
 private struct NotificationGroupHeader: View {
     let group: NotificationGroup
     let iconURL: URL?
     let collapsed: Bool
     let toggle: () -> Void
     let clear: () -> Void
+    let mute: () -> Void
     @State private var hovering = false
 
     var body: some View {
@@ -104,6 +106,11 @@ private struct NotificationGroupHeader: View {
             }
             .buttonStyle(.plain)
             Spacer()
+            Button("Mute", action: mute)
+                .buttonStyle(.borderless)
+                .foregroundStyle(.secondary)
+                .help("Stop showing \(group.appName)'s notifications on this Mac. Unmute it in Muted Apps.")
+                .opacity(hovering ? 1 : 0)
             Button("Clear", action: clear)
                 .buttonStyle(.borderless)
                 .foregroundStyle(.secondary)
@@ -111,5 +118,9 @@ private struct NotificationGroupHeader: View {
                 .opacity(hovering ? 1 : 0)
         }
         .onHover { hovering = $0 }
+        .contextMenu {
+            Button(NotificationCategories.muteTitle(appName: group.appName), systemImage: "bell.slash", action: mute)
+            Button("Clear", systemImage: "xmark", action: clear)
+        }
     }
 }
