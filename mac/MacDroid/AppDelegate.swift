@@ -10,6 +10,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Set by the app at startup: answers Services → "Open on Phone".
     static var servicesProvider: NSObject?
 
+    /// Set by the app at startup: whether a phone is paired, read before any window can appear.
+    static var isPaired: (@MainActor () -> Bool)?
+
+    /// If the window is going to open at launch, become a Dock app *now*, before any window exists. Switching the
+    /// activation policy while the window is on screen breaks its title-bar layout until relaunch: a blurred bar
+    /// sat across every page, over the QR code (closed-test report, Mac 0.4.4). See `DockPolicy`.
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        // Never let macOS reopen the window by itself on older systems; Unison opens it (macOS 15+ uses the scene's
+        // `restorationBehavior(.disabled)`).
+        UserDefaults.standard.register(defaults: ["NSQuitAlwaysKeepsWindows": false])
+        if Self.isPaired?() == false { DockPolicy.prepareToShowWindow() }
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         if let provider = Self.servicesProvider {
             NSApp.servicesProvider = provider
