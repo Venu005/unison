@@ -4,6 +4,13 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-11-09 — Mac 0.4.4 released; website serves it (main)
+- **Owner authorization:** commit, merge to `main`, push, publish the release and update the website.
+- **What:** `fix/mac-0.4.4-tester-feedback` fast-forwarded into `main` and pushed. `website/site.config.js` `version` is 0.4.4 (the Download button already follows the latest release).
+- **Artifact:** `scripts/make-release.sh --dry-run` produced `Unison.dmg` (23,795,351 bytes), SHA-256 `cacad3073274fcbed5a4099c4a336b222f8d5ef88b7a5956b17b45019061ddb2`. The app has `x86_64 arm64`, passes `codesign --verify --deep --strict` (Authority "MacDroid Self-Signed") and reports 0.4.4 build 8. The DMG's executable matches the build. The release build log has no Swift warnings. Published with `gh release create v0.4.4` (the owner's untracked `AGENTS.md`, `docs/unison_feedback.png` and `mac/.desktop-runtime/` were left alone, so the script's clean-tree guard wasn't used).
+- **Gates:** `swift test` 372, Mac Debug build, Android `:core:test :app:testDebugUnitTest :app:assembleDebug` (no Android change since), website 34 tests, build and check (30 files).
+- **Still pending:** the owner's hands-on check of the 0.4.4 fixes (Mute buttons, Can't scan row, no bar after a first launch or relaunch, the denser QR code scanning).
+
 ## 2026-11-09 — Mac 0.4.4: the bar that blocked the QR code (fix/mac-0.4.4-tester-feedback)
 - **Why:** the same tester's QR scan failed because a blurred bar with a thin line under it lay across the middle of the code. The bar was on every page until they force-quit and relaunched. It was the window's title-bar background in the wrong place. `DockPolicy` already documents the cause: switching the activation policy (menu-bar app ↔ Dock app) while the window is on screen re-lays the split view out and breaks its title-bar insets. Unison's own window-opening path switches first, but SwiftUI could open the `Window` scene at launch by itself, or restore it, and then `windowDidAppear` switched with the window already up. A fresh install at the pairing screen is exactly that case. After the relaunch the tester was paired, so the window no longer opened by itself.
 - **Fix:** on macOS 15+ the window scene has `defaultLaunchBehavior(.suppressed)` and `restorationBehavior(.disabled)` (`openedOnlyByUnison()` in `MacDroidApp`). On macOS 14, `NSQuitAlwaysKeepsWindows` defaults to false. And `applicationWillFinishLaunching` switches to a Dock app before any window exists when no phone is paired (the case where the window opens at launch).
