@@ -130,4 +130,9 @@ class UiPrefs(context: Context) {
     var photosStepDone: Boolean
         get() = prefs.getBoolean("photosStepDone", false)
         set(value) { prefs.edit().putBoolean("photosStepDone", value).apply() }
+
+    /** The first-run Unison control step (its Accessibility disclosure) was answered, Agree or Not now. */
+    var controlStepDone: Boolean
+        get() = prefs.getBoolean("controlStepDone", false)
+        set(value) { prefs.edit().putBoolean("controlStepDone", value).apply() }
 }

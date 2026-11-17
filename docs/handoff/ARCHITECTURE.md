@@ -92,7 +92,7 @@ Mac app (`mac/MacDroid/`):
   - `service/`: foreground `ConnectionService` (type connectedDevice), notifications, boot receiver, battery and network watchers. File transfers add `TransferNotifications` (progress with Cancel, received with Open, ask-where-to-save prompts) and the `SEND_FILES`/`CANCEL_TRANSFERS` actions; `platform/SendFiles` turns picked or shared URIs into queued transfers.
 - **UI:**
   - `ui/navigation/AppNavHost.kt`: switches setup ⇄ main via `SetupFlow`.
-  - `ui/setup/`: the first-run wizard (Plan 14). Step order: "Connect to your Mac" (`PairStep`, tour step 1; Scan asks for local network, then the camera) → Local network (only if still missing) → Files ("Where should files from your Mac go?", first run only) → Photos → Battery. Notification access is tour step 3 on the Notifications tab. "Post notifications" is asked once after the first connection (`AppNavHost`, `PromptRules`). Settings has a Files section (`FilesSettingsViewModel`).
+  - `ui/setup/`: the first-run wizard (Plan 14). Step order: Unison control (optional; the Accessibility disclosure in full, shown before pairing so Play reviewers see it without a Mac; `SetupStep.Control`, answered once via `uiPrefs.controlStepDone`) → "Connect to your Mac" (`PairStep`, tour step 1; Scan asks for local network, then the camera) → Local network (only if still missing) → Files ("Where should files from your Mac go?", first run only) → Photos → Battery. Notification access is tour step 3 on the Notifications tab. "Post notifications" is asked once after the first connection (`AppNavHost`, `PromptRules`). Settings has a Files section (`FilesSettingsViewModel`).
   - `ui/main/`: 5-tab bottom navigation: Home, Notifications, Clipboard, Files, Settings. Clipboard is live (`ui/clipboard/ClipboardScreen`: Send now, "Get Mac clipboard", Recent). Notifications is live (`ui/notifications/`: a control panel with the "Show on your Mac" switch and per-app switches). Files is live (`ui/files/`: `FilesScreen`, `TransferRow`, `SendPickers`). Home has a Send FAB and the last 3 transfers.
   - `ui/presentation/`: pure status text shared by Home and the notification.
   - `ui/theme/`: Material You, with a fallback palette.
@@ -116,7 +116,7 @@ Guided tour (Plan 14, Android):
 - `TourController` saves progress through `TourPrefs` and is provided as `LocalTour` from `AppNavHost`.
 - `CoachMarkHost` draws the spotlight and bubble over the tagged composables (`Modifier.tourTarget`).
 - Step 1 is the setup "Connect to your Mac" screen (`PairStep`). The rest run on Home, Notifications, Clipboard and Settings.
-- Disclosures: `ui/disclosure/Disclosures` and `DisclosureSheet`/`rememberDisclosed` come before every sensitive permission.
+- Disclosures: `ui/disclosure/Disclosures` and `DisclosureSheet`/`rememberDisclosed` come before every sensitive permission. `DisclosureContent` is the same disclosure as a full screen (the first-run Unison control step).
 
 Tips in the apps (Plan 13):
 - **Mac:** Settings → About has a "Support Unison" button that opens `…/unison/#support`.

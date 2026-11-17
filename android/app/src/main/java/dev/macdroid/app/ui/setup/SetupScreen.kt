@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.BatteryChargingFull
@@ -43,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.macdroid.app.platform.Permissions
 import dev.macdroid.app.ui.PairingViewModel
+import dev.macdroid.app.ui.disclosure.DisclosureContent
 import dev.macdroid.app.ui.disclosure.Gated
 import dev.macdroid.app.ui.disclosure.rememberDisclosed
 import dev.macdroid.app.ui.presentation.PhotosAccessText
@@ -60,6 +63,7 @@ fun SetupScreen(viewModel: SetupViewModel, pairingViewModel: PairingViewModel = 
         }
         AnimatedContent(targetState = state.step, label = "setup-step", modifier = Modifier.weight(1f)) { step ->
             when (step) {
+                SetupStep.Control -> ControlStep(onDone = viewModel::completeControl)
                 SetupStep.LocalNetwork -> LocalNetworkStep(onResult = viewModel::refresh)
                 SetupStep.PairMac -> PairStep(pairingViewModel, macName)
                 SetupStep.Files -> FilesStep(onDone = viewModel::completeFiles)
@@ -68,6 +72,27 @@ fun SetupScreen(viewModel: SetupViewModel, pairingViewModel: PairingViewModel = 
                 null -> Box(Modifier.fillMaxSize())
             }
         }
+    }
+}
+
+/**
+ * The optional Unison control step, first on first run: the Accessibility disclosure in full, on screen, with the
+ * consent box. Agree opens Android's Accessibility settings; Not now moves on (Settings → Unison control asks again).
+ */
+@Composable
+private fun ControlStep(onDone: () -> Unit) {
+    val context = LocalContext.current
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp)) {
+        Text("Optional", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+        Spacer(Modifier.height(4.dp))
+        DisclosureContent(
+            Gated.Accessibility,
+            onAgree = {
+                onDone()
+                runCatching { context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
+            },
+            onNotNow = onDone,
+        )
     }
 }
 

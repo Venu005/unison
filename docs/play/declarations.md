@@ -2,15 +2,15 @@
 
 These are answers ready to paste. Each video's shot list is in `video-scripts.md`. Upload each video as an **unlisted** YouTube video and paste its link.
 
-## Accessibility API (App content → Accessibility API)
+## Accessibility services (App content → Accessibility services)
 
 - **Is your app an accessibility tool?** No. In the app, `res/xml/control_service.xml` declares `isAccessibilityTool="false"`.
 - **Why does the app use the AccessibilityService API?** App functionality.
 - **Describe the core functionality that uses it:**
   > Unison mirrors the user's own phone screen to their own paired Mac, over their local network. When the user turns on "Unison control", Unison uses the AccessibilityService API to replay the user's mouse clicks, scrolls and typing from the Mac window onto their phone (gestures with dispatchGesture, global actions such as Back and Home, and typing with ACTION_SET_TEXT into the focused field). It acts only while the user is mirroring and only in response to the user's own input on their Mac. It doesn't watch other apps, read screen content beyond the focused text field it types into, or act on its own.
 - **Do you collect or share personal or sensitive data using the accessibility capabilities?** No. The text in the field being typed into is read on the phone only so it can be edited, and it never leaves the phone. Input comes from the user's own Mac, encrypted end to end, and nothing goes to the developer or any server.
-- **Prominent disclosure:** in the app, Settings → Remote control → Unison control opens a bottom sheet titled "Control this phone from your Mac". It says what the service does and reads, needs the "I understand and allow Unison control" box ticked, and offers "Agree and open Accessibility" or "Not now". The guided tour shows it as its last step.
-- **Video link:** `video-scripts.md`, "Accessibility".
+- **Prominent disclosure (since 0.5.2):** the **first screen** of a fresh install, before pairing and with no Mac needed, is "Unison control uses the Accessibility service". It names the AccessibilityService API and says what it uses, how and who it's shared with (no one). The "I understand and allow Unison control" box must be ticked before "Agree and open Accessibility" works, and "Not now" moves on without turning anything on. The same text appears as a sheet from Settings → Remote control → Unison control, and in the guided tour's last step. Play rejected 0.5.1 on 2026-11-13 because the disclosure was only in Settings, behind pairing.
+- **Video link:** https://youtu.be/kTZcMhJnMUE (0.5.2, unlisted; `videos/0.5.2/unison-accessibility-0.5.2.mp4`). Also used under Sign in details.
 
 ## Foreground service permissions (App content → Foreground service permissions)
 

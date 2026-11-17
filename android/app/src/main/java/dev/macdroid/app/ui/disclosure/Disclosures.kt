@@ -18,12 +18,13 @@ object Disclosures {
             agreeLabel = "Agree and open settings",
         )
         Gated.Accessibility -> Disclosure(
-            title = "Control this phone from your Mac",
+            title = "Unison control uses the Accessibility service",
             bullets = listOf(
-                "Uses Android's Accessibility service to tap, scroll and type on this phone, only while you mirror it and only when your Mac asks.",
-                "To type, it reads the text box you're typing into so it can edit it. That text stays on the phone.",
-                "Nothing is collected or sent anywhere except your Mac's mirror window.",
-                "Phones with Advanced Protection turned on don't allow this.",
+                "Unison uses Android's AccessibilityService API so your paired Mac can tap, scroll and type on this phone. This is optional, and Unison isn't an accessibility tool.",
+                "What it uses: the clicks, scrolls and keys you send from your Mac's mirror window. To type, it reads the text box you're typing into so it can edit it. It doesn't read the rest of your screen or watch other apps.",
+                "How it's used: only to carry out your own input from your Mac, only while you mirror this phone. It never acts on its own.",
+                "Shared with: no one. Unison doesn't collect, store or send this data to us or anyone else. That text stays on the phone.",
+                "You can turn it off any time in Android's Accessibility settings. Phones with Advanced Protection turned on don't allow this.",
             ),
             agreeLabel = "Agree and open Accessibility",
             checkbox = "I understand and allow Unison control",

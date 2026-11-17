@@ -6,13 +6,14 @@ Record on the phone with Android's screen recorder. Where the Mac is involved, r
 - Before each recording, uninstall and reinstall the Play build so the first-run screens appear (that clears the pairing), or use "Show the tour again".
 
 ## 1. Accessibility (required: the disclosure, consent, non-consent and the feature)
-Recorded 2026-10-23: `videos/unison-accessibility.mp4`.
-1. Open Unison from the launcher, already paired. Go to Settings → Remote control.
-2. Tap **Unison control**. The sheet "Control this phone from your Mac" opens. Hold for 3 seconds so every line can be read, scrolling slowly if needed.
-3. **Non-consent:** tap **Not now**. The sheet closes and Unison control stays off. Tap the row again to show that the sheet comes back.
-4. **Consent:** tick "I understand and allow Unison control", then tap **Agree and open Accessibility**. Android's Accessibility settings open: choose Unison control → turn it on → Allow.
-5. **Feature:** on the Mac, start mirroring (Unison → Phone → Mirror), then press Start on the phone. In the Mac window, click an app icon on the phone, scroll a list, tap into a search box and type "hello". The phone responds.
-6. End by stopping mirroring.
+Recorded 2026-10-23 for 0.5.1: `videos/unison-accessibility.mp4`. **Re-recorded for 0.5.2 on 2026-11-13:** `videos/0.5.2/unison-accessibility-0.5.2.mp4` (4:34, 720×1600). Play rejected 0.5.1 that day for a missing prominent disclosure. The video is the phone's own screen recording (`adb shell screenrecord`) in three parts, joined with ffmpeg. A WhatsApp pop-up, and the contacts and SMS previews in the phone's search, are blurred, and Android's battery settings are cut. The raw parts (`part1-…`, `part2-…`, `part3-…`) are unblurred: never upload them. `docs/play/videos/` is excluded from git in `.git/info/exclude`.
+1. Start from a **fresh install** (uninstall Unison first, or Android Settings → Apps → Unison → Storage → Clear storage). Open Unison from the launcher.
+2. The first screen is "Unison control uses the Accessibility service". Hold for 5 seconds so every line can be read, scrolling slowly to the end.
+3. **Non-consent:** show that **Agree and open Accessibility** is greyed out until the box is ticked. Tap **Not now**: Unison moves on to "Connect to your Mac" and Unison control stays off.
+4. Pair with the Mac and finish setup. Go to Settings → Remote control → **Unison control**: the same disclosure opens as a sheet.
+5. **Consent:** tick "I understand and allow Unison control", then tap **Agree and open Accessibility**. Android's Accessibility settings open: choose Unison control → turn it on → Allow.
+6. **Feature:** on the Mac, start mirroring (Unison → Phone → Mirror), then press Start on the phone. In the Mac window, click an app icon on the phone, scroll a list, tap into a search box and type "hello". The phone responds.
+7. End by stopping mirroring.
 
 ## 2. Connected device (FGS `connectedDevice`)
 Recorded 2026-10-23: `videos/unison-connected-device.mp4`.

@@ -33,6 +33,8 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 3. `adb devices` may list the phone twice (IP and an `_adb-tls-connect` mDNS alias). Pick one with `ANDROID_SERIAL`.
 4. On-device test: `./gradlew :app:connectedDebugAndroidTest` (KeystoreTlsTest). Gradle installs and then **uninstalls** a temporary build, so the app icon appears and disappears. The task may exit 1 even with 0 failures because of the duplicate adb entry; confirm with `adb shell am instrument`.
 5. Don't `pm clear`, grant permissions or tap on the owner's phone from automation.
+6. From Claude Code, `adb pair` fails with "protocol fault (couldn't read status message)" while the adb server runs inside the command sandbox. Run `adb kill-server` and then pair with the sandbox off. `adb mdns services` then shows the `_adb-tls-connect` port.
+7. A copy installed from Play is signed by Google, so a locally signed release APK won't install over it (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`). You have to uninstall first, which loses the pairing, and the Play Store can't update over the local copy afterwards either. Large installs over Wi-Fi can drop with "device offline". Reconnect with `adb connect <ip>:<connect-port>` and retry.
 
 ## Gotchas
 - **Mirroring (Plan 7):**

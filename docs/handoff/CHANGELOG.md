@@ -11,6 +11,22 @@ Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits
 - **Why:** the owner shared the live listing URL and asked for it on the site.
 - **Verified:** `npm test` 34/34, `npm run build` (no warnings), `npm run check` ok (30 files). The built `index.html` has 3 Play links and no "coming soon". A `playUrl: null` render through the plugin still gives the "Coming soon" labels. Deployed by the website workflow on push to `main`.
 
+## 2026-11-13 — Android 0.5.2: fixes for Play's Accessibility API rejection (main)
+- **Why:** Play rejected the 0.5.1 update on 2026-11-13 with two Accessibility API policy issues. (1) "Missing description in Play Listing": the long description didn't mention the AccessibilityService API. (2) "Missing prominent disclosure": the reviewer couldn't find the in-app disclosure. It was only in Settings → Unison control, and the whole app sits behind pairing with a Mac, so a reviewer without one never reached it.
+- **Disclosure first:** a new optional first-run setup step, `SetupStep.Control`, comes **before** "Connect to your Mac". It shows the full Accessibility disclosure on screen (`DisclosureContent`, extracted from `DisclosureSheet`), with the consent checkbox, "Agree and open Accessibility" (opens Android's Accessibility settings) and "Not now". It's answered once (`uiPrefs.controlStepDone`) and skipped if control is already on or setup was finished before.
+- **Wording:** the disclosure now follows Play's template. The title is "Unison control uses the Accessibility service", and the bullets name the AccessibilityService API and say what it uses, how it's used, who it's shared with (no one), that Unison isn't an accessibility tool, and how to turn it off.
+- **Listing:** `docs/play/listing.md` has a new "Accessibility service (Unison control)" section to paste into the long description. `declarations.md`, `app-access.md` and the Accessibility video script describe the new first screen. The video must be re-recorded.
+- **Video:** `docs/play/videos/0.5.2/unison-accessibility-0.5.2.mp4` (4:34) shows the following, in order:
+  - the fresh-install disclosure, with Agree greyed out until the box is ticked, then Not now;
+  - pairing;
+  - the Settings disclosure, Agree, and Android's "full control" dialog with Allow;
+  - mirroring with Share screen;
+  - remote control from the Mac (opening the launcher, typing in search, opening Settings).
+
+  A WhatsApp pop-up and the contacts and SMS previews in search are blurred, and the battery settings stretch is cut. The video is for both the Accessibility API declaration and App access. The folder isn't tracked in git.
+- **Version:** Android 0.5.2 (versionCode 8). `:app:bundleRelease` built the signed `app-release.aab` (17.3 MB); `jarsigner -verify` says "jar verified".
+- **Verification:** `./gradlew :core:test :app:testDebugUnitTest :app:assembleDebug` pass with no Kotlin warnings. New tests: `controlDisclosureComesFirstAndNeedsNoMac`, `controlStepSkippedWhenAlreadyOnOrSetupDone` and `accessibilityDisclosureFollowsPlaysTemplate`. **On device:** the release APK was installed fresh on the Nothing Phone (3) over wireless adb, replacing the Play 0.5.1 because the signatures differ. A screenshot shows the disclosure as the first screen, with Agree greyed out until the box is ticked. Wireless adb needs the sandbox off here (see DEV-GUIDE).
+
 ## 2026-11-09 — Mac 0.4.4 released; website serves it (main)
 - **Owner authorization:** commit, merge to `main`, push, publish the release and update the website.
 - **What:** `fix/mac-0.4.4-tester-feedback` fast-forwarded into `main` and pushed. `website/site.config.js` `version` is 0.4.4 (the Download button already follows the latest release).

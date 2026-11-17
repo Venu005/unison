@@ -31,26 +31,32 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisclosureSheet(gated: Gated, onAgree: () -> Unit, onNotNow: () -> Unit) {
+    ModalBottomSheet(onDismissRequest = onNotNow, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        DisclosureContent(gated, onAgree, onNotNow, Modifier.padding(horizontal = 24.dp).padding(bottom = 24.dp))
+    }
+}
+
+/** The disclosure itself, for a sheet or a full screen (the first-run Unison control step). */
+@Composable
+fun DisclosureContent(gated: Gated, onAgree: () -> Unit, onNotNow: () -> Unit, modifier: Modifier = Modifier) {
     val d = Disclosures.of(gated)
     var checked by rememberSaveable(gated) { mutableStateOf(false) }
-    ModalBottomSheet(onDismissRequest = onNotNow, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        Column(Modifier.padding(horizontal = 24.dp).padding(bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(d.title, style = MaterialTheme.typography.headlineSmall)
-            Column(
-                Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp)).padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                d.bullets.forEach { Text("•  $it", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-            }
-            d.checkbox?.let { label ->
-                Row(Modifier.fillMaxWidth().clickable { checked = !checked }, verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = checked, onCheckedChange = { checked = it })
-                    Text(label, style = MaterialTheme.typography.bodyMedium)
-                }
-            }
-            Button(onClick = onAgree, enabled = Disclosures.canAgree(gated, checked), modifier = Modifier.fillMaxWidth().height(52.dp)) { Text(d.agreeLabel) }
-            TextButton(onClick = onNotNow, modifier = Modifier.fillMaxWidth()) { Text("Not now") }
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(d.title, style = MaterialTheme.typography.headlineSmall)
+        Column(
+            Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp)).padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            d.bullets.forEach { Text("•  $it", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         }
+        d.checkbox?.let { label ->
+            Row(Modifier.fillMaxWidth().clickable { checked = !checked }, verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = checked, onCheckedChange = { checked = it })
+                Text(label, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+        Button(onClick = onAgree, enabled = Disclosures.canAgree(gated, checked), modifier = Modifier.fillMaxWidth().height(52.dp)) { Text(d.agreeLabel) }
+        TextButton(onClick = onNotNow, modifier = Modifier.fillMaxWidth()) { Text("Not now") }
     }
 }
 

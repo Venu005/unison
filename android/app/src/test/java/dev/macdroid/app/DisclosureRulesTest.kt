@@ -41,6 +41,18 @@ class DisclosureRulesTest {
         assertFalse(Regex("Start|screen-sharing").containsMatchIn(t))
     }
 
+    // Play rejection 2026-11-13: name the API, say what data it touches, how it's used and that nothing is shared.
+    @Test fun accessibilityDisclosureFollowsPlaysTemplate() {
+        val d = Disclosures.of(Gated.Accessibility)
+        assertTrue(d.title.contains("Accessibility"))
+        val t = text(Gated.Accessibility)
+        assertTrue(t.contains("AccessibilityService API"))
+        assertTrue(t.contains("What it uses:"))
+        assertTrue(t.contains("How it's used:"))
+        assertTrue(t.contains("Shared with: no one"))
+        assertTrue(t.contains("isn't an accessibility tool"))
+    }
+
     // Final review: "records … nothing is recorded" contradicted itself; it captures and streams, it doesn't record.
     @Test fun microphoneDisclosureDoesNotSayRecord() {
         assertFalse(text(Gated.Microphone).contains("record", ignoreCase = true))

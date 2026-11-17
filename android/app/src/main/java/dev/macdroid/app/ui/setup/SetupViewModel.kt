@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import dev.macdroid.app.BuildConfig
 import dev.macdroid.app.graph
 import dev.macdroid.app.platform.Permissions
+import dev.macdroid.app.platform.control.MacDroidControlService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,8 @@ class SetupViewModel(application: Application, private val saved: SavedStateHand
         val hasLocalNetwork: Boolean,
         val filesStepDone: Boolean,
         val photosStepDone: Boolean,
+        val controlStepDone: Boolean,
+        val controlOn: Boolean,
     )
 
     private val graph = application.graph
@@ -87,6 +90,12 @@ class SetupViewModel(application: Application, private val saved: SavedStateHand
         refresh()
     }
 
+    /** "Unison control": answered either way; Agree also opens Android's Accessibility settings (the screen does that). */
+    fun completeControl() {
+        graph.uiPrefs.controlStepDone = true
+        refresh()
+    }
+
     fun completeBattery() {
         graph.uiPrefs.setupDone = true
         batteryDone.value = true
@@ -102,6 +111,8 @@ class SetupViewModel(application: Application, private val saved: SavedStateHand
         filesStepDone = l.filesStepDone,
         photosStepDone = l.photosStepDone,
         photosGallery = BuildConfig.PHOTOS_GALLERY,
+        controlStepDone = l.controlStepDone,
+        controlOn = l.controlOn,
     )
 
     private fun readLocal(): Local {
@@ -111,6 +122,8 @@ class SetupViewModel(application: Application, private val saved: SavedStateHand
             hasLocalNetwork = Permissions.hasLocalNetwork(app),
             filesStepDone = graph.filesPrefs.filesStepDone,
             photosStepDone = graph.uiPrefs.photosStepDone,
+            controlStepDone = graph.uiPrefs.controlStepDone,
+            controlOn = MacDroidControlService.running.value,
         )
     }
 

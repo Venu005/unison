@@ -1,6 +1,6 @@
 package dev.macdroid.app.ui.setup
 
-enum class SetupStep { PairMac, LocalNetwork, Files, Photos, Battery }
+enum class SetupStep { Control, PairMac, LocalNetwork, Files, Photos, Battery }
 
 data class SetupInputs(
     val setupDone: Boolean,
@@ -14,11 +14,17 @@ data class SetupInputs(
     val photosStepDone: Boolean = false,
     /** `BuildConfig.PHOTOS_GALLERY`: off only in the Play fallback (docs/play/photos-fallback.md). */
     val photosGallery: Boolean = true,
+    /** The first-run Unison control step (the Accessibility disclosure) was answered. */
+    val controlStepDone: Boolean = false,
+    /** Unison control (the accessibility service) is already on. */
+    val controlOn: Boolean = false,
 )
 
 /**
  * Which setup steps to show. First run starts at "Connect to your Mac", the first step of the guided tour (Plan 14),
  * whose Scan button asks for local network and camera access; notifications are a tour step on the main screens.
+ * Before that comes the optional Unison control step: Google Play's prominent disclosure for the AccessibilityService
+ * API must be seen in normal use, without a paired Mac or a trip into Settings (Play rejection, 2026-11-13).
  * After setup only what's required to work again (local network permission, pairing) is shown.
  */
 object SetupFlow {
@@ -30,6 +36,7 @@ object SetupFlow {
             }
         } else {
             buildList {
+                add(SetupStep.Control)
                 add(SetupStep.PairMac)
                 // Normally granted from the Scan button already; shown only if pairing somehow got past without it.
                 if (i.needsLocalNetwork) add(SetupStep.LocalNetwork)
@@ -42,6 +49,7 @@ object SetupFlow {
     fun current(i: SetupInputs): SetupStep? = steps(i).firstOrNull { !isDone(it, i) }
 
     private fun isDone(step: SetupStep, i: SetupInputs): Boolean = when (step) {
+        SetupStep.Control -> i.controlStepDone || i.controlOn || i.setupDone
         SetupStep.PairMac -> i.paired
         SetupStep.LocalNetwork -> !i.needsLocalNetwork || i.hasLocalNetwork
         SetupStep.Files -> i.filesStepDone || i.setupDone
