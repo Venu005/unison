@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-11-17 — Mac 0.4.5 (build 9) (main)
+- **What:** version bump in `mac/project.yml` for the title-bar re-layout and logging (entry below). Released with `scripts/make-release.sh`.
+- **Verified:** `scripts/make-release.sh --dry-run` built the universal DMG (arm64 + x86_64).
+
 ## 2026-11-17 — Mac: re-lay out the main window and log its title bar, against the bar over the QR code (main)
 - **Why:** users on Mac 0.4.4 still report the blurred bar with a separator line across the pairing QR code on every unpaired launch, after the 0.4.4 fix (`0a92231`). Resizing or collapsing the sidebar clears it, and it comes back on relaunch. The bar is the detail column's title-bar strip (`NSScrollPocket` / `NSTitlebarBackgroundView`) drawn about 244pt below the top of the window.
 - **Couldn't reproduce:** we tried the installed 0.4.4 (paired) and a standalone harness copying the unpaired window path (menu-bar-only app, same `DockPolicy` calls and order, NavigationSplitView, spinner then code, countdown). Each ran with Stage Manager on and off, and with and without the early Dock switch. The strip was always in place. A Release build under another bundle id is not isolated: it asked for the real `dev.macdroid.identity` keychain item, so don't use that for unpaired testing.
