@@ -106,6 +106,7 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 - `.github/workflows/website.yml` runs `npm ci`, `npm test`, `npm run build`, `npm run check` and deploys `website/dist` to GitHub Pages on every push to `main` that touches `website/**` (or from the Actions tab, "Run workflow").
 - One-time setup: repo Settings → Pages → Source "GitHub Actions" (or `gh api -X POST repos/Venu005/unison/pages -f build_type=workflow`).
 - Action versions are pinned to major tags (checkout v7, setup-node v7, upload-pages-artifact v5, deploy-pages v5).
+- The Google Play links come from `playUrl` in `site.config.js` through the `%PLAY_URL%` placeholder. Setting it to `null` turns them back into "Coming soon" labels. The URL contains `dev.macdroid.app`, so `npm run check` skips that exact URL in its old-name check.
 
 ## Search engines (Plan 12)
 - Google Search Console property: URL prefix `https://venu005.github.io/unison/`, verified by `website/public/google5e78a886f56186ac.html` (keep that file; deleting it unverifies the site). Submit `sitemap.xml` there by hand: `/unison/robots.txt` isn't read by crawlers, because robots.txt only counts at the host root. Bing Webmaster Tools: property `https://venu005.github.io/unison/`, verified by `website/public/BingSiteAuth.xml` and the `msvalidate.01` meta tag (`verification.bing` in `site.config.js`); submit the full sitemap URL there.

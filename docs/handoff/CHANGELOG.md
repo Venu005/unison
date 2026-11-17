@@ -4,6 +4,13 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-11-17 — Website: the Google Play links are live (main)
+- **What:** `playUrl` in `website/site.config.js` is now the Play listing (https://play.google.com/store/apps/details?id=dev.macdroid.app). Both "Get it on Google Play" buttons (hero and closing CTA) and install step 05 link to it, and `llms.txt` and the JSON-LD (`operatingSystem: "macOS, Android"`) say Android is on Play.
+- **How:** the links are now real `<a href="%PLAY_URL%">` tags in `index.html`, filled at build time by `src/seo-plugin.js`, so crawlers and visitors without JavaScript see them. The plugin turns them back into the "Coming soon" label when `playUrl` is `null`. The JS swap in `src/main.js` is gone.
+- **Checks:** `npm run check` now fails on an unfilled `%PLAY_URL%`, a missing Play link or leftover "coming soon" text while `playUrl` is set. The old-name (macdroid) check skips the Play URL itself, because the Android package id keeps the old name on purpose. Tests updated for the live state, with the `null` fallback still covered.
+- **Why:** the owner shared the live listing URL and asked for it on the site.
+- **Verified:** `npm test` 34/34, `npm run build` (no warnings), `npm run check` ok (30 files). The built `index.html` has 3 Play links and no "coming soon". A `playUrl: null` render through the plugin still gives the "Coming soon" labels. Deployed by the website workflow on push to `main`.
+
 ## 2026-11-09 — Mac 0.4.4 released; website serves it (main)
 - **Owner authorization:** commit, merge to `main`, push, publish the release and update the website.
 - **What:** `fix/mac-0.4.4-tester-feedback` fast-forwarded into `main` and pushed. `website/site.config.js` `version` is 0.4.4 (the Download button already follows the latest release).

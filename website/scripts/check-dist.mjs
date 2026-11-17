@@ -14,7 +14,8 @@ for (const f of ['google5e78a886f56186ac.html', 'BingSiteAuth.xml', 'index.html'
 
 const files = walk(dist);
 for (const f of files.filter(f => /\.(html|txt|xml|json|webmanifest|js|css|svg)$/.test(f))) {
-  if (/macdroid/i.test(readFileSync(f, 'utf8'))) fail(`${relative(dist, f)} still mentions the old name (macdroid)`);
+  // The Play URL carries the Android package id, which keeps the old name on purpose (see CLAUDE.md).
+  if (/macdroid/i.test(readFileSync(f, 'utf8').replaceAll(SITE.playUrl ?? '\0', ''))) fail(`${relative(dist, f)} still mentions the old name (macdroid)`);
 }
 
 const read = f => readFileSync(join(dist, f), 'utf8');
@@ -33,6 +34,7 @@ for (const f of files.filter(f => f.endsWith('.html')).map(f => relative(dist, f
   if (!html.includes('property="og:image"')) fail(`${f}: no og:image`);
   if (!html.includes('Creative Commons 3.0 Attribution License')) fail(`${f}: no Android robot credit in the footer`);
   if (!SITE.playUrl && html.includes('play.google.com')) fail(`${f}: links to Google Play before the listing is live`);
+  if (html.includes('%PLAY_URL%')) fail(`${f}: unfilled %PLAY_URL% placeholder`);
 }
 
 const index = read('index.html');
@@ -40,6 +42,8 @@ const ld = index.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script
 if (!ld) fail('index.html: no JSON-LD');
 let data;
 try { data = JSON.parse(ld[1]); } catch (e) { fail(`index.html: JSON-LD doesn't parse (${e.message})`); }
+if (SITE.playUrl && !index.includes(`href="${SITE.playUrl}"`)) fail('index.html: no Google Play link although playUrl is set');
+if (SITE.playUrl && /coming soon/i.test(index)) fail('index.html: still says coming soon although playUrl is set');
 const os = SITE.playUrl ? 'macOS, Android' : 'macOS';
 if (data.operatingSystem !== os) fail(`index.html: JSON-LD operatingSystem is "${data.operatingSystem}", expected "${os}"`);
 const h1 = index.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();

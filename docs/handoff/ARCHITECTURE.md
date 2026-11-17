@@ -103,7 +103,7 @@ Static site in `website/`, built with Vite and deployed to GitHub Pages at `http
 
 | Part | Files | Notes |
 |---|---|---|
-| Identity | `site.config.js` | The only place for the name, site URL and base (`/unison/`), repo, DMG and release URLs, Play status (`playUrl: null` = "coming soon"), version, developer |
+| Identity | `site.config.js` | The only place for the name, site URL and base (`/unison/`), repo, DMG and release URLs, Play listing URL (`playUrl`; `null` = "coming soon", filled into `%PLAY_URL%` by `seo-plugin.js`), version, developer |
 | SEO | `src/seo.js` (pure, tested), `src/seo-plugin.js` | Head tags (canonical, OG, Twitter, icons, manifest), JSON-LD `SoftwareApplication`, `sitemap.xml`, `robots.txt`, `llms.txt`, `site.webmanifest`; the plugin fills `%SEO_HEAD%`, `%JSON_LD%`, `%BASE_URL%`, `%DMG_URL%`, `%RELEASES_URL%`, `%REPO_URL%` in the pages |
 | Pages | `index.html`, `privacy/index.html`, `404.html`, `src/styles/` | All copy is real HTML; canvases are `aria-hidden` |
 | 3D | `src/capability.js`, `src/main.js`, `src/three/shared.js`, `src/scenes/{hero,features,game}.js`, `src/game/rules.js` | `chooseQuality` picks `full` / `lite` / `static` once per visit; each scene module loads only when its section is near and exposes `mount(section, quality) -> { stop }`; `run()` pauses rendering off-screen and in hidden tabs; the game's catch rule is `catchDecision` |

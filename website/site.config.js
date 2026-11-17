@@ -12,8 +12,8 @@ export default {
   repo,
   dmgUrl: `${repo}/releases/latest/download/Unison.dmg`,
   releasesUrl: `${repo}/releases/latest`,
-  // null until the Play listing is live: the page shows a "Coming soon to Google Play" badge instead of a link.
-  playUrl: null,
+  // The Play listing (live 2026-11-17). null swaps the Get it on Google Play links for a "Coming soon" label.
+  playUrl: 'https://play.google.com/store/apps/details?id=dev.macdroid.app',
   // GitHub Sponsors (approved 2026-10-22). null leaves out the Support section and its links (Plan 13).
   sponsorUrl: 'https://github.com/sponsors/Venu005',
   // The UPI block in the Support section (QR code, and a pay link on phones); null leaves it out.

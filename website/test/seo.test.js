@@ -18,14 +18,14 @@ test('headTags carries canonical, og and twitter for the page', () => {
   expect(h).toContain(`<title>${privacy.title}</title>`);
 });
 
-test('jsonLd is a free macOS app by Venusai while Play is not live', () => {
+test('jsonLd is a free Mac and Android app by Venusai', () => {
   const j = jsonLd(SITE);
   expect(j['@type']).toBe('SoftwareApplication');
-  expect(j.operatingSystem).toBe('macOS');
+  expect(j.operatingSystem).toBe('macOS, Android');
   expect(j.offers).toMatchObject({ '@type': 'Offer', price: '0' });
   expect(j.author).toMatchObject({ name: 'Venusai', email: 'venusaiyalamanchili@gmail.com', url: 'https://github.com/Venu005' });
   expect(j.downloadUrl).toBe(SITE.dmgUrl);
-  expect(jsonLd({ ...SITE, playUrl: 'https://play.google.com/x' }).operatingSystem).toBe('macOS, Android');
+  expect(jsonLd({ ...SITE, playUrl: null }).operatingSystem).toBe('macOS');
 });
 
 test('sitemap lists both pages, robots points at it', () => {
@@ -33,10 +33,11 @@ test('sitemap lists both pages, robots points at it', () => {
   expect(robotsTxt(SITE)).toContain('Sitemap: https://venu005.github.io/unison/sitemap.xml');
 });
 
-test('llms.txt follows llmstxt.org and says Android is coming soon', () => {
+test('llms.txt follows llmstxt.org and links the Play listing', () => {
   const t = llmsTxt(SITE);
   expect(t.startsWith('# Unison\n\n> ')).toBe(true);
-  expect(t).toMatch(/coming soon/i);
+  expect(t).toContain(`Android: on Google Play (${SITE.playUrl})`);
+  expect(llmsTxt({ ...SITE, playUrl: null })).toMatch(/coming soon/i);
   expect(t).toContain('https://venu005.github.io/unison/privacy/');
   expect(t).toContain('https://github.com/Venu005/unison');
   expect(t).not.toContain('MacDroid');
