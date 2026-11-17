@@ -4,6 +4,10 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-11-17 — Release Mac 0.4.5 and point the website at it (main)
+- **What:** published https://github.com/Venu005/unison/releases/tag/v0.4.5 (`Unison.dmg`, universal, SHA-256 `7bdffc70…5e51`) with `scripts/make-release.sh`, and set `version: '0.4.5'` in `website/site.config.js`. Also committed the regenerated `mac/MacDroid/Info.plist` (0.4.5 / 9).
+- **Verified:** the `releases/latest/download/Unison.dmg` URL returns a file with the same SHA-256. Website `npm test` 34/34, build without warnings, `npm run check` ok.
+
 ## 2026-11-17 — Mac 0.4.5 (build 9) (main)
 - **What:** version bump in `mac/project.yml` for the title-bar re-layout and logging (entry below). Released with `scripts/make-release.sh`.
 - **Verified:** `scripts/make-release.sh --dry-run` built the universal DMG (arm64 + x86_64).
