@@ -37,6 +37,7 @@ ANDROID_SERIAL=<serial> ./gradlew :app:installDebug
 7. A copy installed from Play is signed by Google, so a locally signed release APK won't install over it (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`). You have to uninstall first, which loses the pairing, and the Play Store can't update over the local copy afterwards either. Large installs over Wi-Fi can drop with "device offline". Reconnect with `adb connect <ip>:<connect-port>` and retry.
 
 ## Gotchas
+- **Title-bar strip over the QR code (user reports, 0.4.3/0.4.4):** ask the reporter to run `log show --last 10m --info --predicate 'subsystem == "dev.macdroid.mac" AND category == "dev.macdroid.window"'` right after opening Unison. `MISPLACED` marks a strip below the top band. "re-layout fixed it" means the workaround worked, and "still misplaced" means it didn't. To test unpaired without touching the real pairing, don't just change the bundle id: the keychain item `dev.macdroid.identity` is shared, and macOS will ask for it.
 - **Mirroring (Plan 7):**
   - **Starting:** Mac → Phone page or the popover → Mirror. The Mac says "Tap Start on your phone" at once. The user presses Start on Android's screen-sharing prompt, opened from the phone's "Mirror to <Mac>? Tap to start" notification when Unison is in the background (Android blocks background activity starts). Auto-Start was removed in Plan 14.
   - **Locking:** Android ends screen capture when the phone locks, and shows no consent over the lock screen. Mirroring keeps the phone awake; start it on an unlocked phone.

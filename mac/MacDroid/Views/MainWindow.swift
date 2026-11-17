@@ -23,6 +23,8 @@ struct MainWindow: View {
             }
         }
         .frame(minWidth: 600, minHeight: 420)
+        // Re-lays the window out after it shows, against the title-bar strip drawn across the QR code (0.4.4 reports).
+        .background(WindowReader { MainWindowLayoutRepair.windowShown($0) })
         .onAppear { DockPolicy.windowDidAppear() }
         .onDisappear { DockPolicy.windowDidDisappear() }
     }

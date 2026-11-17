@@ -4,7 +4,12 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
-## 2026-11-17 — Ignore mac/.desktop-runtime (main)
+## 2026-11-17 — Mac: re-lay out the main window and log its title bar, against the bar over the QR code (main)
+- **Why:** users on Mac 0.4.4 still report the blurred bar with a separator line across the pairing QR code on every unpaired launch, after the 0.4.4 fix (`0a92231`). Resizing or collapsing the sidebar clears it, and it comes back on relaunch. The bar is the detail column's title-bar strip (`NSScrollPocket` / `NSTitlebarBackgroundView`) drawn about 244pt below the top of the window.
+- **Couldn't reproduce:** we tried the installed 0.4.4 (paired) and a standalone harness copying the unpaired window path (menu-bar-only app, same `DockPolicy` calls and order, NavigationSplitView, spinner then code, countdown). Each ran with Stage Manager on and off, and with and without the early Dock switch. The strip was always in place. A Release build under another bundle id is not isolated: it asked for the real `dev.macdroid.identity` keychain item, so don't use that for unpaired testing.
+- **What:** new `TitlebarGeometry` in MacDroidCore (pure: which views are title-bar pieces, and whether a strip sits below the window's top 120pt band). New `MainWindowLayoutRepair` plus `WindowReader` in the app, attached to `MainWindow`. When the window is shown, again 0.5 s later, and the first time it becomes key, it does a 1pt resize and back (the same re-layout users trigger by hand). It also logs the strip pieces' frames (category `dev.macdroid.window`): info when in place, notice when the re-layout fixed a misplaced strip, warning when it's still misplaced.
+- **Verified:** `swift test` 377 (5 new), Mac Debug build (no Swift warnings). A Release build launched on the owner's Mac logs `shown`, `became key` and `settled` with every strip at y=428 h=52 in a 720×480 window, no size drift, and the window looks normal. **Not verified:** that the re-layout clears the bar on an affected Mac, because we never saw it. Ask a reporter for the log line (DEV-GUIDE, Gotchas).
+
 - **What:** added `mac/.desktop-runtime/` to `.gitignore`.
 - **Why:** it holds about 65 MB of local build output left over from the dropped Desktop work and kept showing up as untracked.
 - **Verified:** `git status` no longer lists it.
