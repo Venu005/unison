@@ -4,6 +4,11 @@ Newest first. Every change to the repo adds an entry here (see "Keep the handoff
 
 Format: `## YYYY-MM-DD — title`, then what changed, why, the branch or commits, and how it was verified.
 
+## 2026-11-17 — Ignore mac/.desktop-runtime (main)
+- **What:** added `mac/.desktop-runtime/` to `.gitignore`.
+- **Why:** it holds about 65 MB of local build output left over from the dropped Desktop work and kept showing up as untracked.
+- **Verified:** `git status` no longer lists it.
+
 ## 2026-11-17 — Website: the Google Play links are live (main)
 - **What:** `playUrl` in `website/site.config.js` is now the Play listing (https://play.google.com/store/apps/details?id=dev.macdroid.app). Both "Get it on Google Play" buttons (hero and closing CTA) and install step 05 link to it, and `llms.txt` and the JSON-LD (`operatingSystem: "macOS, Android"`) say Android is on Play.
 - **How:** the links are now real `<a href="%PLAY_URL%">` tags in `index.html`, filled at build time by `src/seo-plugin.js`, so crawlers and visitors without JavaScript see them. The plugin turns them back into the "Coming soon" label when `playUrl` is `null`. The JS swap in `src/main.js` is gone.

@@ -25,3 +25,6 @@ brag-output/
 # Google Play upload key (Plan 14): never committed
 android/keystore.properties
 *.jks
+
+# Local Desktop runtime build output (dropped Desktop work)
+mac/.desktop-runtime/
