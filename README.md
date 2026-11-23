@@ -15,6 +15,8 @@ Unison is a pair of native apps: a **Mac menu-bar app** and an **Android app**. 
 
 **Get it:** the Mac app is a free download from **[venu005.github.io/unison](https://venu005.github.io/unison/)**. The Android app is coming soon to Google Play.
 
+[![Total macOS downloads](https://img.shields.io/github/downloads/Venu005/unison/Unison.dmg?displayAssetName=false&label=macOS%20downloads&logo=apple&color=2ea44f)](https://github.com/Venu005/unison/releases) Thanks for giving Unison a try!
+
 It's built by one person (developed on a Nothing Phone (3) running Android 17 and a MacBook Air running macOS 26). The Mac app is sandboxed, and the Android app is being prepared for Google Play.
 
 ## Features
